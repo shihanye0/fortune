@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """占卜接口"""
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_db
@@ -23,6 +24,11 @@ class LiuyaoRequest(BaseModel):
 class QimenRequest(BaseModel):
     question: str | None = None
     mode: str = Field(..., pattern=r"^(question|realtime)$")
+
+
+class DivinationFeedbackRequest(BaseModel):
+    rating: int = Field(..., ge=1, le=5)
+    feedback_text: str | None = None
 
 
 # --- 路由 ---
@@ -113,4 +119,94 @@ def do_qimen(
             "chart": chart_data,
             "interpretation": interpretation,
         },
+    }
+
+
+@router.get("/records")
+def list_divination_records(
+    page: int = Query(1, ge=1),
+    limit: int = Query(20, ge=1, le=100),
+    type: str | None = Query(None, pattern=r"^(liuyao|qimen)$"),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """占卜历史列表"""
+    offset = (page - 1) * limit
+
+    query = db.query(DivinationRecord).filter(
+        DivinationRecord.user_id == current_user.id
+    )
+    if type:
+        query = query.filter(DivinationRecord.type == type)
+
+    total = query.count()
+
+    records = (
+        query.order_by(DivinationRecord.created_at.desc())
+        .offset(offset)
+        .limit(limit)
+        .all()
+    )
+
+    total_pages = (total + limit - 1) // limit if total > 0 else 0
+
+    return {
+        "success": True,
+        "data": [_record_to_list_dict(r) for r in records],
+        "meta": {
+            "total": total,
+            "page": page,
+            "limit": limit,
+            "total_pages": total_pages,
+        },
+    }
+
+
+@router.post("/{record_id}/feedback")
+def submit_divination_feedback(
+    record_id: int,
+    req: DivinationFeedbackRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """占卜反馈（允许修改）"""
+    record = (
+        db.query(DivinationRecord)
+        .filter(
+            DivinationRecord.id == record_id,
+            DivinationRecord.user_id == current_user.id,
+        )
+        .first()
+    )
+
+    if not record:
+        raise HTTPException(status_code=404, detail="占卜记录不存在")
+
+    record.user_rating = req.rating
+    record.user_feedback_text = req.feedback_text
+    db.commit()
+    db.refresh(record)
+
+    return {
+        "success": True,
+        "data": _record_to_list_dict(record),
+    }
+
+
+# --- 辅助函数 ---
+
+def _record_to_list_dict(r: DivinationRecord) -> dict:
+    """占卜记录转列表字典"""
+    summary = ""
+    if r.question:
+        summary = r.question[:30] + "..." if len(r.question) > 30 else r.question
+
+    return {
+        "id": r.id,
+        "type": r.type,
+        "question": r.question,
+        "summary": summary,
+        "user_rating": r.user_rating,
+        "user_feedback_text": r.user_feedback_text,
+        "created_at": r.created_at.isoformat() if r.created_at else None,
     }
