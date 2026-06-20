@@ -12,8 +12,14 @@ from sqlalchemy import create_engine, event, text
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from app.main import app
+from app.main import app as fastapi_app
 from app.models.base import Base
+
+# 确保所有模型被导入，create_all 才能创建所有表
+from app.models.user import User  # noqa
+from app.models.bazi_profile import BaziProfile  # noqa
+from app.models.daily_fortune import DailyFortune  # noqa
+from app.models.divination_record import DivinationRecord  # noqa
 
 
 @pytest.fixture(scope="function")
@@ -53,7 +59,7 @@ def client(db_session):
         finally:
             pass
 
-    app.dependency_overrides[get_db] = override_get_db
-    with TestClient(app) as c:
+    fastapi_app.dependency_overrides[get_db] = override_get_db
+    with TestClient(fastapi_app) as c:
         yield c
-    app.dependency_overrides.clear()
+    fastapi_app.dependency_overrides.clear()
