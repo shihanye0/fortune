@@ -124,6 +124,17 @@ def interpret_daily(
     Returns:
         运势播报文字
     """
+    """
+    生成每日运势播报
+
+    Args:
+        bazi_summary: 八字概要
+        daily_fortune: 每日运势数据
+        user_feedback_summary: 用户反馈摘要
+
+    Returns:
+        运势播报文字
+    """
     # 格式化运势数据
     fortune_lines = []
     if "overall_score" in daily_fortune:
@@ -142,3 +153,118 @@ def interpret_daily(
 
     result = _call_deepseek(prompt)
     return result or FALLBACK_DAILY
+
+
+# --- 六爻解读 ---
+
+LIUYAO_PROMPT = """你是一位精通周易六爻的资深卦师。请用专业但易懂的语言解读以下卦象。
+
+## 占卜问题
+{question}
+
+## 卦象信息
+- 本卦：{hexagram_name}
+- 上卦：{upper_trigram}（{upper_image}）
+- 下卦：{lower_trigram}（{lower_image}）
+- 六爻：{lines}
+- 变爻位置：{changing_lines}
+- 变卦：{changed_hexagram}
+
+## 任务要求
+1. 先解读本卦卦象含义
+2. 分析变爻对卦象的影响
+3. 针对占卜问题给出具体解答
+4. 给出实用建议
+5. 字数控制在 200-400 字"""
+
+
+def interpret_liuyao(hexagram_data: dict) -> str:
+    """
+    解读六爻卦象
+
+    Args:
+        hexagram_data: hexagram.py 生成的卦象数据
+
+    Returns:
+        解读文字
+    """
+    from fortune_engine.liuyao.hexagram import TRIGRAM_IMAGE
+
+    question = hexagram_data.get("question") or "总体运势"
+    upper = hexagram_data["upper_trigram"]
+    lower = hexagram_data["lower_trigram"]
+    changed = hexagram_data.get("changed_hexagram")
+
+    prompt = LIUYAO_PROMPT.format(
+        question=question,
+        hexagram_name=hexagram_data["name"],
+        upper_trigram=upper,
+        upper_image=TRIGRAM_IMAGE.get(upper, ""),
+        lower_trigram=lower,
+        lower_image=TRIGRAM_IMAGE.get(lower, ""),
+        lines=hexagram_data["lines"],
+        changing_lines=hexagram_data.get("changing_lines", []),
+        changed_hexagram=changed["name"] if changed else "无变卦",
+    )
+
+    result = _call_deepseek(prompt)
+    return result or "卦象解读暂不可用，请稍后再试。"
+
+
+# --- 奇门遁甲解读 ---
+
+QIMEN_PROMPT = """你是一位精通奇门遁甲的资深术士。请用专业但易懂的语言解读以下奇门盘面。
+
+## 问题
+{question}
+
+## 盘面信息
+- 阴阳遁：{yin_yang}
+- 局数：第{ju_shu}局
+- 时辰：{time}
+
+## 九宫详情
+{palace_details}
+
+## 任务要求
+1. 分析当前盘面的整体格局
+2. 重点关注与问题相关的宫位
+3. 解读九星、八门、八神的组合含义
+4. 给出针对性建议
+5. 字数控制在 200-400 字"""
+
+
+FALLBACK_LIUYAO = "卦象解读暂不可用，请稍后再试。您可查看卦象数据了解基本信息。"
+FALLBACK_QIMEN = "奇门盘面解读暂不可用，请稍后再试。您可查看盘面数据了解基本信息。"
+
+
+def interpret_qimen(chart_data: dict, question: str = "") -> str:
+    """
+    解读奇门遁甲盘面
+
+    Args:
+        chart_data: chart.py 生成的盘面数据
+        question: 占卜问题
+
+    Returns:
+        解读文字
+    """
+    q = question or "当前时辰总体运势"
+
+    # 格式化九宫详情
+    palace_lines = []
+    for pid, info in chart_data.get("palace", {}).items():
+        palace_lines.append(
+            f"  宫{pid}：{info['star']} / {info['gate']} / {info['god']}"
+        )
+
+    prompt = QIMEN_PROMPT.format(
+        question=q,
+        yin_yang=chart_data["yin_yang"],
+        ju_shu=chart_data["ju_shu"],
+        time=chart_data.get("time", ""),
+        palace_details="\n".join(palace_lines),
+    )
+
+    result = _call_deepseek(prompt)
+    return result or FALLBACK_QIMEN
