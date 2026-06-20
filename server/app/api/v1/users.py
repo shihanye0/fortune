@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """个人信息管理接口"""
+import re
 from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -8,7 +9,7 @@ from pydantic import BaseModel, Field, field_validator
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_db
-from app.core.security import verify_token
+from app.core.security import verify_password, verify_token
 from app.models.user import User
 
 
@@ -60,6 +61,25 @@ class UpdateBirthRequest(BaseModel):
         return v
 
 
+class PushSettingsRequest(BaseModel):
+    push_enabled: bool
+    push_channel: str = Field(..., pattern=r"^(email|feishu|both)$")
+    push_time: str = Field(..., pattern=r"^\d{2}:\d{2}$")
+    feishu_webhook: str | None = None
+
+    @field_validator("push_time")
+    @classmethod
+    def validate_push_time(cls, v: str) -> str:
+        hh, mm = v.split(":")
+        if int(hh) > 23 or int(mm) > 59:
+            raise ValueError("时间格式无效")
+        return v
+
+
+class DeleteAccountRequest(BaseModel):
+    password: str
+
+
 # --- 路由 ---
 
 router = APIRouter(prefix="/users", tags=["个人信息"])
@@ -80,6 +100,7 @@ def _user_to_dict(user: User) -> dict:
         "push_channel": user.push_channel,
         "push_enabled": user.push_enabled,
         "push_time": user.push_time,
+        "feishu_webhook": user.feishu_webhook,
         "created_at": user.created_at.isoformat() if user.created_at else None,
     }
 
@@ -117,3 +138,39 @@ def update_birth(
     db.commit()
     db.refresh(current_user)
     return {"success": True, "data": _user_to_dict(current_user)}
+
+
+@router.put("/me/push-settings")
+def update_push_settings(
+    req: PushSettingsRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """更新推送设置"""
+    # 飞书/both 渠道必须提供 webhook
+    if req.push_channel in ("feishu", "both") and req.push_enabled:
+        if not req.feishu_webhook or not req.feishu_webhook.strip():
+            raise HTTPException(status_code=400, detail="飞书推送需要填写 Webhook URL")
+
+    current_user.push_enabled = req.push_enabled
+    current_user.push_channel = req.push_channel
+    current_user.push_time = req.push_time
+    current_user.feishu_webhook = req.feishu_webhook
+    db.commit()
+    db.refresh(current_user)
+    return {"success": True, "data": _user_to_dict(current_user)}
+
+
+@router.delete("/me")
+def delete_account(
+    req: DeleteAccountRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """注销账号"""
+    if not verify_password(req.password, current_user.password_hash):
+        raise HTTPException(status_code=400, detail="密码错误，无法注销")
+
+    db.delete(current_user)
+    db.commit()
+    return {"success": True, "message": "账号已注销"}
