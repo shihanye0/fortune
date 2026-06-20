@@ -96,6 +96,7 @@
 | birth_location | VARCHAR(100) | 出生地（真太阳时校正） |
 | push_channel | VARCHAR(20) | 推送渠道：email/feishu/both |
 | push_enabled | BOOLEAN | 是否开启每日推送 |
+| push_time | TIME | 用户自定义推送时间（默认 07:00） |
 | feishu_webhook | VARCHAR(500) | 飞书机器人 Webhook URL |
 | created_at | TIMESTAMP | 创建时间 |
 | updated_at | TIMESTAMP | 更新时间 |
@@ -271,14 +272,16 @@ PROMPT_TEMPLATE = """
 
 ## 五、每日运势推送流程
 
+> 用户可自定义推送时间，GitHub Actions 每小时运行一次，检查当前小时内需要推送的用户。
+
 ```
-GitHub Actions 定时触发（每天早上 7:00 CST）
+GitHub Actions 每小时触发（cron: '0 * * * *'）
     │
     ▼
 调用 POST /api/v1/internal/daily-push
     │
     ▼
-查询所有 push_enabled = TRUE 的用户
+查询所有 push_enabled = TRUE 且 push_time 在当前小时内的用户
     │
     ▼
 对每个用户（并发处理）：
@@ -339,6 +342,7 @@ GitHub Actions 定时触发（每天早上 7:00 CST）
 | PUT | /api/v1/users/me | 更新个人信息 |
 | PUT | /api/v1/users/me/birth | 更新生辰信息 |
 | PUT | /api/v1/users/me/push-settings | 更新推送设置 |
+| DELETE | /api/v1/users/me | 注销账号（需密码确认） |
 
 ### 7.3 运势模块
 
@@ -368,12 +372,14 @@ GitHub Actions 定时触发（每天早上 7:00 CST）
 
 ## 八、GitHub Actions 定时任务
 
+> 用户可自定义推送时间，因此每小时运行一次，检查当前小时内需要推送的用户。
+
 ```yaml
 # .github/workflows/daily-fortune.yml
 name: Daily Fortune Push
 on:
   schedule:
-    - cron: '0 23 * * *'  # UTC 23:00 = 北京时间 07:00
+    - cron: '0 * * * *'  # 每小时运行一次
   workflow_dispatch:  # 手动触发
 
 jobs:
