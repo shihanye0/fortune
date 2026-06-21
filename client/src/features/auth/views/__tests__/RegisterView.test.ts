@@ -53,7 +53,9 @@ describe('RegisterView', () => {
     await router.isReady()
 
     expect(wrapper.text()).toContain('生辰信息')
-    expect(wrapper.text()).toContain('出生日期')
+    expect(wrapper.text()).toContain('出生年')
+    expect(wrapper.text()).toContain('出生月')
+    expect(wrapper.text()).toContain('出生日')
     expect(wrapper.text()).toContain('出生时辰')
   })
 

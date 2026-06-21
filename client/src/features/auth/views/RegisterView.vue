@@ -13,10 +13,12 @@ const form = reactive({
   email: '',
   password: '',
   confirmPassword: '',
-  birthDate: '',
+  birthYear: null as number | null,
+  birthMonth: null as number | null,
+  birthDay: null as number | null,
   birthHour: null as number | null,
-  gender: '',
-  birthPlace: '',
+  gender: null as number | null,
+  birthLocation: '',
 })
 
 async function handleRegister() {
@@ -38,10 +40,12 @@ async function handleRegister() {
       username: form.username,
       email: form.email,
       password: form.password,
-      birthDate: form.birthDate || undefined,
-      birthHour: form.birthHour ?? undefined,
-      gender: form.gender || undefined,
-      birthPlace: form.birthPlace || undefined,
+      birth_year: form.birthYear ?? 1990,
+      birth_month: form.birthMonth ?? 1,
+      birth_day: form.birthDay ?? 1,
+      birth_hour: form.birthHour ?? 0,
+      gender: form.gender ?? 1,
+      birth_location: form.birthLocation || undefined,
     })
     if (res.success) {
       ElMessage.success('注册成功')
@@ -77,8 +81,14 @@ async function handleRegister() {
           <el-input v-model="form.confirmPassword" type="password" placeholder="再次输入密码" show-password />
         </el-form-item>
         <el-divider>生辰信息（选填）</el-divider>
-        <el-form-item label="出生日期">
-          <el-date-picker v-model="form.birthDate" type="date" placeholder="选择日期" value-format="YYYY-MM-DD" style="width: 100%" />
+        <el-form-item label="出生年">
+          <el-input-number v-model="form.birthYear" :min="1900" :max="2100" placeholder="年" style="width: 100%" />
+        </el-form-item>
+        <el-form-item label="出生月">
+          <el-input-number v-model="form.birthMonth" :min="1" :max="12" placeholder="月" style="width: 100%" />
+        </el-form-item>
+        <el-form-item label="出生日">
+          <el-input-number v-model="form.birthDay" :min="1" :max="31" placeholder="日" style="width: 100%" />
         </el-form-item>
         <el-form-item label="出生时辰">
           <el-select v-model="form.birthHour" placeholder="选择时辰" style="width: 100%">
@@ -87,12 +97,12 @@ async function handleRegister() {
         </el-form-item>
         <el-form-item label="性别">
           <el-radio-group v-model="form.gender">
-            <el-radio value="male">男</el-radio>
-            <el-radio value="female">女</el-radio>
+            <el-radio :value="1">男</el-radio>
+            <el-radio :value="0">女</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="出生地">
-          <el-input v-model="form.birthPlace" placeholder="选填，用于真太阳时校正" />
+          <el-input v-model="form.birthLocation" placeholder="选填，用于真太阳时校正" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" :loading="loading" @click="handleRegister" style="width: 100%">

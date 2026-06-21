@@ -5,10 +5,12 @@ export interface RegisterRequest {
   username: string
   email: string
   password: string
-  birthDate?: string
-  birthHour?: number
-  gender?: string
-  birthPlace?: string
+  birth_year: number
+  birth_month: number
+  birth_day: number
+  birth_hour: number
+  gender: number
+  birth_location?: string
 }
 
 export interface LoginRequest {
