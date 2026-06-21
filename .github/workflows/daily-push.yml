@@ -1,0 +1,57 @@
+# 每日运势推送 - 每小时触发一次
+# 后端根据用户的 push_time 设置匹配当前小时的用户进行推送
+name: Daily Fortune Push
+
+on:
+  schedule:
+    # 每小时整点触发（UTC 时间）
+    # 北京时间 07:00-23:00 对应 UTC 23:00-15:00
+    - cron: '0 * * * *'
+
+  # 允许手动触发（调试用）
+  workflow_dispatch:
+    inputs:
+      hour:
+        description: '推送小时 (0-23)'
+        required: true
+        default: '7'
+
+jobs:
+  push-fortune:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Calculate current hour
+        id: hour
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "hour=${{ github.event.inputs.hour }}" >> $GITHUB_OUTPUT
+          else
+            # UTC 时间 + 8 小时 = 北京时间
+            HOUR_UTC=$(date -u +%H)
+            HOUR_BEIJING=$(( (HOUR_UTC + 8) % 24 ))
+            echo "hour=$HOUR_BEIJING" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Call daily push API
+        run: |
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
+            "${{ secrets.API_BASE_URL }}/api/v1/internal/daily-push" \
+            -H "Content-Type: application/json" \
+            -H "X-API-Key: ${{ secrets.INTERNAL_API_KEY }}" \
+            -d '{"hour": ${{ steps.hour.outputs.hour }}}')
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | head -n -1)
+
+          echo "Response: $BODY"
+          echo "HTTP Status: $HTTP_CODE"
+
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "::error::Daily push failed with HTTP $HTTP_CODE"
+            exit 1
+          fi
+
+      - name: Report result
+        if: always()
+        run: |
+          echo "Daily push completed for hour ${{ steps.hour.outputs.hour }}"
