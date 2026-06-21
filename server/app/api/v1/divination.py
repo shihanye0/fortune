@@ -31,6 +31,10 @@ class DivinationFeedbackRequest(BaseModel):
     feedback_text: str | None = None
 
 
+class AccuracyMarkRequest(BaseModel):
+    accuracy_mark: int = Field(..., ge=0, le=1, description="1=准, 0=不准")
+
+
 # --- 路由 ---
 
 @router.post("/liuyao")
@@ -260,6 +264,36 @@ def submit_divination_feedback(
     }
 
 
+@router.post("/{record_id}/accuracy")
+def mark_divination_accuracy(
+    record_id: int,
+    req: AccuracyMarkRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """标记占卜准确性（1=准, 0=不准）"""
+    record = (
+        db.query(DivinationRecord)
+        .filter(
+            DivinationRecord.id == record_id,
+            DivinationRecord.user_id == current_user.id,
+        )
+        .first()
+    )
+
+    if not record:
+        raise HTTPException(status_code=404, detail="占卜记录不存在")
+
+    record.accuracy_mark = req.accuracy_mark
+    db.commit()
+    db.refresh(record)
+
+    return {
+        "success": True,
+        "data": _record_to_list_dict(record),
+    }
+
+
 # --- 辅助函数 ---
 
 def _record_to_list_dict(r: DivinationRecord) -> dict:
@@ -275,5 +309,7 @@ def _record_to_list_dict(r: DivinationRecord) -> dict:
         "summary": summary,
         "user_rating": r.user_rating,
         "user_feedback_text": r.user_feedback_text,
+        "accuracy_mark": r.accuracy_mark,
+        "outcome_verified": r.outcome_verified,
         "created_at": r.created_at.isoformat() if r.created_at else None,
     }

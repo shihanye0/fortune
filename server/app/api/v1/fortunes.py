@@ -27,6 +27,10 @@ class FeedbackRequest(BaseModel):
     feedback_text: str | None = None
 
 
+class AccuracyMarkRequest(BaseModel):
+    accuracy_mark: int = Field(..., ge=0, le=1, description="1=准, 0=不准")
+
+
 # --- 路由 ---
 
 @router.get("/today")
@@ -182,6 +186,36 @@ def submit_feedback(
     }
 
 
+@router.post("/{fortune_id}/accuracy")
+def mark_fortune_accuracy(
+    fortune_id: int,
+    req: AccuracyMarkRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """标记运势准确性（1=准, 0=不准）"""
+    fortune = (
+        db.query(DailyFortune)
+        .filter(
+            DailyFortune.id == fortune_id,
+            DailyFortune.user_id == current_user.id,
+        )
+        .first()
+    )
+
+    if not fortune:
+        raise HTTPException(status_code=404, detail="运势记录不存在")
+
+    fortune.accuracy_mark = req.accuracy_mark
+    db.commit()
+    db.refresh(fortune)
+
+    return {
+        "success": True,
+        "data": _fortune_to_detail_dict(fortune),
+    }
+
+
 # --- 按需生成运势 ---
 
 def _generate_fortune_on_demand(user: User, today: date, db: Session) -> DailyFortune:
@@ -286,6 +320,7 @@ def _fortune_to_detail_dict(f: DailyFortune) -> dict:
         "user_rating": f.user_rating,
         "user_feedback_tags": f.user_feedback_tags,
         "user_feedback_text": f.user_feedback_text,
+        "accuracy_mark": f.accuracy_mark,
     }
 
 

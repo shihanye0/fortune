@@ -21,6 +21,7 @@ export interface FortuneDetail {
   user_rating: number | null
   user_feedback_tags: string[]
   user_feedback_text: string | null
+  accuracy_mark: number | null
 }
 
 export interface FortuneListItem {

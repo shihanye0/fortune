@@ -9,6 +9,7 @@ import {
   regenerateTodayFortune,
 } from '../api/fortune-api'
 import type { FortuneDetail, FortuneListItem, FortuneFeedback } from '../api/fortune-api'
+import { submitFortuneAccuracy } from '@/features/feedback/api/feedback-api'
 
 const loading = ref(true)
 const todayFortune = ref<FortuneDetail | null>(null)
@@ -198,6 +199,31 @@ async function handleSubmitFeedback() {
     }
   } catch {
     ElMessage.error('提交反馈失败')
+  }
+}
+
+// 准确性标记
+const markingAccuracy = ref(false)
+
+async function handleAccuracyMark(fortuneId: number, mark: number) {
+  markingAccuracy.value = true
+  try {
+    const res = await submitFortuneAccuracy(fortuneId, mark)
+    if (res.success) {
+      // 更新详情弹窗中的数据
+      if (selectedFortune.value && selectedFortune.value.id === fortuneId) {
+        selectedFortune.value.accuracy_mark = mark
+      }
+      // 更新今日运势数据
+      if (todayFortune.value && todayFortune.value.id === fortuneId) {
+        todayFortune.value.accuracy_mark = mark
+      }
+      ElMessage.success(mark === 1 ? '已标记为准确' : '已标记为不准确')
+    }
+  } catch {
+    ElMessage.error('标记失败，请重试')
+  } finally {
+    markingAccuracy.value = false
   }
 }
 </script>
@@ -439,6 +465,31 @@ async function handleSubmitFeedback() {
           <h4>运势解读</h4>
           <div class="interpretation-text">
             {{ selectedFortune.interpretation || '暂无解读' }}
+          </div>
+        </div>
+        <el-divider />
+        <div class="accuracy-section">
+          <div class="accuracy-label">这个运势准确吗？</div>
+          <div v-if="selectedFortune.accuracy_mark !== null && selectedFortune.accuracy_mark !== undefined" class="accuracy-marked">
+            <el-tag :type="selectedFortune.accuracy_mark === 1 ? 'success' : 'danger'" effect="dark" size="large">
+              {{ selectedFortune.accuracy_mark === 1 ? '✓ 已标记为准确' : '✗ 已标记为不准确' }}
+            </el-tag>
+          </div>
+          <div v-else class="accuracy-buttons">
+            <el-button
+              type="success"
+              :loading="markingAccuracy"
+              @click="handleAccuracyMark(selectedFortune.id, 1)"
+            >
+              👍 准确
+            </el-button>
+            <el-button
+              type="danger"
+              :loading="markingAccuracy"
+              @click="handleAccuracyMark(selectedFortune.id, 0)"
+            >
+              👎 不准确
+            </el-button>
           </div>
         </div>
       </div>
@@ -831,6 +882,30 @@ async function handleSubmitFeedback() {
   text-align: center;
   padding: 40px;
   color: var(--color-text-secondary);
+}
+
+/* 准确性标记 */
+.accuracy-section {
+  text-align: center;
+  padding: 16px 0;
+}
+
+.accuracy-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 16px;
+}
+
+.accuracy-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.accuracy-marked {
+  display: flex;
+  justify-content: center;
 }
 
 /* 响应式 */

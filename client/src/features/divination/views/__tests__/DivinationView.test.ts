@@ -8,7 +8,15 @@ vi.mock('@/features/divination/api/divination-api', () => ({
   doLiuyao: vi.fn(),
   doQimen: vi.fn(),
   getDivinationRecords: vi.fn(),
+  getDivinationDetail: vi.fn(),
   submitDivinationFeedback: vi.fn(),
+}))
+
+vi.mock('@/features/feedback/api/feedback-api', () => ({
+  submitDivinationAccuracy: vi.fn(),
+  submitPredictionOutcome: vi.fn(),
+  submitFortuneAccuracy: vi.fn(),
+  getAccuracyStats: vi.fn(),
 }))
 
 import { doLiuyao, doQimen, getDivinationRecords } from '@/features/divination/api/divination-api'
@@ -135,6 +143,8 @@ describe('DivinationView', () => {
           summary: '今日运势如何？',
           user_rating: null,
           user_feedback_text: null,
+          accuracy_mark: null,
+          outcome_verified: false,
           created_at: '2026-06-20T10:00:00',
         },
       ],

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, reactive } from 'vue'
 import { ElMessage } from 'element-plus'
 import {
   doLiuyao,
@@ -9,6 +9,7 @@ import {
   submitDivinationFeedback,
 } from '../api/divination-api'
 import type { DivinationResult, DivinationRecord } from '../api/divination-api'
+import { submitDivinationAccuracy, submitPredictionOutcome } from '@/features/feedback/api/feedback-api'
 
 const loading = ref(false)
 const method = ref<'liuyao' | 'qimen'>('liuyao')
@@ -154,6 +155,79 @@ async function handleSubmitFeedback() {
     }
   } catch {
     ElMessage.error('提交反馈失败')
+  }
+}
+
+// 准确性标记
+const markingAccuracy = ref(false)
+
+async function handleAccuracyMark(recordId: number, mark: number) {
+  markingAccuracy.value = true
+  try {
+    const res = await submitDivinationAccuracy(recordId, mark)
+    if (res.success) {
+      // 更新详情弹窗中的数据
+      if (selectedRecord.value && selectedRecord.value.id === recordId) {
+        selectedRecord.value.accuracy_mark = mark
+      }
+      // 更新历史列表中的数据
+      const idx = historyList.value.findIndex(r => r.id === recordId)
+      if (idx >= 0) {
+        historyList.value[idx].accuracy_mark = mark
+      }
+      ElMessage.success(mark === 1 ? '已标记为准确' : '已标记为不准确')
+    }
+  } catch {
+    ElMessage.error('标记失败，请重试')
+  } finally {
+    markingAccuracy.value = false
+  }
+}
+
+// 事件验证
+const showVerifyDialog = ref(false)
+const verifyForm = reactive({
+  outcome_text: '',
+  verified: true as boolean,
+})
+const submittingVerify = ref(false)
+
+function openVerifyDialog() {
+  verifyForm.outcome_text = ''
+  verifyForm.verified = true
+  showVerifyDialog.value = true
+}
+
+async function handleSubmitVerify() {
+  if (!selectedRecord.value) return
+  if (!verifyForm.outcome_text.trim()) {
+    ElMessage.warning('请填写结果描述')
+    return
+  }
+  submittingVerify.value = true
+  try {
+    const res = await submitPredictionOutcome({
+      source_type: 'divination',
+      source_id: selectedRecord.value.id,
+      outcome_text: verifyForm.outcome_text,
+      verified: verifyForm.verified,
+    })
+    if (res.success) {
+      // 更新列表状态
+      if (selectedRecord.value) {
+        selectedRecord.value.outcome_verified = true
+      }
+      const idx = historyList.value.findIndex(r => r.id === selectedRecord.value?.id)
+      if (idx >= 0) {
+        historyList.value[idx].outcome_verified = true
+      }
+      showVerifyDialog.value = false
+      ElMessage.success('事件验证提交成功')
+    }
+  } catch {
+    ElMessage.error('提交失败，请重试')
+  } finally {
+    submittingVerify.value = false
   }
 }
 </script>
@@ -357,7 +431,75 @@ async function handleSubmitFeedback() {
           <span class="meta-label">您的评价：</span>
           <span class="rating-stars">{{ '★'.repeat(selectedRecord.user_rating) }}{{ '☆'.repeat(5 - selectedRecord.user_rating) }}</span>
         </div>
+        <el-divider />
+        <div class="accuracy-section">
+          <div class="accuracy-label">这个解读准确吗？</div>
+          <div v-if="selectedRecord.accuracy_mark !== null && selectedRecord.accuracy_mark !== undefined" class="accuracy-marked">
+            <el-tag :type="selectedRecord.accuracy_mark === 1 ? 'success' : 'danger'" effect="dark" size="large">
+              {{ selectedRecord.accuracy_mark === 1 ? '✓ 已标记为准确' : '✗ 已标记为不准确' }}
+            </el-tag>
+          </div>
+          <div v-else class="accuracy-buttons">
+            <el-button
+              type="success"
+              :loading="markingAccuracy"
+              @click="handleAccuracyMark(selectedRecord.id, 1)"
+            >
+              👍 准确
+            </el-button>
+            <el-button
+              type="danger"
+              :loading="markingAccuracy"
+              @click="handleAccuracyMark(selectedRecord.id, 0)"
+            >
+              👎 不准确
+            </el-button>
+          </div>
+        </div>
+        <div class="verify-section">
+          <el-button
+            v-if="!selectedRecord.outcome_verified"
+            type="warning"
+            @click="openVerifyDialog"
+          >
+            🔍 验证事件结果
+          </el-button>
+          <el-tag v-else type="info" effect="plain" size="large">
+            ✓ 事件结果已验证
+          </el-tag>
+        </div>
       </div>
+    </el-dialog>
+
+    <!-- 事件验证弹窗 -->
+    <el-dialog
+      v-model="showVerifyDialog"
+      title="验证事件结果"
+      width="480px"
+      class="verify-dialog"
+    >
+      <el-form label-position="top">
+        <el-form-item label="结果描述">
+          <el-input
+            v-model="verifyForm.outcome_text"
+            type="textarea"
+            :rows="4"
+            placeholder="请描述这个预测的实际结果..."
+          />
+        </el-form-item>
+        <el-form-item label="事件是否发生">
+          <el-radio-group v-model="verifyForm.verified">
+            <el-radio :value="true">确实发生</el-radio>
+            <el-radio :value="false">未发生</el-radio>
+          </el-radio-group>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="showVerifyDialog = false">取消</el-button>
+        <el-button type="primary" :loading="submittingVerify" @click="handleSubmitVerify">
+          提交验证
+        </el-button>
+      </template>
     </el-dialog>
   </div>
 </template>
@@ -688,6 +830,36 @@ async function handleSubmitFeedback() {
   margin-top: 16px;
   padding-top: 16px;
   border-top: 1px solid var(--color-border);
+}
+
+/* 准确性标记 */
+.accuracy-section {
+  text-align: center;
+  padding: 16px 0;
+}
+
+.accuracy-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 16px;
+}
+
+.accuracy-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.accuracy-marked {
+  display: flex;
+  justify-content: center;
+}
+
+/* 事件验证 */
+.verify-section {
+  text-align: center;
+  padding: 8px 0;
 }
 
 /* 响应式 */

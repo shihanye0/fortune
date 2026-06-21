@@ -26,6 +26,8 @@ export interface DivinationRecord {
   summary: string
   user_rating: number | null
   user_feedback_text: string | null
+  accuracy_mark: number | null
+  outcome_verified: boolean
   created_at: string
 }
 

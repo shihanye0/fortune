@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """占卜记录模型"""
-from sqlalchemy import JSON, BIGINT, SMALLINT, String, TEXT
+from sqlalchemy import JSON, BIGINT, BOOLEAN, SMALLINT, String, TEXT
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.models.base import Base, TimestampMixin
@@ -25,3 +25,14 @@ class DivinationRecord(TimestampMixin, Base):
     # 用户反馈
     user_rating: Mapped[int | None] = mapped_column(SMALLINT, nullable=True)
     user_feedback_text: Mapped[str | None] = mapped_column(TEXT, nullable=True)
+
+    # 准确性标记：1=准, 0=不准, null=未标记
+    accuracy_mark: Mapped[int | None] = mapped_column(
+        SMALLINT, nullable=True, default=None,
+        comment="准确性标记: 1=准, 0=不准, null=未标记"
+    )
+    # 事件是否被验证
+    outcome_verified: Mapped[bool | None] = mapped_column(
+        BOOLEAN, nullable=True, default=None,
+        comment="事件是否被验证"
+    )

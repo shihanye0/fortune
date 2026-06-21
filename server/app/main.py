@@ -9,6 +9,7 @@ from app.api.v1.auth import router as auth_router
 from app.api.v1.divination import router as divination_router
 from app.api.v1.fortunes import router as fortunes_router
 from app.api.v1.internal import router as internal_router
+from app.api.v1.prediction_outcomes import router as prediction_outcomes_router
 from app.api.v1.users import router as users_router
 
 app = FastAPI(title="命理运势系统", version="1.0.0")
@@ -27,6 +28,7 @@ app.include_router(auth_router, prefix="/api/v1")
 app.include_router(users_router, prefix="/api/v1")
 app.include_router(divination_router, prefix="/api/v1")
 app.include_router(fortunes_router, prefix="/api/v1")
+app.include_router(prediction_outcomes_router, prefix="/api/v1")
 app.include_router(internal_router, prefix="/api/v1")
 
 

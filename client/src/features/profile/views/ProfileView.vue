@@ -12,11 +12,15 @@ import {
   deleteAccount,
 } from '../api/profile-api'
 import type { UserProfile } from '../api/profile-api'
+import { getAccuracyStats } from '@/features/feedback/api/feedback-api'
+import type { AccuracyStats } from '@/features/feedback/types/feedback.types'
 
 const router = useRouter()
 const authStore = useAuthStore()
 const loading = ref(true)
 const profile = ref<UserProfile | null>(null)
+const accuracyStats = ref<AccuracyStats | null>(null)
+const loadingStats = ref(false)
 
 const editingUsername = ref(false)
 const usernameForm = reactive({ username: '' })
@@ -138,6 +142,19 @@ onMounted(async () => {
   } finally {
     loading.value = false
   }
+
+  // 加载准确率统计（不阻塞主页面加载）
+  loadingStats.value = true
+  try {
+    const statsRes = await getAccuracyStats()
+    if (statsRes.success) {
+      accuracyStats.value = statsRes.data
+    }
+  } catch {
+    // 准确率统计加载失败不影响页面
+  } finally {
+    loadingStats.value = false
+  }
 })
 
 async function handleUpdateUsername() {
@@ -188,6 +205,32 @@ async function handleUpdateLLMSettings() {
   } catch {
     ElMessage.error('更新失败')
   }
+}
+
+function getAccuracyColor(rate: number): string {
+  if (rate >= 80) return '#22c55e'
+  if (rate >= 60) return '#eab308'
+  return '#ef4444'
+}
+
+function getDimensionLabel(key: string): string {
+  const labels: Record<string, string> = {
+    career: '事业',
+    wealth: '财运',
+    love: '感情',
+    health: '健康',
+  }
+  return labels[key] || key
+}
+
+function getDimensionIcon(key: string): string {
+  const icons: Record<string, string> = {
+    career: '💼',
+    wealth: '💰',
+    love: '💕',
+    health: '🏥',
+  }
+  return icons[key] || '📊'
 }
 
 async function handleDeleteAccount() {
@@ -372,6 +415,84 @@ async function handleDeleteAccount() {
         </el-form>
       </el-card>
 
+      <!-- 预测准确率 -->
+      <el-card class="section-card animate-fade-in" v-if="accuracyStats">
+        <template #header>
+          <div class="card-title">
+            <span class="card-icon">📊</span>
+            <span>预测准确率</span>
+          </div>
+        </template>
+        <div class="accuracy-cards">
+          <div class="accuracy-card fortune-card">
+            <div class="accuracy-card-header">
+              <span class="accuracy-card-icon">🔮</span>
+              <span class="accuracy-card-title">运势准确率</span>
+            </div>
+            <div class="accuracy-card-body">
+              <div class="accuracy-big-number" :style="{ color: getAccuracyColor(accuracyStats.fortune_accuracy.rate) }">
+                {{ accuracyStats.fortune_accuracy.rate }}%
+              </div>
+              <el-progress
+                :percentage="accuracyStats.fortune_accuracy.rate"
+                :color="getAccuracyColor(accuracyStats.fortune_accuracy.rate)"
+                :stroke-width="10"
+              />
+              <div class="accuracy-detail">
+                <span>总数：{{ accuracyStats.fortune_accuracy.total }}</span>
+                <span>准确：{{ accuracyStats.fortune_accuracy.accurate }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="accuracy-card divination-card">
+            <div class="accuracy-card-header">
+              <span class="accuracy-card-icon">☯</span>
+              <span class="accuracy-card-title">占卜准确率</span>
+            </div>
+            <div class="accuracy-card-body">
+              <div class="accuracy-big-number" :style="{ color: getAccuracyColor(accuracyStats.divination_accuracy.rate) }">
+                {{ accuracyStats.divination_accuracy.rate }}%
+              </div>
+              <el-progress
+                :percentage="accuracyStats.divination_accuracy.rate"
+                :color="getAccuracyColor(accuracyStats.divination_accuracy.rate)"
+                :stroke-width="10"
+              />
+              <div class="accuracy-detail">
+                <span>总数：{{ accuracyStats.divination_accuracy.total }}</span>
+                <span>准确：{{ accuracyStats.divination_accuracy.accurate }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="dimension-accuracy" v-if="Object.keys(accuracyStats.dimension_accuracy).length > 0">
+          <h4 class="dimension-title">各维度准确率</h4>
+          <div class="dimension-list">
+            <div
+              v-for="(stat, key) in accuracyStats.dimension_accuracy"
+              :key="key"
+              class="dimension-item"
+            >
+              <div class="dimension-info">
+                <span class="dimension-icon">{{ getDimensionIcon(String(key)) }}</span>
+                <span class="dimension-name">{{ getDimensionLabel(String(key)) }}</span>
+              </div>
+              <div class="dimension-progress">
+                <el-progress
+                  :percentage="stat.rate"
+                  :color="getAccuracyColor(stat.rate)"
+                  :stroke-width="8"
+                />
+              </div>
+              <div class="dimension-stats">
+                <span class="dimension-rate" :style="{ color: getAccuracyColor(stat.rate) }">{{ stat.rate }}%</span>
+                <span class="dimension-count">({{ stat.accurate }}/{{ stat.total }})</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </el-card>
+
       <!-- 危险操作 -->
       <el-card class="section-card danger-card animate-fade-in">
         <template #header>
@@ -536,6 +657,140 @@ async function handleDeleteAccount() {
   border-color: rgba(239, 68, 68, 0.3) !important;
 }
 
+/* 预测准确率 */
+.accuracy-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.accuracy-card {
+  padding: 24px;
+  background: linear-gradient(135deg, var(--color-bg-light) 0%, var(--color-surface) 100%);
+  border-radius: 16px;
+  border: 1px solid var(--color-border);
+  transition: all 0.3s ease;
+}
+
+.accuracy-card:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-glow);
+}
+
+.fortune-card {
+  border-left: 4px solid #8b5cf6;
+}
+
+.divination-card {
+  border-left: 4px solid #06b6d4;
+}
+
+.accuracy-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.accuracy-card-icon {
+  font-size: 24px;
+}
+
+.accuracy-card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.accuracy-card-body {
+  text-align: center;
+}
+
+.accuracy-big-number {
+  font-size: 36px;
+  font-weight: 800;
+  font-family: var(--font-family-display);
+  margin-bottom: 12px;
+}
+
+.accuracy-detail {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+/* 维度准确率 */
+.dimension-accuracy {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--color-border);
+}
+
+.dimension-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 16px;
+}
+
+.dimension-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dimension-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  background: var(--color-bg-light);
+  border-radius: 12px;
+}
+
+.dimension-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 80px;
+}
+
+.dimension-info .dimension-icon {
+  font-size: 20px;
+}
+
+.dimension-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.dimension-progress {
+  flex: 1;
+}
+
+.dimension-stats {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 80px;
+  justify-content: flex-end;
+}
+
+.dimension-rate {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.dimension-count {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
 .danger-content {
   display: flex;
   justify-content: space-between;
@@ -564,6 +819,10 @@ async function handleDeleteAccount() {
     flex-direction: column;
     gap: 16px;
     text-align: center;
+  }
+
+  .accuracy-cards {
+    grid-template-columns: 1fr;
   }
 }
 </style>

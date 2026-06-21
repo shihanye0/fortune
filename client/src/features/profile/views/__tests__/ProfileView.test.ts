@@ -9,10 +9,19 @@ vi.mock('@/features/profile/api/profile-api', () => ({
   updateProfile: vi.fn(),
   updateBirth: vi.fn(),
   updatePushSettings: vi.fn(),
+  updateLLMSettings: vi.fn(),
   deleteAccount: vi.fn(),
 }))
 
+vi.mock('@/features/feedback/api/feedback-api', () => ({
+  getAccuracyStats: vi.fn(),
+  submitFortuneAccuracy: vi.fn(),
+  submitDivinationAccuracy: vi.fn(),
+  submitPredictionOutcome: vi.fn(),
+}))
+
 import { getProfile } from '@/features/profile/api/profile-api'
+import { getAccuracyStats } from '@/features/feedback/api/feedback-api'
 
 function createTestRouter() {
   return createRouter({
@@ -51,6 +60,19 @@ describe('ProfileView', () => {
     router = createTestRouter()
     vi.clearAllMocks()
     localStorage.setItem('token', 'test-token')
+    vi.mocked(getAccuracyStats).mockResolvedValue({
+      success: true,
+      data: {
+        fortune_accuracy: { total: 10, accurate: 7, rate: 70 },
+        divination_accuracy: { total: 5, accurate: 4, rate: 80 },
+        dimension_accuracy: {
+          career: { total: 10, accurate: 8, rate: 80 },
+          wealth: { total: 10, accurate: 6, rate: 60 },
+        },
+      },
+      error: null,
+      meta: null,
+    })
   })
 
   afterEach(() => {

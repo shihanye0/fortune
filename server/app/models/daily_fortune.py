@@ -40,3 +40,9 @@ class DailyFortune(TimestampMixin, Base):
     user_rating: Mapped[int | None] = mapped_column(SMALLINT, nullable=True)
     user_feedback_tags: Mapped[list | None] = mapped_column(JSON, nullable=True)
     user_feedback_text: Mapped[str | None] = mapped_column(TEXT, nullable=True)
+
+    # 准确性标记：1=准, 0=不准, null=未标记
+    accuracy_mark: Mapped[int | None] = mapped_column(
+        SMALLINT, nullable=True, default=None,
+        comment="准确性标记: 1=准, 0=不准, null=未标记"
+    )

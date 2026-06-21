@@ -6,10 +6,14 @@ from datetime import date
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import HTTPBearer
 from pydantic import BaseModel, Field, field_validator
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_db
 from app.core.security import verify_password, verify_token
+from app.models.daily_fortune import DailyFortune
+from app.models.divination_record import DivinationRecord
+from app.models.prediction_outcome import PredictionOutcome
 from app.models.user import User
 
 
@@ -202,3 +206,113 @@ def delete_account(
     db.delete(current_user)
     db.commit()
     return {"success": True, "message": "账号已注销"}
+
+
+@router.get("/me/accuracy-stats")
+def get_accuracy_stats(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """获取用户准确率统计"""
+    user_id = current_user.id
+
+    # 运势准确率统计
+    fortune_total = (
+        db.query(func.count(DailyFortune.id))
+        .filter(
+            DailyFortune.user_id == user_id,
+            DailyFortune.accuracy_mark.isnot(None),
+        )
+        .scalar()
+    )
+    fortune_accurate = (
+        db.query(func.count(DailyFortune.id))
+        .filter(
+            DailyFortune.user_id == user_id,
+            DailyFortune.accuracy_mark == 1,
+        )
+        .scalar()
+    )
+    fortune_rate = fortune_accurate / fortune_total if fortune_total > 0 else 0
+
+    # 占卜准确率统计
+    divination_total = (
+        db.query(func.count(DivinationRecord.id))
+        .filter(
+            DivinationRecord.user_id == user_id,
+            DivinationRecord.accuracy_mark.isnot(None),
+        )
+        .scalar()
+    )
+    divination_accurate = (
+        db.query(func.count(DivinationRecord.id))
+        .filter(
+            DivinationRecord.user_id == user_id,
+            DivinationRecord.accuracy_mark == 1,
+        )
+        .scalar()
+    )
+    divination_rate = divination_accurate / divination_total if divination_total > 0 else 0
+
+    # 维度准确率统计（从运势的各维度 JSON 字段推断）
+    dimension_stats = _calculate_dimension_accuracy(db, user_id)
+
+    return {
+        "success": True,
+        "data": {
+            "fortune_accuracy": {
+                "total": fortune_total,
+                "accurate": fortune_accurate,
+                "rate": round(fortune_rate, 2),
+            },
+            "divination_accuracy": {
+                "total": divination_total,
+                "accurate": divination_accurate,
+                "rate": round(divination_rate, 2),
+            },
+            "dimension_accuracy": dimension_stats,
+        },
+    }
+
+
+def _calculate_dimension_accuracy(db: Session, user_id: int) -> dict:
+    """计算各维度（事业/财运/感情/健康）的准确率
+
+    维度来源：DailyFortune 的 career_fortune/wealth_fortune/love_fortune/health_fortune JSON 字段。
+    当运势被标记为准确(accuracy_mark=1)时，该运势的所有维度均计为准确。
+    """
+    dimensions = ["career", "wealth", "love", "health"]
+    result = {}
+
+    for dim in dimensions:
+        # 统计该维度有值且已标记准确性的运势数量
+        col_name = f"{dim}_fortune"
+        col = getattr(DailyFortune, col_name)
+
+        total = (
+            db.query(func.count(DailyFortune.id))
+            .filter(
+                DailyFortune.user_id == user_id,
+                col.isnot(None),
+                DailyFortune.accuracy_mark.isnot(None),
+            )
+            .scalar()
+        )
+        accurate = (
+            db.query(func.count(DailyFortune.id))
+            .filter(
+                DailyFortune.user_id == user_id,
+                col.isnot(None),
+                DailyFortune.accuracy_mark == 1,
+            )
+            .scalar()
+        )
+        rate = accurate / total if total > 0 else 0
+
+        result[dim] = {
+            "total": total,
+            "accurate": accurate,
+            "rate": round(rate, 2),
+        }
+
+    return result
