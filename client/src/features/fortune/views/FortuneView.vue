@@ -200,7 +200,7 @@ async function handleSubmitFeedback() {
 
     <!-- 空状态 -->
     <el-empty v-else-if="!loading" description="正在为您生成今日运势...">
-      <el-button type="primary" @click="loading = true; location.reload()">刷新试试</el-button>
+      <el-button type="primary" @click="window.location.reload()">刷新试试</el-button>
     </el-empty>
 
     <!-- 历史运势 -->

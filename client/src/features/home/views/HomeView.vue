@@ -114,40 +114,6 @@ const features = [
       </div>
     </section>
 
-    <!-- 技术亮点 -->
-    <section class="tech-section">
-      <h2 class="section-title">技术亮点</h2>
-      <div class="tech-grid">
-        <div class="tech-item">
-          <div class="tech-icon">⚡</div>
-          <div class="tech-content">
-            <h4>Vue 3 + TypeScript</h4>
-            <p>现代化前端架构，类型安全，开发效率高</p>
-          </div>
-        </div>
-        <div class="tech-item">
-          <div class="tech-icon">🚀</div>
-          <div class="tech-content">
-            <h4>FastAPI + SQLAlchemy</h4>
-            <p>高性能 Python 后端，自动 API 文档</p>
-          </div>
-        </div>
-        <div class="tech-item">
-          <div class="tech-icon">🧪</div>
-          <div class="tech-content">
-            <h4>TDD 驱动开发</h4>
-            <p>200+ 测试用例，代码质量有保障</p>
-          </div>
-        </div>
-        <div class="tech-item">
-          <div class="tech-icon">🎨</div>
-          <div class="tech-content">
-            <h4>Element Plus UI</h4>
-            <p>企业级组件库，响应式设计</p>
-          </div>
-        </div>
-      </div>
-    </section>
   </div>
 </template>
 
@@ -392,56 +358,6 @@ const features = [
   transform: translateX(8px);
 }
 
-/* 技术亮点 */
-.tech-section {
-  padding: 80px 0;
-  background: rgba(22, 33, 62, 0.3);
-  border-radius: 24px;
-  margin: 0 -24px;
-  padding-left: 24px;
-  padding-right: 24px;
-}
-
-.tech-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.tech-item {
-  display: flex;
-  gap: 16px;
-  padding: 24px;
-  background: var(--color-surface);
-  border-radius: 16px;
-  border: 1px solid var(--color-border);
-  transition: all 0.3s ease;
-}
-
-.tech-item:hover {
-  border-color: var(--color-primary);
-  box-shadow: var(--shadow-glow);
-}
-
-.tech-icon {
-  font-size: 32px;
-  flex-shrink: 0;
-}
-
-.tech-content h4 {
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 8px;
-  color: var(--color-text);
-}
-
-.tech-content p {
-  font-size: 14px;
-  color: var(--color-text-secondary);
-  line-height: 1.5;
-}
 
 /* 响应式 */
 @media (max-width: 768px) {

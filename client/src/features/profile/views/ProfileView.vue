@@ -35,25 +35,28 @@ const pushForm = reactive({
   feishu_webhook: '',
 })
 
-// 农历转换（简化版）
+// 农历转换
+import { Solar } from 'lunar-javascript'
+
 function getLunarInfo(year: number, month: number, day: number): string {
-  // 这里使用简化的农历映射，实际项目中应使用 lunar-javascript 等库
-  const lunarMonths = ['正月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '冬月', '腊月']
-  const lunarDays = ['初一', '初二', '初三', '初四', '初五', '初六', '初七', '初八', '初九', '初十',
-    '十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十',
-    '廿一', '廿二', '廿三', '廿四', '廿五', '廿六', '廿七', '廿八', '廿九', '三十']
-
-  // 简化计算（实际需要复杂的农历算法）
-  const lunarMonth = lunarMonths[(month - 1) % 12]
-  const lunarDay = lunarDays[(day - 1) % 30]
-
-  return `${lunarMonth}${lunarDay}`
+  try {
+    const solar = Solar.fromYmd(year, month, day)
+    const lunar = solar.getLunar()
+    return `${lunar.getMonthInChinese()}月${lunar.getDayInChinese()}`
+  } catch {
+    return '未知'
+  }
 }
 
-// 生肖
-function getZodiac(year: number): string {
-  const zodiacs = ['鼠', '牛', '虎', '兔', '龙', '蛇', '马', '羊', '猴', '鸡', '狗', '猪']
-  return zodiacs[(year - 4) % 12]
+// 生肖（基于农历年）
+function getZodiac(year: number, month: number, day: number): string {
+  try {
+    const solar = Solar.fromYmd(year, month, day)
+    const lunar = solar.getLunar()
+    return lunar.getYearShengXiao()
+  } catch {
+    return '未知'
+  }
 }
 
 // 星座
@@ -77,7 +80,7 @@ const lunarInfo = computed(() => {
   }
   return {
     lunar: getLunarInfo(profile.value.birth_year, profile.value.birth_month, profile.value.birth_day),
-    zodiac: getZodiac(profile.value.birth_year),
+    zodiac: getZodiac(profile.value.birth_year, profile.value.birth_month, profile.value.birth_day),
     constellation: getConstellation(profile.value.birth_month, profile.value.birth_day),
     hourText: getBirthHourText(profile.value.birth_hour ?? 0),
   }
