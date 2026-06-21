@@ -5,6 +5,7 @@ import {
   getTodayFortune,
   getFortuneList,
   submitFortuneFeedback,
+  regenerateTodayFortune,
 } from '../api/fortune-api'
 import type { FortuneDetail, FortuneListItem, FortuneFeedback } from '../api/fortune-api'
 
@@ -18,6 +19,25 @@ const feedbackTags = ['很准', '一般', '不太准', '有启发', '需要更�
 
 function reloadPage() {
   window.location.reload()
+}
+
+const regenerating = ref(false)
+
+async function handleRegenerate() {
+  regenerating.value = true
+  try {
+    const res = await regenerateTodayFortune()
+    if (res.success) {
+      todayFortune.value = res.data
+      ElMessage.success('运势已重新生成')
+    } else {
+      ElMessage.error(res.error?.message || '重新生成失败')
+    }
+  } catch {
+    ElMessage.error('重新生成失败，请稍后重试')
+  } finally {
+    regenerating.value = false
+  }
 }
 
 onMounted(async () => {
@@ -88,6 +108,15 @@ async function handleSubmitFeedback() {
     <div class="page-header animate-fade-in">
       <h1 class="page-title">每日运势</h1>
       <p class="page-subtitle">基于八字排盘，精准推算今日运势</p>
+      <el-button
+        v-if="todayFortune"
+        type="primary"
+        :loading="regenerating"
+        @click="handleRegenerate"
+        class="regenerate-btn"
+      >
+        🔄 重新生成运势
+      </el-button>
     </div>
 
     <!-- 今日运势卡片 -->
@@ -274,6 +303,10 @@ async function handleSubmitFeedback() {
 .page-subtitle {
   font-size: 16px;
   color: var(--color-text-secondary);
+}
+
+.regenerate-btn {
+  margin-top: 16px;
 }
 
 /* 今日运势卡片 */

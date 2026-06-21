@@ -41,6 +41,11 @@ export async function getTodayFortune(): Promise<ApiResponse<FortuneDetail | nul
   return res.data
 }
 
+export async function regenerateTodayFortune(): Promise<ApiResponse<FortuneDetail>> {
+  const res = await client.post('/api/v1/fortunes/today/regenerate')
+  return res.data
+}
+
 export async function getFortuneList(page = 1, limit = 20): Promise<ApiResponse<FortuneListItem[]>> {
   const res = await client.get('/api/v1/fortunes', { params: { page, limit } })
   return res.data

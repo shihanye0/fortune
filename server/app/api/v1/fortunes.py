@@ -55,6 +55,37 @@ def get_today_fortune(
     }
 
 
+@router.post("/today/regenerate")
+def regenerate_today_fortune(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """重新生成今日运势"""
+    today = date.today()
+
+    # 删除旧的运势记录
+    old_fortune = (
+        db.query(DailyFortune)
+        .filter(
+            DailyFortune.user_id == current_user.id,
+            DailyFortune.date == today,
+        )
+        .first()
+    )
+
+    if old_fortune:
+        db.delete(old_fortune)
+        db.commit()
+
+    # 生成新的运势
+    fortune = _generate_fortune_on_demand(current_user, today, db)
+
+    return {
+        "success": True,
+        "data": _fortune_to_detail_dict(fortune),
+    }
+
+
 @router.get("")
 def list_fortunes(
     page: int = Query(1, ge=1),
