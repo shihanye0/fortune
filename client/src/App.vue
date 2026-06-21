@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+import AppLayout from '@/shared/components/AppLayout.vue'
 </script>
 
 <template>
-  <HelloWorld />
+  <AppLayout>
+    <router-view />
+  </AppLayout>
 </template>
