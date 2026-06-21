@@ -41,14 +41,32 @@ def do_liuyao(
 ):
     """六爻占卜"""
     from fortune_engine.liuyao.hexagram import coin_divination
+    from fortune_engine.bazi.pillar import calculate_bazi
     from fortune_engine.services.deepseek import interpret_liuyao
 
     # 起卦
     question = req.question or ""
     hexagram_data = coin_divination(question)
 
-    # LLM 解读
-    interpretation = interpret_liuyao(hexagram_data)
+    # 获取用户八字信息
+    bazi_info = ""
+    try:
+        bazi_result = calculate_bazi(
+            current_user.birth_year, current_user.birth_month,
+            current_user.birth_day, current_user.birth_hour,
+            current_user.gender
+        )
+        bazi_info = (
+            f"八字：{bazi_result['year_pillar']} {bazi_result['month_pillar']} "
+            f"{bazi_result['day_pillar']} {bazi_result['hour_pillar']}，"
+            f"日主：{bazi_result['day_master']}，"
+            f"喜用神：{'、'.join(bazi_result.get('favorable_elements', []))}"
+        )
+    except Exception:
+        pass
+
+    # LLM 解读（结合八字）
+    interpretation = interpret_liuyao(hexagram_data, bazi_info)
 
     # 存储记录
     record = DivinationRecord(
@@ -82,6 +100,7 @@ def do_qimen(
     """奇门遁甲排盘"""
     from datetime import datetime
     from fortune_engine.qimen.chart import calculate_qimen
+    from fortune_engine.bazi.pillar import calculate_bazi
     from fortune_engine.services.deepseek import interpret_qimen
 
     # 获取当前时间
@@ -96,8 +115,25 @@ def do_qimen(
         hour=now.hour,
     )
 
-    # LLM 解读
-    interpretation = interpret_qimen(chart_data, question)
+    # 获取用户八字信息
+    bazi_info = ""
+    try:
+        bazi_result = calculate_bazi(
+            current_user.birth_year, current_user.birth_month,
+            current_user.birth_day, current_user.birth_hour,
+            current_user.gender
+        )
+        bazi_info = (
+            f"八字：{bazi_result['year_pillar']} {bazi_result['month_pillar']} "
+            f"{bazi_result['day_pillar']} {bazi_result['hour_pillar']}，"
+            f"日主：{bazi_result['day_master']}，"
+            f"喜用神：{'、'.join(bazi_result.get('favorable_elements', []))}"
+        )
+    except Exception:
+        pass
+
+    # LLM 解读（结合八字）
+    interpretation = interpret_qimen(chart_data, question, bazi_info)
 
     # 存储记录
     record = DivinationRecord(

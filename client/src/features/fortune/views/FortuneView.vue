@@ -108,8 +108,11 @@ async function handleSubmitFeedback() {
         <div class="dimension-item">
           <div class="dimension-icon">💼</div>
           <div class="dimension-label">事业运</div>
+          <div class="dimension-score" :style="{ color: getScoreColor(todayFortune.career?.score || 0) }">
+            {{ todayFortune.career?.score || 0 }}/5
+          </div>
           <el-progress
-            :percentage="todayFortune.career?.score || 0"
+            :percentage="(todayFortune.career?.score || 0) * 20"
             :color="getScoreColor(todayFortune.career?.score || 0)"
             :stroke-width="8"
           />
@@ -118,8 +121,11 @@ async function handleSubmitFeedback() {
         <div class="dimension-item">
           <div class="dimension-icon">💰</div>
           <div class="dimension-label">财运</div>
+          <div class="dimension-score" :style="{ color: getScoreColor(todayFortune.wealth?.score || 0) }">
+            {{ todayFortune.wealth?.score || 0 }}/5
+          </div>
           <el-progress
-            :percentage="todayFortune.wealth?.score || 0"
+            :percentage="(todayFortune.wealth?.score || 0) * 20"
             :color="getScoreColor(todayFortune.wealth?.score || 0)"
             :stroke-width="8"
           />
@@ -128,8 +134,11 @@ async function handleSubmitFeedback() {
         <div class="dimension-item">
           <div class="dimension-icon">💕</div>
           <div class="dimension-label">感情运</div>
+          <div class="dimension-score" :style="{ color: getScoreColor(todayFortune.love?.score || 0) }">
+            {{ todayFortune.love?.score || 0 }}/5
+          </div>
           <el-progress
-            :percentage="todayFortune.love?.score || 0"
+            :percentage="(todayFortune.love?.score || 0) * 20"
             :color="getScoreColor(todayFortune.love?.score || 0)"
             :stroke-width="8"
           />
@@ -138,8 +147,11 @@ async function handleSubmitFeedback() {
         <div class="dimension-item">
           <div class="dimension-icon">🏥</div>
           <div class="dimension-label">健康运</div>
+          <div class="dimension-score" :style="{ color: getScoreColor(todayFortune.health?.score || 0) }">
+            {{ todayFortune.health?.score || 0 }}/5
+          </div>
           <el-progress
-            :percentage="todayFortune.health?.score || 0"
+            :percentage="(todayFortune.health?.score || 0) * 20"
             :color="getScoreColor(todayFortune.health?.score || 0)"
             :stroke-width="8"
           />
@@ -343,7 +355,13 @@ async function handleSubmitFeedback() {
 .dimension-label {
   font-size: 14px;
   color: var(--color-text-secondary);
-  margin-bottom: 12px;
+  margin-bottom: 8px;
+}
+
+.dimension-score {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 8px;
 }
 
 .dimension-desc {

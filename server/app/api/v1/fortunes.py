@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """运势查看接口"""
-from datetime import date
+from datetime import date, datetime, timezone, timedelta
+
+# 中国时区 UTC+8
+CHINA_TZ = timezone(timedelta(hours=8))
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
