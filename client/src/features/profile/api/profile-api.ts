@@ -9,6 +9,7 @@ export interface UserProfile {
   birth_month: number | null
   birth_day: number | null
   birth_hour: number | null
+  birth_minute: number | null
   gender: string | null
   birth_location: string | null
   push_channel: string | null

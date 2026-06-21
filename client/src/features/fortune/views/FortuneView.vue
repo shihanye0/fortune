@@ -16,6 +16,10 @@ const feedbackForm = ref<FortuneFeedback>({ rating: 5, tags: [], feedback_text: 
 
 const feedbackTags = ['很准', '一般', '不太准', '有启发', '需要更多细节']
 
+function reloadPage() {
+  window.location.reload()
+}
+
 onMounted(async () => {
   try {
     const [todayRes, listRes] = await Promise.all([
@@ -105,37 +109,41 @@ async function handleSubmitFeedback() {
           <div class="dimension-icon">💼</div>
           <div class="dimension-label">事业运</div>
           <el-progress
-            :percentage="todayFortune.career"
-            :color="getScoreColor(todayFortune.career)"
+            :percentage="todayFortune.career?.score || 0"
+            :color="getScoreColor(todayFortune.career?.score || 0)"
             :stroke-width="8"
           />
+          <div class="dimension-desc">{{ todayFortune.career?.description || '' }}</div>
         </div>
         <div class="dimension-item">
           <div class="dimension-icon">💰</div>
           <div class="dimension-label">财运</div>
           <el-progress
-            :percentage="todayFortune.wealth"
-            :color="getScoreColor(todayFortune.wealth)"
+            :percentage="todayFortune.wealth?.score || 0"
+            :color="getScoreColor(todayFortune.wealth?.score || 0)"
             :stroke-width="8"
           />
+          <div class="dimension-desc">{{ todayFortune.wealth?.description || '' }}</div>
         </div>
         <div class="dimension-item">
           <div class="dimension-icon">💕</div>
           <div class="dimension-label">感情运</div>
           <el-progress
-            :percentage="todayFortune.love"
-            :color="getScoreColor(todayFortune.love)"
+            :percentage="todayFortune.love?.score || 0"
+            :color="getScoreColor(todayFortune.love?.score || 0)"
             :stroke-width="8"
           />
+          <div class="dimension-desc">{{ todayFortune.love?.description || '' }}</div>
         </div>
         <div class="dimension-item">
           <div class="dimension-icon">🏥</div>
           <div class="dimension-label">健康运</div>
           <el-progress
-            :percentage="todayFortune.health"
-            :color="getScoreColor(todayFortune.health)"
+            :percentage="todayFortune.health?.score || 0"
+            :color="getScoreColor(todayFortune.health?.score || 0)"
             :stroke-width="8"
           />
+          <div class="dimension-desc">{{ todayFortune.health?.description || '' }}</div>
         </div>
       </div>
 
@@ -200,7 +208,7 @@ async function handleSubmitFeedback() {
 
     <!-- 空状态 -->
     <el-empty v-else-if="!loading" description="正在为您生成今日运势...">
-      <el-button type="primary" @click="window.location.reload()">刷新试试</el-button>
+      <el-button type="primary" @click="reloadPage">刷新试试</el-button>
     </el-empty>
 
     <!-- 历史运势 -->
@@ -336,6 +344,13 @@ async function handleSubmitFeedback() {
   font-size: 14px;
   color: var(--color-text-secondary);
   margin-bottom: 12px;
+}
+
+.dimension-desc {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin-top: 8px;
+  line-height: 1.4;
 }
 
 /* 幸运信息 */

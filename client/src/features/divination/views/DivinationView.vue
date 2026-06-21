@@ -19,16 +19,40 @@ const showFeedback = ref(false)
 const feedbackRating = ref(5)
 const feedbackText = ref('')
 
-// 每日概率事件
+// 每日概率事件（更精细）
 const dailyEvents = ref([
-  { icon: '💼', event: '工作变动', probability: 0, description: '今日工作上可能有新的机会或变化' },
-  { icon: '💰', event: '财运波动', probability: 0, description: '可能有意外收入或支出' },
-  { icon: '💕', event: '感情机遇', probability: 0, description: '可能遇到心仪的人或感情升温' },
-  { icon: '🏥', event: '健康提醒', probability: 0, description: '需要注意身体状况' },
-  { icon: '🚗', event: '出行顺利', probability: 0, description: '今日出行是否顺利' },
-  { icon: '📱', event: '消息到来', probability: 0, description: '可能收到重要消息或通知' },
-  { icon: '🎯', event: '目标达成', probability: 0, description: '今日计划完成度' },
-  { icon: '🌙', event: '睡眠质量', probability: 0, description: '今晚睡眠状况预测' },
+  {
+    icon: '💼',
+    event: '工作机遇',
+    probability: 0,
+    description: '可能收到面试邀请、项目合作或升职加薪的机会',
+    timeRange: '上午 9-11 点',
+    advice: '保持专注，主动沟通',
+  },
+  {
+    icon: '💰',
+    event: '偏财运',
+    probability: 0,
+    description: '可能有意外收入、中奖或投资回报',
+    timeRange: '下午 2-4 点',
+    advice: '理性消费，避免冲动',
+  },
+  {
+    icon: '💕',
+    event: '桃花运',
+    probability: 0,
+    description: '可能遇到心仪对象或收到表白',
+    timeRange: '晚上 7-9 点',
+    advice: '主动出击，把握机会',
+  },
+  {
+    icon: '🤝',
+    event: '贵人相助',
+    probability: 0,
+    description: '可能得到长辈、朋友或同事的帮助',
+    timeRange: '全天',
+    advice: '虚心请教，感恩回报',
+  },
 ])
 
 // 生成随机概率（基于今日日期）
@@ -129,18 +153,24 @@ async function handleSubmitFeedback() {
         <div v-for="(item, index) in dailyEvents" :key="index" class="event-item">
           <div class="event-icon">{{ item.icon }}</div>
           <div class="event-content">
-            <div class="event-name">{{ item.event }}</div>
+            <div class="event-header">
+              <span class="event-name">{{ item.event }}</span>
+              <el-tag size="small" type="info">{{ item.timeRange }}</el-tag>
+            </div>
             <div class="event-desc">{{ item.description }}</div>
             <div class="event-probability">
               <el-progress
                 :percentage="item.probability"
                 :color="getProbabilityColor(item.probability)"
-                :stroke-width="6"
+                :stroke-width="8"
                 :show-text="false"
               />
               <span class="probability-text" :style="{ color: getProbabilityColor(item.probability) }">
                 {{ item.probability }}% {{ getProbabilityText(item.probability) }}
               </span>
+            </div>
+            <div class="event-advice">
+              <span class="advice-label">建议：</span>{{ item.advice }}
             </div>
           </div>
         </div>
@@ -315,15 +345,15 @@ async function handleSubmitFeedback() {
 .events-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  gap: 20px;
 }
 
 .event-item {
   display: flex;
-  gap: 12px;
-  padding: 16px;
-  background: var(--color-bg-light);
-  border-radius: 12px;
+  gap: 16px;
+  padding: 20px;
+  background: linear-gradient(135deg, var(--color-bg-light) 0%, var(--color-surface) 100%);
+  border-radius: 16px;
   border: 1px solid var(--color-border);
   transition: all 0.3s ease;
 }
@@ -331,10 +361,11 @@ async function handleSubmitFeedback() {
 .event-item:hover {
   border-color: var(--color-primary);
   box-shadow: var(--shadow-glow);
+  transform: translateY(-2px);
 }
 
 .event-icon {
-  font-size: 32px;
+  font-size: 40px;
   flex-shrink: 0;
 }
 
@@ -342,29 +373,50 @@ async function handleSubmitFeedback() {
   flex: 1;
 }
 
+.event-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
 .event-name {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--color-text);
-  margin-bottom: 4px;
 }
 
 .event-desc {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--color-text-secondary);
-  margin-bottom: 8px;
+  margin-bottom: 12px;
+  line-height: 1.5;
 }
 
 .event-probability {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
 .probability-text {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 700;
   white-space: nowrap;
+}
+
+.event-advice {
+  font-size: 12px;
+  color: var(--color-accent);
+  padding: 8px 12px;
+  background: rgba(245, 158, 11, 0.1);
+  border-radius: 8px;
+  border-left: 3px solid var(--color-accent);
+}
+
+.advice-label {
+  font-weight: 600;
 }
 
 /* 占卜方式选择 */

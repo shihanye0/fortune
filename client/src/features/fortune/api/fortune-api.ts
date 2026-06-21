@@ -1,14 +1,19 @@
 import client from '@/shared/api/client'
 import type { ApiResponse, PaginationMeta } from '@/shared/types/api'
 
+export interface FortuneDimension {
+  score: number
+  description: string
+}
+
 export interface FortuneDetail {
   id: number
   date: string
   overall_score: number
-  career: number
-  wealth: number
-  love: number
-  health: number
+  career: FortuneDimension
+  wealth: FortuneDimension
+  love: FortuneDimension
+  health: FortuneDimension
   lucky_color: string
   lucky_number: string
   lucky_direction: string

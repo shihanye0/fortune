@@ -26,6 +26,7 @@ const birthForm = reactive({
   birth_month: 1,
   birth_day: 1,
   birth_hour: 0,
+  birth_minute: 0,
 })
 
 const pushForm = reactive({
@@ -66,12 +67,12 @@ function getConstellation(month: number, day: number): string {
   return day < dates[month - 1] ? signs[month - 1] : signs[month % 12]
 }
 
-// 时辰
-function getBirthHourText(hour: number): string {
-  const hours = ['子时 (23-1点)', '丑时 (1-3点)', '寅时 (3-5点)', '卯时 (5-7点)',
-    '辰时 (7-9点)', '巳时 (9-11点)', '午时 (11-13点)', '未时 (13-15点)',
-    '申时 (15-17点)', '酉时 (17-19点)', '戌时 (19-21点)', '亥时 (21-23点)']
-  return hours[Math.floor(hour / 2)] || '未知'
+// 时辰（精确到分钟）
+function getBirthTimeText(hour: number, minute: number = 0): string {
+  const timeStr = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
+  const hours = ['子时', '丑时', '寅时', '卯时', '辰时', '巳时', '午时', '未时', '申时', '酉时', '戌时', '亥时']
+  const shichen = hours[Math.floor(hour / 2)] || '未知'
+  return `${timeStr} (${shichen})`
 }
 
 const lunarInfo = computed(() => {
@@ -82,7 +83,7 @@ const lunarInfo = computed(() => {
     lunar: getLunarInfo(profile.value.birth_year, profile.value.birth_month, profile.value.birth_day),
     zodiac: getZodiac(profile.value.birth_year, profile.value.birth_month, profile.value.birth_day),
     constellation: getConstellation(profile.value.birth_month, profile.value.birth_day),
-    hourText: getBirthHourText(profile.value.birth_hour ?? 0),
+    timeText: getBirthTimeText(profile.value.birth_hour ?? 0, profile.value.birth_minute ?? 0),
   }
 })
 
@@ -96,6 +97,7 @@ onMounted(async () => {
       birthForm.birth_month = res.data.birth_month || 1
       birthForm.birth_day = res.data.birth_day || 1
       birthForm.birth_hour = res.data.birth_hour ?? 0
+      birthForm.birth_minute = res.data.birth_minute ?? 0
       pushForm.push_enabled = res.data.push_enabled
       pushForm.push_channel = res.data.push_channel || 'email'
       pushForm.push_time = res.data.push_time || '07:00'
@@ -229,7 +231,7 @@ async function handleDeleteAccount() {
               <div class="birth-value">
                 {{ profile.birth_year }}年{{ profile.birth_month }}月{{ profile.birth_day }}日
               </div>
-              <div class="birth-detail">{{ getBirthHourText(profile.birth_hour ?? 0) }}</div>
+              <div class="birth-detail">{{ getBirthTimeText(profile.birth_hour ?? 0, profile.birth_minute ?? 0) }}</div>
             </div>
             <div class="birth-card lunar">
               <div class="birth-label">农历生日</div>
@@ -253,10 +255,15 @@ async function handleDeleteAccount() {
             <el-form-item label="日">
               <el-input-number v-model="birthForm.birth_day" :min="1" :max="31" style="width: 100%" />
             </el-form-item>
-            <el-form-item label="时辰">
-              <el-select v-model="birthForm.birth_hour" style="width: 100%">
-                <el-option v-for="h in 24" :key="h-1" :label="`${h-1}:00`" :value="h-1" />
-              </el-select>
+            <el-form-item label="出生时间">
+              <div style="display: flex; gap: 12px; width: 100%">
+                <el-select v-model="birthForm.birth_hour" placeholder="时" style="flex: 1">
+                  <el-option v-for="h in 24" :key="h-1" :label="`${h-1}时`" :value="h-1" />
+                </el-select>
+                <el-select v-model="birthForm.birth_minute" placeholder="分" style="flex: 1">
+                  <el-option v-for="m in 12" :key="(m-1)*5" :label="`${String((m-1)*5).padStart(2, '0')}分`" :value="(m-1)*5" />
+                </el-select>
+              </div>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="handleUpdateBirth">保存</el-button>
