@@ -16,8 +16,8 @@
 # 进入项目目录
 cd E:\fortune\server
 
-# 使用完整 conda 环境路径启动
-E:\conda_envs\fortune\python.exe -m uvicorn app.main:app --port 8000
+# 使用完整 conda 环境路径启动（端口 8080，避免 Windows 端口权限问题）
+E:\conda_envs\fortune\python.exe -m uvicorn app.main:app --port 8080
 ```
 
 ### 2. 启动前端（终端 2）
@@ -40,7 +40,7 @@ npm run dev
 | **运势** | http://localhost:3000/fortune | 每日运势（需登录） |
 | **占卜** | http://localhost:3000/divination | 六爻/奇门占卜（需登录） |
 | **个人中心** | http://localhost:3000/profile | 个人信息管理（需登录） |
-| **API 文档** | http://localhost:8000/docs | Swagger API 文档 |
+| **API 文档** | http://localhost:8080/docs | Swagger API 文档 |
 
 ## 测试流程
 
@@ -103,7 +103,7 @@ E:\conda_envs\fortune\python.exe -m alembic upgrade head
 
 ```bash
 # 查找占用端口的进程
-netstat -ano | findstr :8000
+netstat -ano | findstr :8080
 
 # 强制结束进程
 taskkill /F /PID <进程ID>
