@@ -3,6 +3,7 @@
 from datetime import datetime, timezone
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.auth import router as auth_router
 from app.api.v1.divination import router as divination_router
@@ -11,6 +12,15 @@ from app.api.v1.internal import router as internal_router
 from app.api.v1.users import router as users_router
 
 app = FastAPI(title="命理运势系统", version="1.0.0")
+
+# CORS 配置（允许前端跨域访问）
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # 注册路由
 app.include_router(auth_router, prefix="/api/v1")
