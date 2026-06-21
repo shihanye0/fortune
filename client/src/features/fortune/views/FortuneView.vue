@@ -43,9 +43,15 @@ function getScoreText(score: number): string {
 }
 
 function getScoreColor(score: number): string {
-  if (score >= 80) return '#67c23a'
-  if (score >= 60) return '#e6a23c'
-  return '#f56c6c'
+  if (score >= 80) return '#22c55e'
+  if (score >= 60) return '#eab308'
+  return '#ef4444'
+}
+
+function getScoreGradient(score: number): string {
+  if (score >= 80) return 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)'
+  if (score >= 60) return 'linear-gradient(135deg, #eab308 0%, #ca8a04 100%)'
+  return 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'
 }
 
 function toggleFeedbackTag(tag: string) {
@@ -75,109 +81,150 @@ async function handleSubmitFeedback() {
 
 <template>
   <div class="fortune-page" v-loading="loading">
-    <h1 class="page-title">每日运势</h1>
+    <div class="page-header animate-fade-in">
+      <h1 class="page-title">每日运势</h1>
+      <p class="page-subtitle">基于八字排盘，精准推算今日运势</p>
+    </div>
 
     <!-- 今日运势卡片 -->
-    <el-card v-if="todayFortune" class="today-card">
-      <template #header>
-        <div class="card-header">
-          <span>今日运势</span>
-          <span class="date">{{ todayFortune.date }}</span>
+    <el-card v-if="todayFortune" class="today-card animate-fade-in">
+      <div class="fortune-header">
+        <div class="fortune-date">
+          <span class="date-label">今日运势</span>
+          <span class="date-value">{{ todayFortune.date }}</span>
         </div>
-      </template>
-
-      <div class="score-section">
-        <div class="overall-score" :style="{ color: getScoreColor(todayFortune.overall_score) }">
+        <div class="fortune-score" :style="{ background: getScoreGradient(todayFortune.overall_score) }">
           <span class="score-number">{{ todayFortune.overall_score }}</span>
           <span class="score-text">{{ getScoreText(todayFortune.overall_score) }}</span>
         </div>
       </div>
 
-      <el-row :gutter="16" class="dimension-scores">
-        <el-col :span="6">
-          <div class="dimension">
-            <span class="dim-label">事业</span>
-            <el-progress :percentage="todayFortune.career" :color="getScoreColor(todayFortune.career)" />
-          </div>
-        </el-col>
-        <el-col :span="6">
-          <div class="dimension">
-            <span class="dim-label">财运</span>
-            <el-progress :percentage="todayFortune.wealth" :color="getScoreColor(todayFortune.wealth)" />
-          </div>
-        </el-col>
-        <el-col :span="6">
-          <div class="dimension">
-            <span class="dim-label">感情</span>
-            <el-progress :percentage="todayFortune.love" :color="getScoreColor(todayFortune.love)" />
-          </div>
-        </el-col>
-        <el-col :span="6">
-          <div class="dimension">
-            <span class="dim-label">健康</span>
-            <el-progress :percentage="todayFortune.health" :color="getScoreColor(todayFortune.health)" />
-          </div>
-        </el-col>
-      </el-row>
-
-      <div class="lucky-info">
-        <span>幸运色：<el-tag size="small">{{ todayFortune.lucky_color }}</el-tag></span>
-        <span>幸运数字：<el-tag size="small">{{ todayFortune.lucky_number }}</el-tag></span>
-        <span>吉利方位：<el-tag size="small">{{ todayFortune.lucky_direction }}</el-tag></span>
-      </div>
-
-      <el-divider />
-      <div class="interpretation">
-        <p>{{ todayFortune.interpretation }}</p>
-      </div>
-
-      <div class="card-actions">
-        <el-button @click="showFeedback = !showFeedback">
-          {{ showFeedback ? '收起反馈' : '反馈' }}
-        </el-button>
-      </div>
-
-      <!-- 反馈表单 -->
-      <el-card v-if="showFeedback" class="feedback-card">
-        <p>这个运势准确吗？</p>
-        <el-rate v-model="feedbackForm.rating" :max="5" />
-        <div class="feedback-tags">
-          <el-tag
-            v-for="tag in feedbackTags"
-            :key="tag"
-            :type="feedbackForm.tags?.includes(tag) ? '' : 'info'"
-            class="tag-item"
-            @click="toggleFeedbackTag(tag)"
-          >
-            {{ tag }}
-          </el-tag>
+      <!-- 四维评分 -->
+      <div class="dimension-grid">
+        <div class="dimension-item">
+          <div class="dimension-icon">💼</div>
+          <div class="dimension-label">事业运</div>
+          <el-progress
+            :percentage="todayFortune.career"
+            :color="getScoreColor(todayFortune.career)"
+            :stroke-width="8"
+          />
         </div>
-        <el-input
-          v-model="feedbackForm.feedback_text"
-          type="textarea"
-          placeholder="补充说明（选填）"
-          :rows="2"
-        />
-        <el-button type="primary" @click="handleSubmitFeedback" style="margin-top: 12px">
-          提交反馈
+        <div class="dimension-item">
+          <div class="dimension-icon">💰</div>
+          <div class="dimension-label">财运</div>
+          <el-progress
+            :percentage="todayFortune.wealth"
+            :color="getScoreColor(todayFortune.wealth)"
+            :stroke-width="8"
+          />
+        </div>
+        <div class="dimension-item">
+          <div class="dimension-icon">💕</div>
+          <div class="dimension-label">感情运</div>
+          <el-progress
+            :percentage="todayFortune.love"
+            :color="getScoreColor(todayFortune.love)"
+            :stroke-width="8"
+          />
+        </div>
+        <div class="dimension-item">
+          <div class="dimension-icon">🏥</div>
+          <div class="dimension-label">健康运</div>
+          <el-progress
+            :percentage="todayFortune.health"
+            :color="getScoreColor(todayFortune.health)"
+            :stroke-width="8"
+          />
+        </div>
+      </div>
+
+      <!-- 幸运信息 -->
+      <div class="lucky-section">
+        <div class="lucky-item">
+          <span class="lucky-icon">🎨</span>
+          <span class="lucky-label">幸运色</span>
+          <el-tag type="primary" effect="dark">{{ todayFortune.lucky_color }}</el-tag>
+        </div>
+        <div class="lucky-item">
+          <span class="lucky-icon">🔢</span>
+          <span class="lucky-label">幸运数字</span>
+          <el-tag type="warning" effect="dark">{{ todayFortune.lucky_number }}</el-tag>
+        </div>
+        <div class="lucky-item">
+          <span class="lucky-icon">🧭</span>
+          <span class="lucky-label">吉利方位</span>
+          <el-tag type="success" effect="dark">{{ todayFortune.lucky_direction }}</el-tag>
+        </div>
+      </div>
+
+      <!-- 解读 -->
+      <div class="interpretation-section">
+        <h3 class="interpretation-title">🔮 运势解读</h3>
+        <p class="interpretation-text">{{ todayFortune.interpretation }}</p>
+      </div>
+
+      <!-- 反馈按钮 -->
+      <div class="feedback-section">
+        <el-button @click="showFeedback = !showFeedback" class="feedback-toggle">
+          {{ showFeedback ? '收起反馈' : '📝 反馈运势准确度' }}
         </el-button>
-      </el-card>
+
+        <!-- 反馈表单 -->
+        <el-card v-if="showFeedback" class="feedback-card">
+          <h4>这个运势准确吗？</h4>
+          <el-rate v-model="feedbackForm.rating" :max="5" class="feedback-rate" />
+          <div class="feedback-tags">
+            <el-tag
+              v-for="tag in feedbackTags"
+              :key="tag"
+              :type="feedbackForm.tags?.includes(tag) ? '' : 'info'"
+              class="tag-item"
+              @click="toggleFeedbackTag(tag)"
+            >
+              {{ tag }}
+            </el-tag>
+          </div>
+          <el-input
+            v-model="feedbackForm.feedback_text"
+            type="textarea"
+            placeholder="补充说明（选填）"
+            :rows="2"
+          />
+          <el-button type="primary" @click="handleSubmitFeedback" class="submit-feedback">
+            提交反馈
+          </el-button>
+        </el-card>
+      </div>
     </el-card>
 
     <!-- 空状态 -->
-    <el-empty v-else-if="!loading" description="今日运势正在生成中，请稍后查看" />
+    <el-empty v-else-if="!loading" description="正在为您生成今日运势...">
+      <el-button type="primary" @click="loading = true; location.reload()">刷新试试</el-button>
+    </el-empty>
 
     <!-- 历史运势 -->
-    <div class="history-section" v-if="historyList.length > 0">
-      <h2>历史运势</h2>
-      <el-table :data="historyList" stripe>
-        <el-table-column prop="date" label="日期" width="120" />
-        <el-table-column prop="overall_score" label="综合评分" width="100">
+    <div class="history-section animate-fade-in" v-if="historyList.length > 0">
+      <h2 class="section-title">历史运势</h2>
+      <el-table :data="historyList" stripe class="history-table">
+        <el-table-column prop="date" label="日期" width="120">
           <template #default="{ row }">
-            <span :style="{ color: getScoreColor(row.overall_score) }">{{ row.overall_score }}</span>
+            <span class="date-cell">{{ row.date }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="summary" label="摘要" />
+        <el-table-column prop="overall_score" label="综合评分" width="120">
+          <template #default="{ row }">
+            <div class="score-cell" :style="{ color: getScoreColor(row.overall_score) }">
+              <span class="score-num">{{ row.overall_score }}</span>
+              <span class="score-label">{{ getScoreText(row.overall_score) }}</span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="summary" label="运势摘要">
+          <template #default="{ row }">
+            <span class="summary-cell">{{ row.summary }}</span>
+          </template>
+        </el-table-column>
       </el-table>
     </div>
   </div>
@@ -185,97 +232,261 @@ async function handleSubmitFeedback() {
 
 <style scoped>
 .fortune-page {
-  padding: 20px 0;
+  padding: 0;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 32px;
 }
 
 .page-title {
-  margin-bottom: 24px;
+  font-size: 36px;
+  font-weight: 700;
+  font-family: var(--font-family-display);
+  background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
 }
 
+.page-subtitle {
+  font-size: 16px;
+  color: var(--color-text-secondary);
+}
+
+/* 今日运势卡片 */
 .today-card {
-  margin-bottom: 24px;
+  margin-bottom: 32px;
 }
 
-.card-header {
+.fortune-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--color-border);
 }
 
-.date {
-  color: var(--color-text-secondary);
+.fortune-date {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.date-label {
   font-size: 14px;
+  color: var(--color-text-secondary);
 }
 
-.score-section {
-  text-align: center;
-  margin-bottom: 24px;
+.date-value {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--color-text);
 }
 
-.overall-score {
-  display: inline-flex;
+.fortune-score {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
 .score-number {
-  font-size: 48px;
-  font-weight: bold;
+  font-size: 36px;
+  font-weight: 800;
+  color: white;
+  line-height: 1;
 }
 
 .score-text {
-  font-size: 18px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
   margin-top: 4px;
 }
 
-.dimension-scores {
-  margin-bottom: 16px;
+/* 四维评分 */
+.dimension-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin-bottom: 32px;
 }
 
-.dimension {
+.dimension-item {
   text-align: center;
+  padding: 20px;
+  background: var(--color-bg-light);
+  border-radius: 16px;
+  border: 1px solid var(--color-border);
 }
 
-.dim-label {
-  display: block;
+.dimension-icon {
+  font-size: 32px;
   margin-bottom: 8px;
+}
+
+.dimension-label {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin-bottom: 12px;
+}
+
+/* 幸运信息 */
+.lucky-section {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-bottom: 32px;
+  padding: 24px;
+  background: var(--color-bg-light);
+  border-radius: 16px;
+}
+
+.lucky-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lucky-icon {
+  font-size: 20px;
+}
+
+.lucky-label {
   font-size: 14px;
   color: var(--color-text-secondary);
 }
 
-.lucky-info {
-  display: flex;
-  gap: 24px;
-  justify-content: center;
-  margin: 16px 0;
+/* 解读 */
+.interpretation-section {
+  margin-bottom: 24px;
+  padding: 24px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(245, 158, 11, 0.1) 100%);
+  border-radius: 16px;
+  border: 1px solid rgba(99, 102, 241, 0.2);
 }
 
-.interpretation {
+.interpretation-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--color-accent);
+}
+
+.interpretation-text {
+  font-size: 15px;
   line-height: 1.8;
   color: var(--color-text);
 }
 
-.card-actions {
-  margin-top: 16px;
+/* 反馈 */
+.feedback-section {
   text-align: center;
 }
 
+.feedback-toggle {
+  margin-bottom: 16px;
+}
+
 .feedback-card {
+  text-align: left;
   margin-top: 16px;
 }
 
+.feedback-card h4 {
+  margin-bottom: 12px;
+  color: var(--color-text);
+}
+
+.feedback-rate {
+  margin-bottom: 16px;
+}
+
 .feedback-tags {
-  margin: 12px 0;
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+  margin-bottom: 16px;
 }
 
 .tag-item {
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
+.tag-item:hover {
+  transform: scale(1.05);
+}
+
+.submit-feedback {
+  margin-top: 12px;
+}
+
+/* 历史运势 */
 .history-section {
-  margin-top: 32px;
+  margin-top: 48px;
+}
+
+.section-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 24px;
+  color: var(--color-text);
+}
+
+.history-table {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.date-cell {
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.score-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.score-num {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.score-label {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.summary-cell {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .fortune-header {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+  }
+
+  .dimension-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .lucky-section {
+    flex-direction: column;
+    align-items: center;
+  }
 }
 </style>

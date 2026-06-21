@@ -134,7 +134,7 @@ describe('FortuneView', () => {
     await router.isReady()
     await flushPromises()
 
-    expect(wrapper.text()).toContain('正在生成中')
+    expect(wrapper.text()).toContain('正在为您生成今日运势')
   })
 
   it('displays fortune history list', async () => {

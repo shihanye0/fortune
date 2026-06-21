@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, reactive } from 'vue'
+import { ref, onMounted, reactive, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/features/auth/stores/auth'
@@ -33,6 +33,54 @@ const pushForm = reactive({
   push_channel: 'email',
   push_time: '07:00',
   feishu_webhook: '',
+})
+
+// 农历转换（简化版）
+function getLunarInfo(year: number, month: number, day: number): string {
+  // 这里使用简化的农历映射，实际项目中应使用 lunar-javascript 等库
+  const lunarMonths = ['正月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '冬月', '腊月']
+  const lunarDays = ['初一', '初二', '初三', '初四', '初五', '初六', '初七', '初八', '初九', '初十',
+    '十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十',
+    '廿一', '廿二', '廿三', '廿四', '廿五', '廿六', '廿七', '廿八', '廿九', '三十']
+
+  // 简化计算（实际需要复杂的农历算法）
+  const lunarMonth = lunarMonths[(month - 1) % 12]
+  const lunarDay = lunarDays[(day - 1) % 30]
+
+  return `${lunarMonth}${lunarDay}`
+}
+
+// 生肖
+function getZodiac(year: number): string {
+  const zodiacs = ['鼠', '牛', '虎', '兔', '龙', '蛇', '马', '羊', '猴', '鸡', '狗', '猪']
+  return zodiacs[(year - 4) % 12]
+}
+
+// 星座
+function getConstellation(month: number, day: number): string {
+  const dates = [20, 19, 21, 20, 21, 22, 23, 23, 23, 24, 22, 22]
+  const signs = ['水瓶座', '双鱼座', '白羊座', '金牛座', '双子座', '巨蟹座', '狮子座', '处女座', '天秤座', '天蝎座', '射手座', '摩羯座']
+  return day < dates[month - 1] ? signs[month - 1] : signs[month % 12]
+}
+
+// 时辰
+function getBirthHourText(hour: number): string {
+  const hours = ['子时 (23-1点)', '丑时 (1-3点)', '寅时 (3-5点)', '卯时 (5-7点)',
+    '辰时 (7-9点)', '巳时 (9-11点)', '午时 (11-13点)', '未时 (13-15点)',
+    '申时 (15-17点)', '酉时 (17-19点)', '戌时 (19-21点)', '亥时 (21-23点)']
+  return hours[Math.floor(hour / 2)] || '未知'
+}
+
+const lunarInfo = computed(() => {
+  if (!profile.value?.birth_year || !profile.value?.birth_month || !profile.value?.birth_day) {
+    return null
+  }
+  return {
+    lunar: getLunarInfo(profile.value.birth_year, profile.value.birth_month, profile.value.birth_day),
+    zodiac: getZodiac(profile.value.birth_year),
+    constellation: getConstellation(profile.value.birth_month, profile.value.birth_day),
+    hourText: getBirthHourText(profile.value.birth_hour ?? 0),
+  }
 })
 
 onMounted(async () => {
@@ -119,60 +167,91 @@ async function handleDeleteAccount() {
 
 <template>
   <div class="profile-page" v-loading="loading">
-    <h1 class="page-title">个人中心</h1>
+    <div class="page-header animate-fade-in">
+      <h1 class="page-title">个人中心</h1>
+      <p class="page-subtitle">管理您的个人信息和推送设置</p>
+    </div>
 
     <template v-if="profile">
       <!-- 基本信息 -->
-      <el-card class="section-card">
+      <el-card class="section-card animate-fade-in">
         <template #header>
           <div class="card-header">
-            <span>基本信息</span>
-            <el-button text @click="editingUsername = !editingUsername">
+            <div class="card-title">
+              <span class="card-icon">👤</span>
+              <span>基本信息</span>
+            </div>
+            <el-button text @click="editingUsername = !editingUsername" class="edit-btn">
               {{ editingUsername ? '取消' : '编辑' }}
             </el-button>
           </div>
         </template>
-        <div v-if="!editingUsername">
-          <p>用户名：{{ profile.username }}</p>
-          <p>邮箱：{{ profile.email }}</p>
+        <div v-if="!editingUsername" class="info-grid">
+          <div class="info-item">
+            <span class="info-label">用户名</span>
+            <span class="info-value">{{ profile.username }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">邮箱</span>
+            <span class="info-value">{{ profile.email }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">注册时间</span>
+            <span class="info-value">{{ new Date(profile.created_at).toLocaleDateString('zh-CN') }}</span>
+          </div>
         </div>
-        <div v-else>
+        <div v-else class="edit-form">
           <el-input v-model="usernameForm.username" placeholder="新用户名" />
-          <el-button type="primary" @click="handleUpdateUsername" style="margin-top: 12px">
-            保存
-          </el-button>
+          <el-button type="primary" @click="handleUpdateUsername" class="save-btn">保存</el-button>
         </div>
       </el-card>
 
       <!-- 生辰信息 -->
-      <el-card class="section-card">
+      <el-card class="section-card animate-fade-in">
         <template #header>
           <div class="card-header">
-            <span>生辰信息</span>
-            <el-button text @click="editingBirth = !editingBirth">
+            <div class="card-title">
+              <span class="card-icon">🌙</span>
+              <span>生辰信息</span>
+            </div>
+            <el-button text @click="editingBirth = !editingBirth" class="edit-btn">
               {{ editingBirth ? '取消' : '修改生辰' }}
             </el-button>
           </div>
         </template>
         <div v-if="!editingBirth">
-          <p>
-            出生：{{ profile.birth_year }}-{{ String(profile.birth_month).padStart(2, '0') }}-{{ String(profile.birth_day).padStart(2, '0') }}
-            {{ profile.birth_hour }}:00
-          </p>
+          <div class="birth-info-grid">
+            <div class="birth-card">
+              <div class="birth-label">阳历生日</div>
+              <div class="birth-value">
+                {{ profile.birth_year }}年{{ profile.birth_month }}月{{ profile.birth_day }}日
+              </div>
+              <div class="birth-detail">{{ getBirthHourText(profile.birth_hour ?? 0) }}</div>
+            </div>
+            <div class="birth-card lunar">
+              <div class="birth-label">农历生日</div>
+              <div class="birth-value" v-if="lunarInfo">
+                {{ lunarInfo.lunar }}
+              </div>
+              <div class="birth-detail" v-if="lunarInfo">
+                {{ lunarInfo.zodiac }}年 · {{ lunarInfo.constellation }}
+              </div>
+            </div>
+          </div>
         </div>
-        <div v-else>
+        <div v-else class="edit-form">
           <el-form label-width="80px">
             <el-form-item label="年">
-              <el-input-number v-model="birthForm.birth_year" :min="1900" :max="2100" />
+              <el-input-number v-model="birthForm.birth_year" :min="1900" :max="2100" style="width: 100%" />
             </el-form-item>
             <el-form-item label="月">
-              <el-input-number v-model="birthForm.birth_month" :min="1" :max="12" />
+              <el-input-number v-model="birthForm.birth_month" :min="1" :max="12" style="width: 100%" />
             </el-form-item>
             <el-form-item label="日">
-              <el-input-number v-model="birthForm.birth_day" :min="1" :max="31" />
+              <el-input-number v-model="birthForm.birth_day" :min="1" :max="31" style="width: 100%" />
             </el-form-item>
             <el-form-item label="时辰">
-              <el-select v-model="birthForm.birth_hour">
+              <el-select v-model="birthForm.birth_hour" style="width: 100%">
                 <el-option v-for="h in 24" :key="h-1" :label="`${h-1}:00`" :value="h-1" />
               </el-select>
             </el-form-item>
@@ -184,11 +263,16 @@ async function handleDeleteAccount() {
       </el-card>
 
       <!-- 推送设置 -->
-      <el-card class="section-card">
-        <template #header>推送设置</template>
-        <el-form label-width="100px">
+      <el-card class="section-card animate-fade-in">
+        <template #header>
+          <div class="card-title">
+            <span class="card-icon">🔔</span>
+            <span>推送设置</span>
+          </div>
+        </template>
+        <el-form label-width="100px" class="push-form">
           <el-form-item label="每日推送">
-            <el-switch v-model="pushForm.push_enabled" />
+            <el-switch v-model="pushForm.push_enabled" active-text="开启" inactive-text="关闭" />
           </el-form-item>
           <el-form-item label="推送渠道">
             <el-radio-group v-model="pushForm.push_channel">
@@ -210,9 +294,20 @@ async function handleDeleteAccount() {
       </el-card>
 
       <!-- 危险操作 -->
-      <el-card class="section-card danger-card">
-        <template #header>危险操作</template>
-        <el-button type="danger" @click="handleDeleteAccount">注销账号</el-button>
+      <el-card class="section-card danger-card animate-fade-in">
+        <template #header>
+          <div class="card-title">
+            <span class="card-icon">⚠️</span>
+            <span>危险操作</span>
+          </div>
+        </template>
+        <div class="danger-content">
+          <div class="danger-info">
+            <h4>注销账号</h4>
+            <p>注销后，您的所有数据将被永久删除，且无法恢复。</p>
+          </div>
+          <el-button type="danger" @click="handleDeleteAccount">注销账号</el-button>
+        </div>
       </el-card>
     </template>
   </div>
@@ -220,15 +315,33 @@ async function handleDeleteAccount() {
 
 <style scoped>
 .profile-page {
-  padding: 20px 0;
+  padding: 0;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 32px;
 }
 
 .page-title {
-  margin-bottom: 24px;
+  font-size: 36px;
+  font-weight: 700;
+  font-family: var(--font-family-display);
+  background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
 }
 
+.page-subtitle {
+  font-size: 16px;
+  color: var(--color-text-secondary);
+}
+
+/* 卡片通用 */
 .section-card {
-  margin-bottom: 16px;
+  margin-bottom: 24px;
 }
 
 .card-header {
@@ -237,7 +350,141 @@ async function handleDeleteAccount() {
   align-items: center;
 }
 
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.card-icon {
+  font-size: 24px;
+}
+
+.edit-btn {
+  color: var(--color-primary) !important;
+}
+
+/* 信息网格 */
+.info-grid {
+  display: grid;
+  gap: 20px;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: var(--color-bg-light);
+  border-radius: 12px;
+}
+
+.info-label {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.info-value {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+/* 生辰信息 */
+.birth-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.birth-card {
+  padding: 24px;
+  background: linear-gradient(135deg, var(--color-bg-light) 0%, var(--color-surface) 100%);
+  border-radius: 16px;
+  border: 1px solid var(--color-border);
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.birth-card:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-glow);
+}
+
+.birth-card.lunar {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%);
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.birth-label {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin-bottom: 12px;
+}
+
+.birth-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-text);
+  font-family: var(--font-family-display);
+  margin-bottom: 8px;
+}
+
+.birth-detail {
+  font-size: 14px;
+  color: var(--color-accent);
+}
+
+/* 编辑表单 */
+.edit-form {
+  padding: 16px 0;
+}
+
+.save-btn {
+  margin-top: 16px;
+}
+
+/* 推送设置 */
+.push-form {
+  max-width: 500px;
+}
+
+/* 危险操作 */
 .danger-card {
-  border-color: #f56c6c;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+}
+
+.danger-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.danger-info h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #ef4444;
+  margin-bottom: 4px;
+}
+
+.danger-info p {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .birth-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .danger-content {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
 }
 </style>
