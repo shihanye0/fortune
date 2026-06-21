@@ -17,8 +17,83 @@ const feedbackForm = ref<FortuneFeedback>({ rating: 5, tags: [], feedback_text: 
 
 const feedbackTags = ['很准', '一般', '不太准', '有启发', '需要更多细节']
 
+// 时辰运势
+const hourlyFortunes = ref([
+  { hour: '子时 (23-1点)', icon: '🌙', fortune: '', advice: '' },
+  { hour: '丑时 (1-3点)', icon: '🌑', fortune: '', advice: '' },
+  { hour: '寅时 (3-5点)', icon: '🌅', fortune: '', advice: '' },
+  { hour: '卯时 (5-7点)', icon: '🌄', fortune: '', advice: '' },
+  { hour: '辰时 (7-9点)', icon: '☀️', fortune: '', advice: '' },
+  { hour: '巳时 (9-11点)', icon: '🌞', fortune: '', advice: '' },
+  { hour: '午时 (11-13点)', icon: '⛅', fortune: '', advice: '' },
+  { hour: '未时 (13-15点)', icon: '🌤️', fortune: '', advice: '' },
+  { hour: '申时 (15-17点)', icon: '🌇', fortune: '', advice: '' },
+  { hour: '酉时 (17-19点)', icon: '🌆', fortune: '', advice: '' },
+  { hour: '戌时 (19-21点)', icon: '🌃', fortune: '', advice: '' },
+  { hour: '亥时 (21-23点)', icon: '🌌', fortune: '', advice: '' },
+])
+
+// 根据八字生成时辰运势
+function generateHourlyFortunes() {
+  const now = new Date()
+  const currentHour = now.getHours()
+  const shichenIndex = Math.floor(currentHour / 2)
+
+  const fortunes = [
+    '适合休息养神，不宜熬夜',
+    '深度睡眠时段，养精蓄锐',
+    '黎明时分，适合冥想或晨练',
+    '精力充沛，适合学习或工作',
+    '贵人运旺，适合社交活动',
+    '思维活跃，适合创意工作',
+    '注意休息，避免过度劳累',
+    '财运渐起，适合处理财务',
+    '桃花运旺，适合约会聚会',
+    '适合家庭时光，增进感情',
+    '适合独处思考，规划未来',
+    '准备休息，保持心态平和',
+  ]
+
+  const advices = [
+    '早睡早起，养精蓄锐',
+    '保持安静，深度睡眠',
+    '可以冥想或做瑜伽',
+    '抓住黄金时间，高效工作',
+    '主动社交，拓展人脉',
+    '发挥创意，解决难题',
+    '适当休息，补充能量',
+    '理性消费，规划财务',
+    '表达感情，增进关系',
+    '陪伴家人，享受温馨',
+    '反思总结，调整方向',
+    '放松身心，准备入睡',
+  ]
+
+  hourlyFortunes.value.forEach((item, index) => {
+    item.fortune = fortunes[index]
+    item.advice = advices[index]
+  })
+}
+
 function reloadPage() {
   window.location.reload()
+}
+
+function splitInterpretation(text: string): string[] {
+  if (!text) return []
+  // 按句号、感叹号、问号分段
+  const sentences = text.split(/(?<=[。！？])/)
+  // 每3-4句合并为一段
+  const paragraphs: string[] = []
+  let current = ''
+  for (let i = 0; i < sentences.length; i++) {
+    current += sentences[i]
+    if ((i + 1) % 3 === 0 || i === sentences.length - 1) {
+      paragraphs.push(current.trim())
+      current = ''
+    }
+  }
+  return paragraphs.filter(p => p.length > 0)
 }
 
 const regenerating = ref(false)
@@ -41,6 +116,7 @@ async function handleRegenerate() {
 }
 
 onMounted(async () => {
+  generateHourlyFortunes()
   try {
     const [todayRes, listRes] = await Promise.all([
       getTodayFortune(),
@@ -210,7 +286,11 @@ async function handleSubmitFeedback() {
       <!-- 解读 -->
       <div class="interpretation-section">
         <h3 class="interpretation-title">🔮 运势解读</h3>
-        <p class="interpretation-text">{{ todayFortune.interpretation }}</p>
+        <div class="interpretation-content">
+          <div v-for="(para, idx) in splitInterpretation(todayFortune.interpretation)" :key="idx" class="interpretation-para">
+            {{ para }}
+          </div>
+        </div>
       </div>
 
       <!-- 反馈按钮 -->
@@ -251,6 +331,26 @@ async function handleSubmitFeedback() {
     <el-empty v-else-if="!loading" description="正在为您生成今日运势...">
       <el-button type="primary" @click="reloadPage">刷新试试</el-button>
     </el-empty>
+
+    <!-- 时辰运势 -->
+    <div class="hourly-section animate-fade-in" v-if="todayFortune">
+      <h2 class="section-title">时辰运势</h2>
+      <div class="hourly-grid">
+        <div
+          v-for="(item, index) in hourlyFortunes"
+          :key="index"
+          class="hourly-item"
+          :class="{ 'current-hour': Math.floor(new Date().getHours() / 2) === index }"
+        >
+          <div class="hourly-icon">{{ item.icon }}</div>
+          <div class="hourly-content">
+            <div class="hourly-time">{{ item.hour }}</div>
+            <div class="hourly-fortune">{{ item.fortune }}</div>
+            <div class="hourly-advice">{{ item.advice }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- 历史运势 -->
     <div class="history-section animate-fade-in" v-if="historyList.length > 0">
@@ -446,10 +546,18 @@ async function handleSubmitFeedback() {
   color: var(--color-accent);
 }
 
-.interpretation-text {
+.interpretation-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.interpretation-para {
   font-size: 15px;
   line-height: 1.8;
   color: var(--color-text);
+  padding-left: 16px;
+  border-left: 3px solid var(--color-primary);
 }
 
 /* 反馈 */
@@ -554,5 +662,63 @@ async function handleSubmitFeedback() {
     flex-direction: column;
     align-items: center;
   }
+
+  .hourly-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 时辰运势 */
+.hourly-section {
+  margin-top: 48px;
+}
+
+.hourly-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.hourly-item {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  background: var(--color-bg-light);
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  transition: all 0.3s ease;
+}
+
+.hourly-item.current-hour {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(245, 158, 11, 0.2) 100%);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-glow);
+}
+
+.hourly-icon {
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.hourly-content {
+  flex: 1;
+}
+
+.hourly-time {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 4px;
+}
+
+.hourly-fortune {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin-bottom: 4px;
+}
+
+.hourly-advice {
+  font-size: 12px;
+  color: var(--color-accent);
 }
 </style>

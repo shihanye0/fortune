@@ -62,16 +62,27 @@ function getZodiac(year: number, month: number, day: number): string {
   try {
     const solar = Solar.fromYmd(year, month, day)
     const lunar = solar.getLunar()
-    return lunar.getYearShengXiao()
+    // 使用 getYearInGanZhi 获取完整的干支年，然后提取生肖
+    const ganZhi = lunar.getYearInGanZhi()
+    // 从干支年中提取地支，然后映射到生肖
+    const dizhi = ganZhi.charAt(1) // 第二个字是地支
+    const zodiacMap: Record<string, string> = {
+      '子': '鼠', '丑': '牛', '寅': '虎', '卯': '兔',
+      '辰': '龙', '巳': '蛇', '午': '马', '未': '羊',
+      '申': '猴', '酉': '鸡', '戌': '狗', '亥': '猪'
+    }
+    return zodiacMap[dizhi] || '未知'
   } catch {
     return '未知'
   }
 }
 
-// 星座
+// 星座（按阳历计算）
 function getConstellation(month: number, day: number): string {
+  // 星座日期分界
   const dates = [20, 19, 21, 20, 21, 22, 23, 23, 23, 24, 22, 22]
   const signs = ['水瓶座', '双鱼座', '白羊座', '金牛座', '双子座', '巨蟹座', '狮子座', '处女座', '天秤座', '天蝎座', '射手座', '摩羯座']
+  // 如果日期小于分界日，是上一个星座
   return day < dates[month - 1] ? signs[month - 1] : signs[month % 12]
 }
 

@@ -19,6 +19,15 @@ const showFeedback = ref(false)
 const feedbackRating = ref(5)
 const feedbackText = ref('')
 
+// 查看详情
+const showDetailDialog = ref(false)
+const selectedRecord = ref<DivinationRecord | null>(null)
+
+function viewDetail(record: DivinationRecord) {
+  selectedRecord.value = record
+  showDetailDialog.value = true
+}
+
 // 每日概率事件（更精细）
 const dailyEvents = ref([
   {
@@ -268,27 +277,71 @@ async function handleSubmitFeedback() {
     <!-- 历史记录 -->
     <div class="history-section animate-fade-in" v-if="historyList.length > 0">
       <h2 class="section-title">占卜历史</h2>
-      <el-table :data="historyList" stripe class="history-table">
-        <el-table-column prop="created_at" label="时间" width="180">
-          <template #default="{ row }">
-            {{ new Date(row.created_at).toLocaleString('zh-CN') }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="type" label="类型" width="100">
-          <template #default="{ row }">
-            <el-tag :type="row.type === 'liuyao' ? '' : 'success'" size="small">
-              {{ row.type === 'liuyao' ? '六爻' : '奇门' }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="question" label="问题" />
-        <el-table-column prop="user_rating" label="评分" width="80">
-          <template #default="{ row }">
-            {{ row.user_rating ? `${row.user_rating}分` : '-' }}
-          </template>
-        </el-table-column>
-      </el-table>
+      <div class="history-list">
+        <div
+          v-for="record in historyList"
+          :key="record.id"
+          class="history-item"
+          @click="viewDetail(record)"
+        >
+          <div class="history-header">
+            <div class="history-type">
+              <el-tag :type="record.type === 'liuyao' ? '' : 'success'" size="small">
+                {{ record.type === 'liuyao' ? '六爻' : '奇门' }}
+              </el-tag>
+            </div>
+            <div class="history-time">
+              {{ new Date(record.created_at).toLocaleString('zh-CN') }}
+            </div>
+          </div>
+          <div class="history-question" v-if="record.question">
+            {{ record.question }}
+          </div>
+          <div class="history-rating" v-if="record.user_rating">
+            <span class="rating-stars">{{ '★'.repeat(record.user_rating) }}{{ '☆'.repeat(5 - record.user_rating) }}</span>
+          </div>
+          <div class="history-arrow">→</div>
+        </div>
+      </div>
     </div>
+
+    <!-- 详情弹窗 -->
+    <el-dialog
+      v-model="showDetailDialog"
+      :title="selectedRecord?.type === 'liuyao' ? '六爻占卜详情' : '奇门遁甲详情'"
+      width="600px"
+      class="detail-dialog"
+    >
+      <div v-if="selectedRecord" class="detail-content">
+        <div class="detail-meta">
+          <div class="detail-time">
+            <span class="meta-label">占卜时间：</span>
+            {{ new Date(selectedRecord.created_at).toLocaleString('zh-CN') }}
+          </div>
+          <div class="detail-type">
+            <span class="meta-label">占卜类型：</span>
+            <el-tag :type="selectedRecord.type === 'liuyao' ? '' : 'success'" size="small">
+              {{ selectedRecord.type === 'liuyao' ? '六爻' : '奇门' }}
+            </el-tag>
+          </div>
+          <div class="detail-question" v-if="selectedRecord.question">
+            <span class="meta-label">占卜问题：</span>
+            {{ selectedRecord.question }}
+          </div>
+        </div>
+        <el-divider />
+        <div class="detail-interpretation">
+          <h4>解读结果</h4>
+          <div class="interpretation-text">
+            {{ selectedRecord.summary || '暂无解读' }}
+          </div>
+        </div>
+        <div class="detail-rating" v-if="selectedRecord.user_rating">
+          <span class="meta-label">您的评价：</span>
+          <span class="rating-stars">{{ '★'.repeat(selectedRecord.user_rating) }}{{ '☆'.repeat(5 - selectedRecord.user_rating) }}</span>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -513,9 +566,111 @@ async function handleSubmitFeedback() {
   color: var(--color-text);
 }
 
-.history-table {
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: var(--color-surface);
   border-radius: 12px;
-  overflow: hidden;
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.history-item:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-glow);
+  transform: translateX(4px);
+}
+
+.history-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 120px;
+}
+
+.history-time {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.history-question {
+  flex: 1;
+  font-size: 14px;
+  color: var(--color-text);
+}
+
+.history-rating {
+  min-width: 80px;
+}
+
+.rating-stars {
+  color: #f59e0b;
+  font-size: 14px;
+}
+
+.history-arrow {
+  font-size: 18px;
+  color: var(--color-primary);
+  transition: transform 0.3s ease;
+}
+
+.history-item:hover .history-arrow {
+  transform: translateX(4px);
+}
+
+/* 详情弹窗 */
+.detail-dialog {
+  background: var(--color-surface);
+}
+
+.detail-content {
+  padding: 16px 0;
+}
+
+.detail-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.meta-label {
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.detail-interpretation {
+  margin-top: 16px;
+}
+
+.detail-interpretation h4 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--color-text);
+}
+
+.interpretation-text {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--color-text);
+  padding: 16px;
+  background: var(--color-bg-light);
+  border-radius: 8px;
+}
+
+.detail-rating {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border);
 }
 
 /* 响应式 */
