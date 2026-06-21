@@ -79,11 +79,18 @@ function getZodiac(year: number, month: number, day: number): string {
 
 // 星座（按阳历计算）
 function getConstellation(month: number, day: number): string {
-  // 星座日期分界
+  // 星座日期分界（每个星座的开始日期）
   const dates = [20, 19, 21, 20, 21, 22, 23, 23, 23, 24, 22, 22]
   const signs = ['水瓶座', '双鱼座', '白羊座', '金牛座', '双子座', '巨蟹座', '狮子座', '处女座', '天秤座', '天蝎座', '射手座', '摩羯座']
-  // 如果日期小于分界日，是上一个星座
-  return day < dates[month - 1] ? signs[month - 1] : signs[month % 12]
+
+  // 判断日期是否在当前星座的开始日期之前
+  if (day < dates[month - 1]) {
+    // 在开始日期之前，是上一个星座
+    return signs[(month - 2 + 12) % 12]
+  } else {
+    // 在开始日期之后，是当前星座
+    return signs[month - 1]
+  }
 }
 
 // 时辰（精确到分钟）
