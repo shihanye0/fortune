@@ -198,6 +198,37 @@ def list_divination_records(
     }
 
 
+@router.get("/{record_id}")
+def get_divination_detail(
+    record_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """获取占卜详情"""
+    record = (
+        db.query(DivinationRecord)
+        .filter(
+            DivinationRecord.id == record_id,
+            DivinationRecord.user_id == current_user.id,
+        )
+        .first()
+    )
+
+    if not record:
+        raise HTTPException(status_code=404, detail="占卜记录不存在")
+
+    return {
+        "success": True,
+        "data": {
+            "id": record.id,
+            "question": record.question,
+            "hexagram": record.raw_data if record.type == "liuyao" else None,
+            "chart": record.raw_data if record.type == "qimen" else None,
+            "interpretation": record.llm_interpretation,
+        },
+    }
+
+
 @router.post("/{record_id}/feedback")
 def submit_divination_feedback(
     record_id: int,

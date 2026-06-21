@@ -160,7 +160,9 @@ describe('FortuneView', () => {
     await router.isReady()
     await flushPromises()
 
-    expect(wrapper.text()).toContain('2026-06-19')
-    expect(wrapper.text()).toContain('2026-06-18')
+    // 检查日期是否显示（新格式显示为 19 和 06月）
+    expect(wrapper.text()).toContain('19')
+    expect(wrapper.text()).toContain('18')
+    expect(wrapper.text()).toContain('06月')
   })
 })

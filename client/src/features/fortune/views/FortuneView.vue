@@ -4,6 +4,7 @@ import { ElMessage } from 'element-plus'
 import {
   getTodayFortune,
   getFortuneList,
+  getFortuneDetail,
   submitFortuneFeedback,
   regenerateTodayFortune,
 } from '../api/fortune-api'
@@ -97,6 +98,28 @@ function splitInterpretation(text: string): string[] {
 }
 
 const regenerating = ref(false)
+
+// 查看详情
+const showFortuneDetailDialog = ref(false)
+const selectedFortune = ref<FortuneDetail | null>(null)
+const loadingFortuneDetail = ref(false)
+
+async function viewFortuneDetail(record: FortuneListItem) {
+  showFortuneDetailDialog.value = true
+  loadingFortuneDetail.value = true
+  selectedFortune.value = null
+
+  try {
+    const res = await getFortuneDetail(record.id)
+    if (res.success) {
+      selectedFortune.value = res.data
+    }
+  } catch {
+    ElMessage.error('加载详情失败')
+  } finally {
+    loadingFortuneDetail.value = false
+  }
+}
 
 async function handleRegenerate() {
   regenerating.value = true
@@ -355,27 +378,71 @@ async function handleSubmitFeedback() {
     <!-- 历史运势 -->
     <div class="history-section animate-fade-in" v-if="historyList.length > 0">
       <h2 class="section-title">历史运势</h2>
-      <el-table :data="historyList" stripe class="history-table">
-        <el-table-column prop="date" label="日期" width="120">
-          <template #default="{ row }">
-            <span class="date-cell">{{ row.date }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="overall_score" label="综合评分" width="120">
-          <template #default="{ row }">
-            <div class="score-cell" :style="{ color: getScoreColor(row.overall_score) }">
-              <span class="score-num">{{ row.overall_score }}</span>
-              <span class="score-label">{{ getScoreText(row.overall_score) }}</span>
+      <div class="history-list">
+        <div
+          v-for="record in historyList"
+          :key="record.id"
+          class="history-item"
+          @click="viewFortuneDetail(record)"
+        >
+          <div class="history-date">
+            <span class="date-day">{{ record.date.split('-')[2] }}</span>
+            <span class="date-month">{{ record.date.split('-')[1] }}月</span>
+          </div>
+          <div class="history-content">
+            <div class="history-score" :style="{ color: getScoreColor(record.overall_score) }">
+              {{ record.overall_score }}分 {{ getScoreText(record.overall_score) }}
             </div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="summary" label="运势摘要">
-          <template #default="{ row }">
-            <span class="summary-cell">{{ row.summary }}</span>
-          </template>
-        </el-table-column>
-      </el-table>
+            <div class="history-summary">{{ record.summary }}</div>
+          </div>
+          <div class="history-arrow">→</div>
+        </div>
+      </div>
     </div>
+
+    <!-- 运势详情弹窗 -->
+    <el-dialog
+      v-model="showFortuneDetailDialog"
+      title="运势详情"
+      width="600px"
+      class="detail-dialog"
+    >
+      <div v-if="loadingFortuneDetail" class="loading-container">加载中...</div>
+      <div v-else-if="selectedFortune" class="fortune-detail-content">
+        <div class="detail-header">
+          <div class="detail-date">{{ selectedFortune.date }}</div>
+          <div class="detail-score" :style="{ background: getScoreGradient(selectedFortune.overall_score) }">
+            {{ selectedFortune.overall_score }}
+          </div>
+        </div>
+        <el-divider />
+        <div class="detail-dimensions">
+          <div class="dim-item">
+            <span class="dim-label">事业</span>
+            <span class="dim-value">{{ selectedFortune.career?.score }}/5</span>
+          </div>
+          <div class="dim-item">
+            <span class="dim-label">财运</span>
+            <span class="dim-value">{{ selectedFortune.wealth?.score }}/5</span>
+          </div>
+          <div class="dim-item">
+            <span class="dim-label">感情</span>
+            <span class="dim-value">{{ selectedFortune.love?.score }}/5</span>
+          </div>
+          <div class="dim-item">
+            <span class="dim-label">健康</span>
+            <span class="dim-value">{{ selectedFortune.health?.score }}/5</span>
+          </div>
+        </div>
+        <el-divider />
+        <div class="detail-interpretation">
+          <h4>运势解读</h4>
+          <div class="interpretation-text">
+            {{ selectedFortune.interpretation || '暂无解读' }}
+          </div>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -615,35 +682,155 @@ async function handleSubmitFeedback() {
   color: var(--color-text);
 }
 
-.history-table {
-  border-radius: 12px;
-  overflow: hidden;
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.date-cell {
-  font-weight: 500;
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: var(--color-surface);
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.history-item:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-glow);
+  transform: translateX(4px);
+}
+
+.history-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 50px;
+}
+
+.date-day {
+  font-size: 24px;
+  font-weight: 700;
   color: var(--color-text);
 }
 
-.score-cell {
+.date-month {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.history-content {
+  flex: 1;
+}
+
+.history-score {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.history-summary {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.history-arrow {
+  font-size: 18px;
+  color: var(--color-primary);
+  transition: transform 0.3s ease;
+}
+
+.history-item:hover .history-arrow {
+  transform: translateX(4px);
+}
+
+/* 运势详情弹窗 */
+.fortune-detail-content {
+  padding: 16px 0;
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.detail-date {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.detail-score {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
-  gap: 8px;
-}
-
-.score-num {
-  font-size: 18px;
+  justify-content: center;
+  font-size: 24px;
   font-weight: 700;
+  color: white;
 }
 
-.score-label {
+.detail-dimensions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.dim-item {
+  text-align: center;
+  padding: 12px;
+  background: var(--color-bg-light);
+  border-radius: 8px;
+}
+
+.dim-label {
+  display: block;
   font-size: 12px;
   color: var(--color-text-secondary);
+  margin-bottom: 4px;
 }
 
-.summary-cell {
-  color: var(--color-text-secondary);
+.dim-value {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.detail-interpretation {
+  margin-top: 16px;
+}
+
+.detail-interpretation h4 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--color-text);
+}
+
+.interpretation-text {
   font-size: 14px;
+  line-height: 1.8;
+  color: var(--color-text);
+  padding: 16px;
+  background: var(--color-bg-light);
+  border-radius: 8px;
+}
+
+.loading-container {
+  text-align: center;
+  padding: 40px;
+  color: var(--color-text-secondary);
 }
 
 /* 响应式 */

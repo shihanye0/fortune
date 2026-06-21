@@ -5,6 +5,7 @@ import {
   doLiuyao,
   doQimen,
   getDivinationRecords,
+  getDivinationDetail,
   submitDivinationFeedback,
 } from '../api/divination-api'
 import type { DivinationResult, DivinationRecord } from '../api/divination-api'
@@ -22,10 +23,25 @@ const feedbackText = ref('')
 // 查看详情
 const showDetailDialog = ref(false)
 const selectedRecord = ref<DivinationRecord | null>(null)
+const detailInterpretation = ref('')
+const loadingDetail = ref(false)
 
-function viewDetail(record: DivinationRecord) {
+async function viewDetail(record: DivinationRecord) {
   selectedRecord.value = record
   showDetailDialog.value = true
+  loadingDetail.value = true
+  detailInterpretation.value = ''
+
+  try {
+    const res = await getDivinationDetail(record.id)
+    if (res.success) {
+      detailInterpretation.value = res.data.interpretation || '暂无解读'
+    }
+  } catch {
+    detailInterpretation.value = '加载失败'
+  } finally {
+    loadingDetail.value = false
+  }
 }
 
 // 每日概率事件（更精细）
@@ -332,8 +348,9 @@ async function handleSubmitFeedback() {
         <el-divider />
         <div class="detail-interpretation">
           <h4>解读结果</h4>
-          <div class="interpretation-text">
-            {{ selectedRecord.summary || '暂无解读' }}
+          <div v-if="loadingDetail" class="loading-text">加载中...</div>
+          <div v-else class="interpretation-text">
+            {{ detailInterpretation }}
           </div>
         </div>
         <div class="detail-rating" v-if="selectedRecord.user_rating">

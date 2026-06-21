@@ -48,6 +48,11 @@ export async function getDivinationRecords(
   return res.data
 }
 
+export async function getDivinationDetail(id: number): Promise<ApiResponse<DivinationResult>> {
+  const res = await client.get(`/api/v1/divination/${id}`)
+  return res.data
+}
+
 export async function submitDivinationFeedback(
   id: number,
   data: { rating: number; feedback_text?: string }
