@@ -31,7 +31,7 @@ def get_today_fortune(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    """查看今日运势"""
+    """查看今日运势（不存在时自动生成）"""
     today = date.today()
     fortune = (
         db.query(DailyFortune)
@@ -43,7 +43,8 @@ def get_today_fortune(
     )
 
     if not fortune:
-        return {"success": True, "data": None, "message": "今日运势正在生成中，请稍后查看"}
+        # 按需生成今日运势
+        fortune = _generate_fortune_on_demand(current_user, today, db)
 
     return {
         "success": True,
@@ -145,6 +146,91 @@ def submit_feedback(
         "success": True,
         "data": _fortune_to_detail_dict(fortune),
     }
+
+
+# --- 按需生成运势 ---
+
+def _generate_fortune_on_demand(user: User, today: date, db: Session) -> DailyFortune:
+    """用户查看今日运势时，如果不存在则自动生成"""
+    import logging
+    logger = logging.getLogger(__name__)
+
+    try:
+        # 1. 计算八字
+        from fortune_engine.bazi.pillar import calculate_bazi
+        bazi_result = calculate_bazi(
+            user.birth_year, user.birth_month, user.birth_day,
+            user.birth_hour, user.gender,
+        )
+
+        # 2. 计算今日运势
+        from fortune_engine.bazi.daily_fortune import calculate_daily_fortune
+        daily = calculate_daily_fortune(bazi_result, today.year, today.month, today.day)
+
+        # 3. LLM 解读（降级处理）
+        from fortune_engine.services.deepseek import interpret_daily, FALLBACK_DAILY
+        from app.services.feedback_summary import generate_feedback_summary
+
+        bazi_summary = (
+            f"八字：{bazi_result['year_pillar']} {bazi_result['month_pillar']} "
+            f"{bazi_result['day_pillar']} {bazi_result['hour_pillar']}，"
+            f"日主：{bazi_result['day_master']}，"
+            f"喜用神：{'、'.join(bazi_result.get('favorable_elements', []))}"
+        )
+        feedback_summary = generate_feedback_summary(db, user.id)
+
+        try:
+            interpretation = interpret_daily(bazi_summary, daily, feedback_summary)
+        except Exception as e:
+            logger.error("LLM 解读失败 user=%d: %s", user.id, e)
+            interpretation = FALLBACK_DAILY
+
+        # 4. 存入数据库
+        fortune = DailyFortune(
+            user_id=user.id,
+            date=today,
+            heavenly_stem=daily["heavenly_stem"],
+            earthly_branch=daily["earthly_branch"],
+            overall_score=daily["overall_score"],
+            career_fortune=daily.get("career_fortune"),
+            wealth_fortune=daily.get("wealth_fortune"),
+            love_fortune=daily.get("love_fortune"),
+            health_fortune=daily.get("health_fortune"),
+            lucky_color=daily.get("lucky_color"),
+            lucky_number=daily.get("lucky_number"),
+            lucky_direction=daily.get("lucky_direction"),
+            llm_interpretation=interpretation,
+        )
+        db.add(fortune)
+        db.commit()
+        db.refresh(fortune)
+
+        logger.info("按需生成运势成功 user=%d date=%s", user.id, today)
+        return fortune
+
+    except Exception as e:
+        logger.error("按需生成运势失败 user=%d: %s", user.id, e)
+        db.rollback()
+        # 返回一个默认运势，避免接口报错
+        fortune = DailyFortune(
+            user_id=user.id,
+            date=today,
+            heavenly_stem="甲",
+            earthly_branch="子",
+            overall_score=60,
+            career_fortune={"score": 60, "description": "事业运势平稳"},
+            wealth_fortune={"score": 60, "description": "财运一般"},
+            love_fortune={"score": 60, "description": "感情运势平稳"},
+            health_fortune={"score": 60, "description": "健康状况良好"},
+            lucky_color="蓝色",
+            lucky_number="3, 8",
+            lucky_direction="东方",
+            llm_interpretation="今日运势平稳，适合日常事务处理。",
+        )
+        db.add(fortune)
+        db.commit()
+        db.refresh(fortune)
+        return fortune
 
 
 # --- 辅助函数 ---

@@ -106,8 +106,8 @@ class TestTodayFortune:
         assert data["lucky_direction"] == "东方"
         assert "今日运势不错" in data["interpretation"]
 
-    def test_today_fortune_not_generated(self, client: TestClient, auth_user):
-        """今日运势未生成，返回提示"""
+    def test_today_fortune_auto_generated(self, client: TestClient, auth_user):
+        """今日运势未生成时，自动生成并返回"""
         _, token = auth_user
 
         resp = client.get(
@@ -117,8 +117,10 @@ class TestTodayFortune:
         assert resp.status_code == 200
         body = resp.json()
         assert body["success"] is True
-        assert body["data"] is None
-        assert "生成中" in body["message"]
+        # 现在会自动生成运势，不再返回 null
+        assert body["data"] is not None
+        assert "overall_score" in body["data"]
+        assert "interpretation" in body["data"]
 
     def test_today_fortune_unauthenticated(self, client: TestClient):
         """未登录返回 403"""
