@@ -1,7 +1,27 @@
 # -*- coding: utf-8 -*-
 """DeepSeek API 解读服务"""
+import re
 import httpx
 from app.config import settings
+
+
+def _strip_markdown(text: str) -> str:
+    """清除markdown格式标记"""
+    if not text:
+        return text
+    # 移除 ** 加粗
+    text = re.sub(r'\*\*([^*]+)\*\*', r'\1', text)
+    # 移除 * 斜体
+    text = re.sub(r'\*([^*]+)\*', r'\1', text)
+    # 移除 ## 标题
+    text = re.sub(r'^#{1,6}\s+', '', text, flags=re.MULTILINE)
+    # 移除 - 列表标记（保留内容）
+    text = re.sub(r'^[\-\*]\s+', '', text, flags=re.MULTILINE)
+    # 移除数字列表标记（保留内容）
+    text = re.sub(r'^\d+\.\s+', '', text, flags=re.MULTILINE)
+    # 清理多余空行
+    text = re.sub(r'\n{3,}', '\n\n', text)
+    return text.strip()
 
 # 降级结果
 FALLBACK_FORTUNE = "今日解读暂不可用，请稍后再试。您可查看基础运势数据了解今日概况。"
@@ -25,22 +45,20 @@ FORTUNE_PROMPT = """你是一位精通周易、八字命理的资深命理师。
 
 DAILY_PROMPT = """你是一位精通命理的运势播报师。请根据以下数据生成今日运势播报。
 
-## 八字概要
-{bazi_summary}
+八字概要：{bazi_summary}
 
-## 今日运势数据
-{fortune_data}
+今日运势数据：{fortune_data}
 
-## 用户偏好
-{user_feedback_summary}
+用户偏好：{user_feedback_summary}
 
-## 输出格式要求（严格遵守）
-1. 先用一句话总评今日运势
-2. 事业、财运、感情、健康各用2-3句话描述，不要用**加粗**
-3. 最后给2-3条实用建议
-4. 语气温和亲切，像朋友聊天
-5. 不要用**加粗**标记，直接用文字描述
-6. 总字数控制在200-300字"""
+重要格式要求（必须严格遵守）：
+- 禁止使用任何markdown格式符号，如**、##、-、*等
+- 禁止使用加粗、斜体等格式标记
+- 直接用纯文字描述，像平时聊天一样
+- 事业、财运、感情、健康各用2-3句话自然描述
+- 最后给2-3条实用建议
+- 语气温和亲切
+- 总字数控制在200-300字"""
 
 
 def _call_deepseek(prompt: str, max_retries: int = 2) -> str | None:
@@ -107,7 +125,7 @@ def interpret_fortune(
         prompt += f"\n\n## 用户偏好\n{user_feedback_summary}"
 
     result = _call_deepseek(prompt)
-    return result or FALLBACK_FORTUNE
+    return _strip_markdown(result) if result else FALLBACK_FORTUNE
 
 
 def interpret_daily(
@@ -154,34 +172,35 @@ def interpret_daily(
     )
 
     result = _call_deepseek(prompt)
-    return result or FALLBACK_DAILY
+    return _strip_markdown(result) if result else FALLBACK_DAILY
 
 
 # --- 六爻解读 ---
 
 LIUYAO_PROMPT = """你是一位精通周易六爻的资深卦师。请用专业但易懂的语言解读以下卦象。
 
-## 占卜问题
-{question}
+占卜问题：{question}
 
-## 卦象信息
-- 本卦：{hexagram_name}
-- 上卦：{upper_trigram}（{upper_image}）
-- 下卦：{lower_trigram}（{lower_image}）
-- 六爻：{lines}
-- 变爻位置：{changing_lines}
-- 变卦：{changed_hexagram}
+卦象信息：
+本卦：{hexagram_name}
+上卦：{upper_trigram}（{upper_image}）
+下卦：{lower_trigram}（{lower_image}）
+六爻：{lines}
+变爻位置：{changing_lines}
+变卦：{changed_hexagram}
 
-## 用户八字信息
-{bazi_info}
+用户八字信息：{bazi_info}
 
-## 输出格式要求（严格遵守）
-1. 先用一句话概括卦象核心含义
-2. 解读本卦和变卦的关系
-3. 结合用户八字分析运势走向
-4. 针对占卜问题给出具体、可操作的建议
-5. 语气温和专业，不要用**加粗**标记
-6. 总字数控制在250-400字"""
+重要格式要求（必须严格遵守）：
+- 禁止使用任何markdown格式符号，如**、##、-、*等
+- 禁止使用加粗、斜体等格式标记
+- 直接用纯文字描述，像平时聊天一样
+- 先用一句话概括卦象核心含义
+- 解读本卦和变卦的关系
+- 结合用户八字分析运势走向
+- 针对占卜问题给出具体、可操作的建议
+- 语气温和专业
+- 总字数控制在250-400字"""
 
 
 def interpret_liuyao(hexagram_data: dict, bazi_info: str = "") -> str:
@@ -216,34 +235,35 @@ def interpret_liuyao(hexagram_data: dict, bazi_info: str = "") -> str:
     )
 
     result = _call_deepseek(prompt)
-    return result or "卦象解读暂不可用，请稍后再试。"
+    return _strip_markdown(result) if result else "卦象解读暂不可用，请稍后再试。"
 
 
 # --- 奇门遁甲解读 ---
 
 QIMEN_PROMPT = """你是一位精通奇门遁甲的资深术士。请用专业但易懂的语言解读以下奇门盘面。
 
-## 问题
-{question}
+问题：{question}
 
-## 盘面信息
-- 阴阳遁：{yin_yang}
-- 局数：第{ju_shu}局
-- 时辰：{time}
+盘面信息：
+阴阳遁：{yin_yang}
+局数：第{ju_shu}局
+时辰：{time}
 
-## 九宫详情
+九宫详情：
 {palace_details}
 
-## 用户八字信息
-{bazi_info}
+用户八字信息：{bazi_info}
 
-## 输出格式要求（严格遵守）
-1. 先概括当前盘面的核心格局
-2. 解读九星、八门、八神的组合含义
-3. 结合用户八字分析运势走向
-4. 针对问题给出具体、可操作的建议
-5. 语气温和专业，不要用**加粗**标记
-6. 总字数控制在250-400字"""
+重要格式要求（必须严格遵守）：
+- 禁止使用任何markdown格式符号，如**、##、-、*等
+- 禁止使用加粗、斜体等格式标记
+- 直接用纯文字描述，像平时聊天一样
+- 先概括当前盘面的核心格局
+- 解读九星、八门、八神的组合含义
+- 结合用户八字分析运势走向
+- 针对问题给出具体、可操作的建议
+- 语气温和专业
+- 总字数控制在250-400字"""
 
 
 FALLBACK_LIUYAO = "卦象解读暂不可用，请稍后再试。您可查看卦象数据了解基本信息。"
@@ -281,4 +301,4 @@ def interpret_qimen(chart_data: dict, question: str = "", bazi_info: str = "") -
     )
 
     result = _call_deepseek(prompt)
-    return result or FALLBACK_QIMEN
+    return _strip_markdown(result) if result else FALLBACK_QIMEN
