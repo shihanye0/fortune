@@ -76,6 +76,14 @@ class PushSettingsRequest(BaseModel):
         return v
 
 
+class LLMSettingsRequest(BaseModel):
+    """LLM配置请求"""
+    llm_provider: str | None = None
+    llm_api_key: str | None = None
+    llm_api_url: str | None = None
+    llm_model: str | None = None
+
+
 class DeleteAccountRequest(BaseModel):
     password: str
 
@@ -101,6 +109,10 @@ def _user_to_dict(user: User) -> dict:
         "push_enabled": user.push_enabled,
         "push_time": user.push_time,
         "feishu_webhook": user.feishu_webhook,
+        "llm_provider": user.llm_provider,
+        "llm_api_key": user.llm_api_key[:8] + "***" if user.llm_api_key else None,
+        "llm_api_url": user.llm_api_url,
+        "llm_model": user.llm_model,
         "created_at": user.created_at.isoformat() if user.created_at else None,
     }
 
@@ -156,6 +168,22 @@ def update_push_settings(
     current_user.push_channel = req.push_channel
     current_user.push_time = req.push_time
     current_user.feishu_webhook = req.feishu_webhook
+    db.commit()
+    db.refresh(current_user)
+    return {"success": True, "data": _user_to_dict(current_user)}
+
+
+@router.put("/me/llm-settings")
+def update_llm_settings(
+    req: LLMSettingsRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """更新LLM配置"""
+    current_user.llm_provider = req.llm_provider
+    current_user.llm_api_key = req.llm_api_key
+    current_user.llm_api_url = req.llm_api_url
+    current_user.llm_model = req.llm_model
     db.commit()
     db.refresh(current_user)
     return {"success": True, "data": _user_to_dict(current_user)}

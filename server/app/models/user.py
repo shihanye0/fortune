@@ -34,3 +34,17 @@ class User(TimestampMixin, Base):
         String(5), default="07:00", nullable=False
     )
     feishu_webhook: Mapped[str | None] = mapped_column(String(500), nullable=True)
+
+    # LLM 配置
+    llm_provider: Mapped[str | None] = mapped_column(
+        String(50), nullable=True, comment="LLM供应商名称"
+    )
+    llm_api_key: Mapped[str | None] = mapped_column(
+        String(255), nullable=True, comment="LLM API Key"
+    )
+    llm_api_url: Mapped[str | None] = mapped_column(
+        String(500), nullable=True, comment="LLM API URL"
+    )
+    llm_model: Mapped[str | None] = mapped_column(
+        String(100), nullable=True, comment="LLM模型名称"
+    )

@@ -16,6 +16,10 @@ export interface UserProfile {
   push_enabled: boolean
   push_time: string | null
   feishu_webhook: string | null
+  llm_provider: string | null
+  llm_api_key: string | null
+  llm_api_url: string | null
+  llm_model: string | null
   created_at: string
 }
 
@@ -46,6 +50,16 @@ export async function updatePushSettings(data: {
   feishu_webhook?: string
 }): Promise<ApiResponse<UserProfile>> {
   const res = await client.put('/api/v1/users/me/push-settings', data)
+  return res.data
+}
+
+export async function updateLLMSettings(data: {
+  llm_provider?: string
+  llm_api_key?: string
+  llm_api_url?: string
+  llm_model?: string
+}): Promise<ApiResponse<UserProfile>> {
+  const res = await client.put('/api/v1/users/me/llm-settings', data)
   return res.data
 }
 

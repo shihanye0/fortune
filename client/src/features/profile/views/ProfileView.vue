@@ -8,6 +8,7 @@ import {
   updateProfile,
   updateBirth,
   updatePushSettings,
+  updateLLMSettings,
   deleteAccount,
 } from '../api/profile-api'
 import type { UserProfile } from '../api/profile-api'
@@ -34,6 +35,13 @@ const pushForm = reactive({
   push_channel: 'email',
   push_time: '07:00',
   feishu_webhook: '',
+})
+
+const llmForm = reactive({
+  llm_provider: '',
+  llm_api_key: '',
+  llm_api_url: '',
+  llm_model: '',
 })
 
 // 农历转换
@@ -102,6 +110,10 @@ onMounted(async () => {
       pushForm.push_channel = res.data.push_channel || 'email'
       pushForm.push_time = res.data.push_time || '07:00'
       pushForm.feishu_webhook = res.data.feishu_webhook || ''
+      llmForm.llm_provider = res.data.llm_provider || ''
+      llmForm.llm_api_key = res.data.llm_api_key || ''
+      llmForm.llm_api_url = res.data.llm_api_url || ''
+      llmForm.llm_model = res.data.llm_model || ''
     }
   } catch {
     ElMessage.error('加载个人信息失败')
@@ -142,6 +154,18 @@ async function handleUpdatePushSettings() {
     if (res.success) {
       profile.value = res.data
       ElMessage.success('推送设置更新成功')
+    }
+  } catch {
+    ElMessage.error('更新失败')
+  }
+}
+
+async function handleUpdateLLMSettings() {
+  try {
+    const res = await updateLLMSettings(llmForm)
+    if (res.success) {
+      profile.value = res.data
+      ElMessage.success('LLM配置更新成功')
     }
   } catch {
     ElMessage.error('更新失败')
@@ -299,6 +323,33 @@ async function handleDeleteAccount() {
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="handleUpdatePushSettings">保存设置</el-button>
+          </el-form-item>
+        </el-form>
+      </el-card>
+
+      <!-- LLM 配置 -->
+      <el-card class="section-card animate-fade-in">
+        <template #header>
+          <div class="card-title">
+            <span class="card-icon">🤖</span>
+            <span>LLM 配置</span>
+          </div>
+        </template>
+        <el-form label-width="100px" class="llm-form">
+          <el-form-item label="供应商名称">
+            <el-input v-model="llmForm.llm_provider" placeholder="例如：DeepSeek、Xiaomi MiMo" />
+          </el-form-item>
+          <el-form-item label="API Key">
+            <el-input v-model="llmForm.llm_api_key" type="password" placeholder="输入 API Key" show-password />
+          </el-form-item>
+          <el-form-item label="API URL">
+            <el-input v-model="llmForm.llm_api_url" placeholder="例如：https://api.deepseek.com/v1" />
+          </el-form-item>
+          <el-form-item label="模型名称">
+            <el-input v-model="llmForm.llm_model" placeholder="例如：deepseek-chat" />
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="handleUpdateLLMSettings">保存 LLM 配置</el-button>
           </el-form-item>
         </el-form>
       </el-card>
