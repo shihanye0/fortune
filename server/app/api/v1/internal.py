@@ -61,22 +61,32 @@ def daily_push(req: DailyPushRequest, db: Session = Depends(get_db)):
             # 2. 计算今日运势
             daily = calculate_daily_fortune(bazi_result, today.year, today.month, today.day)
 
-            # 3. LLM 解读（降级处理）
+            # 3. 计算时辰运势
+            from fortune_engine.bazi.hourly_fortune import calculate_all_hours_fortune
+            hourly_fortunes = calculate_all_hours_fortune(bazi_result, today.year, today.month, today.day)
+
+            # 4. 生成概率事件
+            from fortune_engine.probability_events import generate_probability_events
+            feedback_summary_text = generate_feedback_summary(db, user.id)
+            probability_events = generate_probability_events(
+                bazi_result, daily, hourly_fortunes, today, feedback_summary_text,
+            )
+
+            # 5. LLM 解读（降级处理）
             bazi_summary = (
                 f"八字：{bazi_result['year_pillar']} {bazi_result['month_pillar']} "
                 f"{bazi_result['day_pillar']} {bazi_result['hour_pillar']}，"
                 f"日主：{bazi_result['day_master']}，"
                 f"喜用神：{'、'.join(bazi_result.get('favorable_elements', []))}"
             )
-            feedback_summary = generate_feedback_summary(db, user.id)
 
             try:
-                interpretation = interpret_daily(bazi_summary, daily, feedback_summary)
+                interpretation = interpret_daily(bazi_summary, daily, feedback_summary_text)
             except Exception as e:
                 logger.error("LLM 解读失败 user=%d: %s", user.id, e)
                 interpretation = FALLBACK_DAILY
 
-            # 4. 构建运势数据
+            # 6. 构建完整运势数据
             fortune_data = {
                 "date": today.isoformat(),
                 "overall_score": daily["overall_score"],
@@ -88,9 +98,11 @@ def daily_push(req: DailyPushRequest, db: Session = Depends(get_db)):
                 "lucky_number": daily.get("lucky_number", ""),
                 "lucky_direction": daily.get("lucky_direction", ""),
                 "interpretation": interpretation,
+                "hourly_fortunes": hourly_fortunes,
+                "probability_events": probability_events,
             }
 
-            # 5. 推送
+            # 7. 推送
             push_ok = False
             if user.push_channel in ("email", "both"):
                 if send_fortune_email(user.email, fortune_data):
@@ -100,7 +112,7 @@ def daily_push(req: DailyPushRequest, db: Session = Depends(get_db)):
                 if send_fortune_feishu(user.feishu_webhook, fortune_data):
                     push_ok = True
 
-            # 6. 存入数据库
+            # 8. 存入数据库
             row = DailyFortune(
                 user_id=user.id,
                 date=today,
@@ -114,6 +126,7 @@ def daily_push(req: DailyPushRequest, db: Session = Depends(get_db)):
                 lucky_color=daily.get("lucky_color"),
                 lucky_number=daily.get("lucky_number"),
                 lucky_direction=daily.get("lucky_direction"),
+                hourly_fortunes=hourly_fortunes,
                 llm_interpretation=interpretation,
             )
             db.add(row)
