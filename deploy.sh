@@ -36,7 +36,7 @@ mkdir -p $APP_DIR
 if [ ! -f "$APP_DIR/server/requirements.txt" ]; then
     echo "[4/7] 克隆代码..."
     rm -rf $APP_DIR/*
-    git clone https://github.com/shihanye0/fortune.git $APP_DIR
+    git clone --depth 1 https://gitclone.com/github.com/shihanye0/fortune.git $APP_DIR
 else
     echo "[4/7] 更新代码..."
     cd $APP_DIR

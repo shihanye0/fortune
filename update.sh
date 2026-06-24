@@ -12,8 +12,9 @@ echo "=========================================="
 
 cd $APP_DIR
 
-# 1. 拉取最新代码
+# 1. 拉取最新代码（国内镜像加速）
 echo "[1/3] 拉取最新代码..."
+git fetch --unshallow origin 2>/dev/null || true
 git pull origin main
 
 # 2. 更新后端依赖（如有新包）
