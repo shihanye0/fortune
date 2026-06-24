@@ -175,9 +175,10 @@ E:\fortune\
 ### 后端
 - Python 3.10
 - FastAPI
-- SQLAlchemy
+- SQLAlchemy + SQLite（开发）/ MySQL（生产）
 - Alembic (数据库迁移)
-- JWT 认证
+- JWT 认证 + bcrypt
+- Xiaomi MiMo API（LLM 解读）
 - pytest (单元测试)
 
 ## 联系方式

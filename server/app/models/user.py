@@ -39,8 +39,17 @@ class User(TimestampMixin, Base):
     llm_provider: Mapped[str | None] = mapped_column(
         String(50), nullable=True, comment="LLM供应商名称"
     )
+    llm_notes: Mapped[str | None] = mapped_column(
+        String(200), nullable=True, comment="LLM配置备注"
+    )
+    llm_website: Mapped[str | None] = mapped_column(
+        String(500), nullable=True, comment="LLM供应商官网"
+    )
     llm_api_key: Mapped[str | None] = mapped_column(
         String(255), nullable=True, comment="LLM API Key"
+    )
+    llm_api_key_url: Mapped[str | None] = mapped_column(
+        String(500), nullable=True, comment="获取API Key的链接"
     )
     llm_api_url: Mapped[str | None] = mapped_column(
         String(500), nullable=True, comment="LLM API URL"

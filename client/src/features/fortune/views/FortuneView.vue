@@ -19,63 +19,45 @@ const feedbackForm = ref<FortuneFeedback>({ rating: 5, tags: [], feedback_text: 
 
 const feedbackTags = ['很准', '一般', '不太准', '有启发', '需要更多细节']
 
-// 时辰运势
-const hourlyFortunes = ref([
-  { hour: '子时 (23-1点)', icon: '🌙', fortune: '', advice: '' },
-  { hour: '丑时 (1-3点)', icon: '🌑', fortune: '', advice: '' },
-  { hour: '寅时 (3-5点)', icon: '🌅', fortune: '', advice: '' },
-  { hour: '卯时 (5-7点)', icon: '🌄', fortune: '', advice: '' },
-  { hour: '辰时 (7-9点)', icon: '☀️', fortune: '', advice: '' },
-  { hour: '巳时 (9-11点)', icon: '🌞', fortune: '', advice: '' },
-  { hour: '午时 (11-13点)', icon: '⛅', fortune: '', advice: '' },
-  { hour: '未时 (13-15点)', icon: '🌤️', fortune: '', advice: '' },
-  { hour: '申时 (15-17点)', icon: '🌇', fortune: '', advice: '' },
-  { hour: '酉时 (17-19点)', icon: '🌆', fortune: '', advice: '' },
-  { hour: '戌时 (19-21点)', icon: '🌃', fortune: '', advice: '' },
-  { hour: '亥时 (21-23点)', icon: '🌌', fortune: '', advice: '' },
-])
-
-// 根据八字生成时辰运势
-function generateHourlyFortunes() {
-  const now = new Date()
-  const currentHour = now.getHours()
-  const shichenIndex = Math.floor(currentHour / 2)
-
-  const fortunes = [
-    '适合休息养神，不宜熬夜',
-    '深度睡眠时段，养精蓄锐',
-    '黎明时分，适合冥想或晨练',
-    '精力充沛，适合学习或工作',
-    '贵人运旺，适合社交活动',
-    '思维活跃，适合创意工作',
-    '注意休息，避免过度劳累',
-    '财运渐起，适合处理财务',
-    '桃花运旺，适合约会聚会',
-    '适合家庭时光，增进感情',
-    '适合独处思考，规划未来',
-    '准备休息，保持心态平和',
-  ]
-
-  const advices = [
-    '早睡早起，养精蓄锐',
-    '保持安静，深度睡眠',
-    '可以冥想或做瑜伽',
-    '抓住黄金时间，高效工作',
-    '主动社交，拓展人脉',
-    '发挥创意，解决难题',
-    '适当休息，补充能量',
-    '理性消费，规划财务',
-    '表达感情，增进关系',
-    '陪伴家人，享受温馨',
-    '反思总结，调整方向',
-    '放松身心，准备入睡',
-  ]
-
-  hourlyFortunes.value.forEach((item, index) => {
-    item.fortune = fortunes[index]
-    item.advice = advices[index]
-  })
+// 时辰运势数据（从 API 获取）
+interface HourlyFortune {
+  shichen: string
+  shichen_range: string
+  hourly_stem: string
+  hourly_branch: string
+  score: number
+  ten_god: string
+  element: string
+  atmosphere: string
+  energy: string
+  events: string[]
+  favorable: string[]
+  unfavorable: string[]
 }
+
+const hourlyFortunes = ref<HourlyFortune[]>([])
+
+// 时辰图标映射
+const shichenIcons: Record<string, string> = {
+  '子': '🌙', '丑': '🌑', '寅': '🌅', '卯': '🌄',
+  '辰': '☀️', '巳': '🌞', '午': '⛅', '未': '🌤️',
+  '申': '🌇', '酉': '🌆', '戌': '🌃', '亥': '🌌',
+}
+
+// 获取时辰图标
+function getShichenIcon(shichen: string): string {
+  return shichenIcons[shichen] || '⏰'
+}
+
+// 获取评分颜色
+function getHourlyScoreColor(score: number): string {
+  if (score >= 5) return '#22c55e'
+  if (score >= 4) return '#84cc16'
+  if (score >= 3) return '#eab308'
+  if (score >= 2) return '#f97316'
+  return '#ef4444'
+}
+
 
 function reloadPage() {
   window.location.reload()
@@ -140,14 +122,17 @@ async function handleRegenerate() {
 }
 
 onMounted(async () => {
-  generateHourlyFortunes()
   try {
     const [todayRes, listRes] = await Promise.all([
       getTodayFortune(),
       getFortuneList(),
     ])
-    if (todayRes.success) {
+    if (todayRes.success && todayRes.data) {
       todayFortune.value = todayRes.data
+      // 使用 API 返回的时辰运势数据
+      if (todayRes.data.hourly_fortunes) {
+        hourlyFortunes.value = todayRes.data.hourly_fortunes
+      }
     }
     if (listRes.success) {
       historyList.value = listRes.data
@@ -382,8 +367,9 @@ async function handleAccuracyMark(fortuneId: number, mark: number) {
     </el-empty>
 
     <!-- 时辰运势 -->
-    <div class="hourly-section animate-fade-in" v-if="todayFortune">
-      <h2 class="section-title">时辰运势</h2>
+    <div class="hourly-section animate-fade-in" v-if="todayFortune && hourlyFortunes.length > 0">
+      <h2 class="section-title">⏰ 时辰运势</h2>
+      <p class="section-desc">每个时辰运势不同，把握吉利时段，规避不利时辰</p>
       <div class="hourly-grid">
         <div
           v-for="(item, index) in hourlyFortunes"
@@ -391,11 +377,38 @@ async function handleAccuracyMark(fortuneId: number, mark: number) {
           class="hourly-item"
           :class="{ 'current-hour': Math.floor(new Date().getHours() / 2) === index }"
         >
-          <div class="hourly-icon">{{ item.icon }}</div>
-          <div class="hourly-content">
-            <div class="hourly-time">{{ item.hour }}</div>
-            <div class="hourly-fortune">{{ item.fortune }}</div>
-            <div class="hourly-advice">{{ item.advice }}</div>
+          <div class="hourly-header">
+            <div class="hourly-icon">{{ getShichenIcon(item.shichen) }}</div>
+            <div class="hourly-time-info">
+              <div class="hourly-shichen">{{ item.shichen }}时</div>
+              <div class="hourly-range">{{ item.shichen_range }}</div>
+            </div>
+            <div class="hourly-score-badge" :style="{ background: getHourlyScoreColor(item.score) }">
+              {{ item.score }}分
+            </div>
+          </div>
+          <div class="hourly-body">
+            <div class="hourly-meta">
+              <el-tag size="small" type="info">{{ item.ten_god }}</el-tag>
+              <el-tag size="small">{{ item.element }}</el-tag>
+              <span class="hourly-atmosphere">{{ item.atmosphere }}</span>
+            </div>
+            <div class="hourly-events">
+              <div class="events-title">可能发生：</div>
+              <div class="events-list">{{ item.events.join('、') }}</div>
+            </div>
+            <div class="hourly-actions">
+              <div class="action-item favorable">
+                <span class="action-icon">✅</span>
+                <span class="action-label">宜：</span>
+                <span class="action-text">{{ item.favorable.join('、') }}</span>
+              </div>
+              <div class="action-item unfavorable">
+                <span class="action-icon">❌</span>
+                <span class="action-label">忌：</span>
+                <span class="action-text">{{ item.unfavorable.join('、') }}</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -928,11 +941,25 @@ async function handleAccuracyMark(fortuneId: number, mark: number) {
   .hourly-grid {
     grid-template-columns: 1fr;
   }
+
+  .hourly-item {
+    padding: 12px;
+  }
+
+  .hourly-header {
+    flex-wrap: wrap;
+  }
 }
 
 /* 时辰运势 */
 .hourly-section {
   margin-top: 48px;
+}
+
+.section-desc {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin-bottom: 24px;
 }
 
 .hourly-grid {
@@ -942,8 +969,6 @@ async function handleAccuracyMark(fortuneId: number, mark: number) {
 }
 
 .hourly-item {
-  display: flex;
-  gap: 12px;
   padding: 16px;
   background: var(--color-bg-light);
   border-radius: 12px;
@@ -951,10 +976,24 @@ async function handleAccuracyMark(fortuneId: number, mark: number) {
   transition: all 0.3s ease;
 }
 
+.hourly-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
 .hourly-item.current-hour {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(245, 158, 11, 0.2) 100%);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(245, 158, 11, 0.15) 100%);
   border-color: var(--color-primary);
   box-shadow: var(--shadow-glow);
+}
+
+.hourly-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .hourly-icon {
@@ -962,25 +1001,94 @@ async function handleAccuracyMark(fortuneId: number, mark: number) {
   flex-shrink: 0;
 }
 
-.hourly-content {
+.hourly-time-info {
   flex: 1;
 }
 
-.hourly-time {
-  font-size: 14px;
+.hourly-shichen {
+  font-size: 16px;
   font-weight: 600;
   color: var(--color-text);
-  margin-bottom: 4px;
 }
 
-.hourly-fortune {
-  font-size: 13px;
-  color: var(--color-text-secondary);
-  margin-bottom: 4px;
-}
-
-.hourly-advice {
+.hourly-range {
   font-size: 12px;
-  color: var(--color-accent);
+  color: var(--color-text-muted);
+}
+
+.hourly-score-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+}
+
+.hourly-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.hourly-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.hourly-atmosphere {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.hourly-events {
+  font-size: 13px;
+  color: var(--color-text);
+}
+
+.events-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--color-text-secondary);
+}
+
+.events-list {
+  line-height: 1.5;
+}
+
+.hourly-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.action-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.action-icon {
+  flex-shrink: 0;
+}
+
+.action-label {
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.action-text {
+  color: var(--color-text-secondary);
+}
+
+.favorable .action-label {
+  color: #22c55e;
+}
+
+.unfavorable .action-label {
+  color: #ef4444;
 }
 </style>

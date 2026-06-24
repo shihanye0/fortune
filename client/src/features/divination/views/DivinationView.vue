@@ -7,8 +7,10 @@ import {
   getDivinationRecords,
   getDivinationDetail,
   submitDivinationFeedback,
+  getProbabilityEvents,
+  submitEventFeedback,
 } from '../api/divination-api'
-import type { DivinationResult, DivinationRecord } from '../api/divination-api'
+import type { DivinationResult, DivinationRecord, ProbabilityEvent, EventFeedbackRequest } from '../api/divination-api'
 import { submitDivinationAccuracy, submitPredictionOutcome } from '@/features/feedback/api/feedback-api'
 
 const loading = ref(false)
@@ -20,6 +22,23 @@ const historyList = ref<DivinationRecord[]>([])
 const showFeedback = ref(false)
 const feedbackRating = ref(5)
 const feedbackText = ref('')
+
+// 概率事件数据（从 API 获取）
+const probabilityEvents = ref<ProbabilityEvent[]>([])
+const loadingEvents = ref(false)
+
+// 事件反馈弹窗
+const showEventFeedbackDialog = ref(false)
+const feedbackEvent = ref<ProbabilityEvent | null>(null)
+const eventFeedbackForm = reactive<EventFeedbackRequest>({
+  dimension: '',
+  event_name: '',
+  probability: 0,
+  occurred: undefined,
+  rating: undefined,
+  feedback_text: '',
+})
+const submittingEventFeedback = ref(false)
 
 // 查看详情
 const showDetailDialog = ref(false)
@@ -45,52 +64,56 @@ async function viewDetail(record: DivinationRecord) {
   }
 }
 
-// 每日概率事件（更精细）
-const dailyEvents = ref([
-  {
-    icon: '💼',
-    event: '工作机遇',
-    probability: 0,
-    description: '可能收到面试邀请、项目合作或升职加薪的机会',
-    timeRange: '上午 9-11 点',
-    advice: '保持专注，主动沟通',
-  },
-  {
-    icon: '💰',
-    event: '偏财运',
-    probability: 0,
-    description: '可能有意外收入、中奖或投资回报',
-    timeRange: '下午 2-4 点',
-    advice: '理性消费，避免冲动',
-  },
-  {
-    icon: '💕',
-    event: '桃花运',
-    probability: 0,
-    description: '可能遇到心仪对象或收到表白',
-    timeRange: '晚上 7-9 点',
-    advice: '主动出击，把握机会',
-  },
-  {
-    icon: '🤝',
-    event: '贵人相助',
-    probability: 0,
-    description: '可能得到长辈、朋友或同事的帮助',
-    timeRange: '全天',
-    advice: '虚心请教，感恩回报',
-  },
-])
+// 获取概率事件
+async function fetchProbabilityEvents() {
+  loadingEvents.value = true
+  try {
+    const res = await getProbabilityEvents()
+    if (res.success && res.data) {
+      probabilityEvents.value = res.data.events
+    }
+  } catch {
+    // silent
+  } finally {
+    loadingEvents.value = false
+  }
+}
 
-// 生成随机概率（基于今日日期）
-function generateProbabilities() {
-  const today = new Date()
-  const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate()
+// 打开事件反馈弹窗
+function openEventFeedback(event: ProbabilityEvent) {
+  feedbackEvent.value = event
+  eventFeedbackForm.dimension = event.dimension
+  eventFeedbackForm.event_name = event.event
+  eventFeedbackForm.probability = event.probability
+  eventFeedbackForm.occurred = event.feedback?.occurred ?? undefined
+  eventFeedbackForm.rating = event.feedback?.rating ?? undefined
+  eventFeedbackForm.feedback_text = event.feedback?.feedback_text ?? ''
+  showEventFeedbackDialog.value = true
+}
 
-  dailyEvents.value.forEach((event, index) => {
-    // 使用简单的伪随机算法，确保同一天概率相同
-    const random = Math.sin(seed * (index + 1) * 9301 + 49297) % 233280
-    event.probability = Math.floor((Math.abs(random) / 233280) * 40 + 30) // 30-70%
-  })
+// 提交事件反馈
+async function handleSubmitEventFeedback() {
+  if (!feedbackEvent.value) return
+  submittingEventFeedback.value = true
+  try {
+    const res = await submitEventFeedback(eventFeedbackForm)
+    if (res.success) {
+      ElMessage.success('反馈提交成功')
+      showEventFeedbackDialog.value = false
+      // 更新本地数据
+      if (feedbackEvent.value) {
+        feedbackEvent.value.feedback = {
+          occurred: eventFeedbackForm.occurred ?? null,
+          rating: eventFeedbackForm.rating ?? null,
+          feedback_text: eventFeedbackForm.feedback_text ?? null,
+        }
+      }
+    }
+  } catch {
+    ElMessage.error('提交失败，请重试')
+  } finally {
+    submittingEventFeedback.value = false
+  }
 }
 
 function getProbabilityColor(prob: number): string {
@@ -106,7 +129,7 @@ function getProbabilityText(prob: number): string {
 }
 
 onMounted(async () => {
-  generateProbabilities()
+  fetchProbabilityEvents()
   try {
     const res = await getDivinationRecords()
     if (res.success) {
@@ -240,23 +263,33 @@ async function handleSubmitVerify() {
     </div>
 
     <!-- 每日概率事件 -->
-    <el-card class="daily-events-card animate-fade-in">
+    <el-card class="daily-events-card animate-fade-in" v-loading="loadingEvents">
       <template #header>
         <div class="card-header">
           <span class="card-icon">📊</span>
           <span class="card-title">今日概率事件</span>
           <el-tag type="info" effect="plain" size="small">{{ new Date().toLocaleDateString('zh-CN') }}</el-tag>
+          <el-tag v-if="probabilityEvents.length > 0" type="success" effect="plain" size="small">
+            基于您的八字推算
+          </el-tag>
         </div>
       </template>
-      <div class="events-grid">
-        <div v-for="(item, index) in dailyEvents" :key="index" class="event-item">
+      <div class="events-grid" v-if="probabilityEvents.length > 0">
+        <div v-for="(item, index) in probabilityEvents" :key="index" class="event-item">
           <div class="event-icon">{{ item.icon }}</div>
           <div class="event-content">
             <div class="event-header">
               <span class="event-name">{{ item.event }}</span>
-              <el-tag size="small" type="info">{{ item.timeRange }}</el-tag>
+              <el-tag size="small" :type="item.is_favorable ? 'success' : 'info'">
+                {{ item.time_range }}
+              </el-tag>
             </div>
             <div class="event-desc">{{ item.description }}</div>
+            <div class="event-meta">
+              <el-tag v-if="item.ten_god" size="small" type="warning">{{ item.ten_god }}</el-tag>
+              <el-tag v-if="item.element" size="small">{{ item.element }}</el-tag>
+              <el-tag v-if="item.is_favorable" size="small" type="success">喜用神</el-tag>
+            </div>
             <div class="event-probability">
               <el-progress
                 :percentage="item.probability"
@@ -268,11 +301,47 @@ async function handleSubmitVerify() {
                 {{ item.probability }}% {{ getProbabilityText(item.probability) }}
               </span>
             </div>
-            <div class="event-advice">
-              <span class="advice-label">建议：</span>{{ item.advice }}
+            <div class="event-feedback">
+              <el-button
+                v-if="!item.feedback"
+                size="small"
+                type="primary"
+                plain
+                @click.stop="openEventFeedback(item)"
+              >
+                反馈
+              </el-button>
+              <el-tag
+                v-else-if="item.feedback.occurred === true"
+                type="success"
+                size="small"
+                effect="plain"
+              >
+                ✓ 已发生
+              </el-tag>
+              <el-tag
+                v-else-if="item.feedback.occurred === false"
+                type="info"
+                size="small"
+                effect="plain"
+              >
+                ✗ 未发生
+              </el-tag>
+              <el-button
+                v-if="item.feedback"
+                size="small"
+                type="primary"
+                plain
+                @click.stop="openEventFeedback(item)"
+              >
+                修改
+              </el-button>
             </div>
           </div>
         </div>
+      </div>
+      <div v-else-if="!loadingEvents" class="empty-events">
+        暂无概率事件数据
       </div>
     </el-card>
 
@@ -471,6 +540,49 @@ async function handleSubmitVerify() {
       </div>
     </el-dialog>
 
+    <!-- 概率事件反馈弹窗 -->
+    <el-dialog
+      v-model="showEventFeedbackDialog"
+      title="概率事件反馈"
+      width="480px"
+      class="event-feedback-dialog"
+    >
+      <div v-if="feedbackEvent" class="event-feedback-content">
+        <div class="feedback-event-info">
+          <div class="feedback-event-icon">{{ feedbackEvent.icon }}</div>
+          <div class="feedback-event-name">{{ feedbackEvent.event }}</div>
+          <div class="feedback-event-desc">{{ feedbackEvent.description }}</div>
+          <div class="feedback-event-prob">预测概率：{{ feedbackEvent.probability }}%</div>
+        </div>
+        <el-divider />
+        <el-form label-position="top">
+          <el-form-item label="事件是否发生">
+            <el-radio-group v-model="eventFeedbackForm.occurred">
+              <el-radio :value="true">确实发生</el-radio>
+              <el-radio :value="false">未发生</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="预测准确度评分">
+            <el-rate v-model="eventFeedbackForm.rating" :max="5" />
+          </el-form-item>
+          <el-form-item label="补充说明（选填）">
+            <el-input
+              v-model="eventFeedbackForm.feedback_text"
+              type="textarea"
+              :rows="3"
+              placeholder="可以描述具体发生了什么..."
+            />
+          </el-form-item>
+        </el-form>
+      </div>
+      <template #footer>
+        <el-button @click="showEventFeedbackDialog = false">取消</el-button>
+        <el-button type="primary" :loading="submittingEventFeedback" @click="handleSubmitEventFeedback">
+          提交反馈
+        </el-button>
+      </template>
+    </el-dialog>
+
     <!-- 事件验证弹窗 -->
     <el-dialog
       v-model="showVerifyDialog"
@@ -618,17 +730,60 @@ async function handleSubmitVerify() {
   white-space: nowrap;
 }
 
-.event-advice {
-  font-size: 12px;
-  color: var(--color-accent);
-  padding: 8px 12px;
-  background: rgba(245, 158, 11, 0.1);
-  border-radius: 8px;
-  border-left: 3px solid var(--color-accent);
+.event-meta {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
 }
 
-.advice-label {
+.event-feedback {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.empty-events {
+  text-align: center;
+  padding: 40px;
+  color: var(--color-text-secondary);
+}
+
+/* 事件反馈弹窗 */
+.event-feedback-content {
+  padding: 8px 0;
+}
+
+.feedback-event-info {
+  text-align: center;
+  padding: 16px;
+  background: var(--color-bg-light);
+  border-radius: 12px;
+}
+
+.feedback-event-icon {
+  font-size: 48px;
+  margin-bottom: 8px;
+}
+
+.feedback-event-name {
+  font-size: 18px;
   font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 8px;
+}
+
+.feedback-event-desc {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin-bottom: 8px;
+}
+
+.feedback-event-prob {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-accent);
 }
 
 /* 占卜方式选择 */

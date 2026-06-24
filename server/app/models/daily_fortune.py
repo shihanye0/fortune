@@ -41,6 +41,9 @@ class DailyFortune(TimestampMixin, Base):
     user_feedback_tags: Mapped[list | None] = mapped_column(JSON, nullable=True)
     user_feedback_text: Mapped[str | None] = mapped_column(TEXT, nullable=True)
 
+    # 时辰运势（JSON 数组，包含 12 个时辰的运势）
+    hourly_fortunes: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+
     # 准确性标记：1=准, 0=不准, null=未标记
     accuracy_mark: Mapped[int | None] = mapped_column(
         SMALLINT, nullable=True, default=None,

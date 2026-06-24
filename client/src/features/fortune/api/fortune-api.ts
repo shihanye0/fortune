@@ -1,9 +1,24 @@
 import client from '@/shared/api/client'
-import type { ApiResponse, PaginationMeta } from '@/shared/types/api'
+import type { ApiResponse } from '@/shared/types/api'
 
 export interface FortuneDimension {
   score: number
   description: string
+}
+
+export interface HourlyFortune {
+  shichen: string
+  shichen_range: string
+  hourly_stem: string
+  hourly_branch: string
+  score: number
+  ten_god: string
+  element: string
+  atmosphere: string
+  energy: string
+  events: string[]
+  favorable: string[]
+  unfavorable: string[]
 }
 
 export interface FortuneDetail {
@@ -17,6 +32,7 @@ export interface FortuneDetail {
   lucky_color: string
   lucky_number: string
   lucky_direction: string
+  hourly_fortunes: HourlyFortune[] | null
   interpretation: string
   user_rating: number | null
   user_feedback_tags: string[]
@@ -43,7 +59,7 @@ export async function getTodayFortune(): Promise<ApiResponse<FortuneDetail | nul
 }
 
 export async function regenerateTodayFortune(): Promise<ApiResponse<FortuneDetail>> {
-  const res = await client.post('/api/v1/fortunes/today/regenerate')
+  const res = await client.post('/api/v1/fortunes/today/regenerate', null, { timeout: 60000 })
   return res.data
 }
 

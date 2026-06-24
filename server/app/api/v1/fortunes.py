@@ -235,6 +235,10 @@ def _generate_fortune_on_demand(user: User, today: date, db: Session) -> DailyFo
         from fortune_engine.bazi.daily_fortune import calculate_daily_fortune
         daily = calculate_daily_fortune(bazi_result, today.year, today.month, today.day)
 
+        # 2.5 计算时辰运势
+        from fortune_engine.bazi.hourly_fortune import calculate_all_hours_fortune
+        hourly_fortunes = calculate_all_hours_fortune(bazi_result, today.year, today.month, today.day)
+
         # 3. LLM 解读（降级处理）
         from fortune_engine.services.deepseek import interpret_daily, FALLBACK_DAILY
         from app.services.feedback_summary import generate_feedback_summary
@@ -248,7 +252,12 @@ def _generate_fortune_on_demand(user: User, today: date, db: Session) -> DailyFo
         feedback_summary = generate_feedback_summary(db, user.id)
 
         try:
-            interpretation = interpret_daily(bazi_summary, daily, feedback_summary)
+            interpretation = interpret_daily(
+                bazi_summary, daily, feedback_summary,
+                llm_api_key=user.llm_api_key,
+                llm_api_url=user.llm_api_url,
+                llm_model=user.llm_model,
+            )
         except Exception as e:
             logger.error("LLM 解读失败 user=%d: %s", user.id, e)
             interpretation = FALLBACK_DAILY
@@ -267,6 +276,7 @@ def _generate_fortune_on_demand(user: User, today: date, db: Session) -> DailyFo
             lucky_color=daily.get("lucky_color"),
             lucky_number=daily.get("lucky_number"),
             lucky_direction=daily.get("lucky_direction"),
+            hourly_fortunes=hourly_fortunes,
             llm_interpretation=interpretation,
         )
         db.add(fortune)
@@ -316,6 +326,7 @@ def _fortune_to_detail_dict(f: DailyFortune) -> dict:
         "lucky_color": f.lucky_color,
         "lucky_number": f.lucky_number,
         "lucky_direction": f.lucky_direction,
+        "hourly_fortunes": f.hourly_fortunes,
         "interpretation": f.llm_interpretation,
         "user_rating": f.user_rating,
         "user_feedback_tags": f.user_feedback_tags,

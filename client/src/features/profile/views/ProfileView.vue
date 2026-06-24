@@ -9,6 +9,7 @@ import {
   updateBirth,
   updatePushSettings,
   updateLLMSettings,
+  testLLMConnection,
   deleteAccount,
 } from '../api/profile-api'
 import type { UserProfile } from '../api/profile-api'
@@ -43,10 +44,16 @@ const pushForm = reactive({
 
 const llmForm = reactive({
   llm_provider: '',
+  llm_notes: '',
+  llm_website: '',
   llm_api_key: '',
+  llm_api_key_url: '',
   llm_api_url: '',
   llm_model: '',
 })
+
+const testingLLM = ref(false)
+const llmTestResult = ref<{ status: string; message: string } | null>(null)
 
 // 农历转换
 import { Solar } from 'lunar-javascript'
@@ -132,10 +139,14 @@ onMounted(async () => {
       pushForm.push_channel = res.data.push_channel || 'email'
       pushForm.push_time = res.data.push_time || '07:00'
       pushForm.feishu_webhook = res.data.feishu_webhook || ''
-      llmForm.llm_provider = res.data.llm_provider || ''
-      llmForm.llm_api_key = res.data.llm_api_key || ''
-      llmForm.llm_api_url = res.data.llm_api_url || ''
-      llmForm.llm_model = res.data.llm_model || ''
+      llmForm.llm_provider = res.data.llm_provider || 'Xiaomi MiMo'
+      llmForm.llm_notes = res.data.llm_notes || ''
+      llmForm.llm_website = res.data.llm_website || 'https://platform.xiaomimimo.com'
+      // 脱敏的 API Key 不填回表单，避免覆盖真实 key
+      llmForm.llm_api_key = (res.data.llm_api_key && !res.data.llm_api_key.includes('***')) ? res.data.llm_api_key : ''
+      llmForm.llm_api_key_url = res.data.llm_api_key_url || 'https://platform.xiaomimimo.com'
+      llmForm.llm_api_url = res.data.llm_api_url || 'https://token-plan-cn.xiaomimimo.com/v1'
+      llmForm.llm_model = res.data.llm_model || 'mimo-v2.5'
     }
   } catch {
     ElMessage.error('加载个人信息失败')
@@ -204,6 +215,30 @@ async function handleUpdateLLMSettings() {
     }
   } catch {
     ElMessage.error('更新失败')
+  }
+}
+
+async function handleTestLLM() {
+  testingLLM.value = true
+  llmTestResult.value = null
+  try {
+    const res = await testLLMConnection({
+      llm_api_key: llmForm.llm_api_key || undefined,
+      llm_api_url: llmForm.llm_api_url || undefined,
+      llm_model: llmForm.llm_model || undefined,
+    })
+    if (res.success) {
+      llmTestResult.value = { status: 'success', message: res.data.message }
+      ElMessage.success('连接测试成功')
+    } else {
+      llmTestResult.value = { status: 'error', message: res.error?.message || '连接失败' }
+      ElMessage.error('连接测试失败')
+    }
+  } catch {
+    llmTestResult.value = { status: 'error', message: '请求异常，请检查网络' }
+    ElMessage.error('连接测试失败')
+  } finally {
+    testingLLM.value = false
   }
 }
 
@@ -389,28 +424,91 @@ async function handleDeleteAccount() {
       </el-card>
 
       <!-- LLM 配置 -->
-      <el-card class="section-card animate-fade-in">
+      <el-card class="section-card animate-fade-in llm-card">
         <template #header>
-          <div class="card-title">
-            <span class="card-icon">🤖</span>
-            <span>LLM 配置</span>
+          <div class="card-header">
+            <div class="card-title">
+              <span class="card-icon">🤖</span>
+              <span>LLM 配置</span>
+            </div>
+            <el-tag v-if="llmForm.llm_provider" type="success" effect="plain" size="small">
+              {{ llmForm.llm_provider }}
+            </el-tag>
           </div>
         </template>
         <el-form label-width="100px" class="llm-form">
-          <el-form-item label="供应商名称">
-            <el-input v-model="llmForm.llm_provider" placeholder="例如：DeepSeek、Xiaomi MiMo" />
+          <!-- 供应商名称 + 备注 -->
+          <div class="llm-row">
+            <el-form-item label="供应商名称" class="llm-row-main">
+              <el-input v-model="llmForm.llm_provider" placeholder="例如：Xiaomi MiMo、DeepSeek" />
+            </el-form-item>
+            <el-form-item label="备注" class="llm-row-sub">
+              <el-input v-model="llmForm.llm_notes" placeholder="例如：公司专用账号" />
+            </el-form-item>
+          </div>
+
+          <!-- 官网链接 -->
+          <el-form-item label="官网链接">
+            <el-input v-model="llmForm.llm_website" placeholder="https://platform.xiaomimimo.com">
+              <template #prefix>
+                <span>🔗</span>
+              </template>
+              <template #append>
+                <el-button @click="llmForm.llm_website && window.open(llmForm.llm_website, '_blank')">
+                  访问
+                </el-button>
+              </template>
+            </el-input>
           </el-form-item>
+
+          <!-- API Key + 获取链接 -->
           <el-form-item label="API Key">
-            <el-input v-model="llmForm.llm_api_key" type="password" placeholder="输入 API Key" show-password />
+            <el-input v-model="llmForm.llm_api_key" type="password" placeholder="留空则使用服务器默认配置" show-password>
+              <template #prefix>
+                <span>🔑</span>
+              </template>
+            </el-input>
+            <div class="llm-hint" v-if="llmForm.llm_api_key_url">
+              <el-link type="primary" :href="llmForm.llm_api_key_url" target="_blank" :underline="false">
+                获取 API Key →
+              </el-link>
+            </div>
           </el-form-item>
-          <el-form-item label="API URL">
-            <el-input v-model="llmForm.llm_api_url" placeholder="例如：https://api.deepseek.com/v1" />
+
+          <!-- 请求地址 -->
+          <el-form-item label="请求地址">
+            <el-input v-model="llmForm.llm_api_url" placeholder="https://token-plan-cn.xiaomimimo.com/v1">
+              <template #prefix>
+                <span>🌐</span>
+              </template>
+            </el-input>
+            <div class="llm-hint">完整 URL：{{ llmForm.llm_api_url || '...' }}/chat/completions</div>
           </el-form-item>
+
+          <!-- 模型名称 -->
           <el-form-item label="模型名称">
-            <el-input v-model="llmForm.llm_model" placeholder="例如：deepseek-chat" />
+            <el-input v-model="llmForm.llm_model" placeholder="mimo-v2.5">
+              <template #prefix>
+                <span>🧠</span>
+              </template>
+            </el-input>
           </el-form-item>
+
+          <!-- 测试结果 -->
+          <div v-if="llmTestResult" class="llm-test-result" :class="llmTestResult.status">
+            <span v-if="llmTestResult.status === 'success'">✅</span>
+            <span v-else>❌</span>
+            {{ llmTestResult.message }}
+          </div>
+
+          <!-- 操作按钮 -->
           <el-form-item>
-            <el-button type="primary" @click="handleUpdateLLMSettings">保存 LLM 配置</el-button>
+            <div class="llm-actions">
+              <el-button type="primary" @click="handleUpdateLLMSettings">保存配置</el-button>
+              <el-button @click="handleTestLLM" :loading="testingLLM">
+                🔌 测试连接
+              </el-button>
+            </div>
           </el-form-item>
         </el-form>
       </el-card>
@@ -652,6 +750,54 @@ async function handleDeleteAccount() {
   max-width: 500px;
 }
 
+/* LLM 配置 */
+.llm-form {
+  max-width: 600px;
+}
+
+.llm-row {
+  display: flex;
+  gap: 16px;
+}
+
+.llm-row-main {
+  flex: 1;
+}
+
+.llm-row-sub {
+  flex: 1;
+}
+
+.llm-hint {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin-top: 4px;
+}
+
+.llm-test-result {
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.llm-test-result.success {
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  color: #22c55e;
+}
+
+.llm-test-result.error {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+}
+
+.llm-actions {
+  display: flex;
+  gap: 12px;
+}
+
 /* 危险操作 */
 .danger-card {
   border-color: rgba(239, 68, 68, 0.3) !important;
@@ -823,6 +969,11 @@ async function handleDeleteAccount() {
 
   .accuracy-cards {
     grid-template-columns: 1fr;
+  }
+
+  .llm-row {
+    flex-direction: column;
+    gap: 0;
   }
 }
 </style>

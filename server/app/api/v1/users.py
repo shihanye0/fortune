@@ -83,9 +83,20 @@ class PushSettingsRequest(BaseModel):
 class LLMSettingsRequest(BaseModel):
     """LLM配置请求"""
     llm_provider: str | None = None
+    llm_notes: str | None = None
+    llm_website: str | None = None
     llm_api_key: str | None = None
+    llm_api_key_url: str | None = None
     llm_api_url: str | None = None
     llm_model: str | None = None
+
+    @field_validator("llm_api_key")
+    @classmethod
+    def validate_api_key(cls, v: str | None) -> str | None:
+        """跳过脱敏值，避免覆盖真实 key"""
+        if v and "***" in v:
+            return None  # 返回 None 表示不更新
+        return v
 
 
 class DeleteAccountRequest(BaseModel):
@@ -114,7 +125,10 @@ def _user_to_dict(user: User) -> dict:
         "push_time": user.push_time,
         "feishu_webhook": user.feishu_webhook,
         "llm_provider": user.llm_provider,
+        "llm_notes": user.llm_notes,
+        "llm_website": user.llm_website,
         "llm_api_key": user.llm_api_key[:8] + "***" if user.llm_api_key else None,
+        "llm_api_key_url": user.llm_api_key_url,
         "llm_api_url": user.llm_api_url,
         "llm_model": user.llm_model,
         "created_at": user.created_at.isoformat() if user.created_at else None,
@@ -185,12 +199,87 @@ def update_llm_settings(
 ):
     """更新LLM配置"""
     current_user.llm_provider = req.llm_provider
-    current_user.llm_api_key = req.llm_api_key
+    current_user.llm_notes = req.llm_notes
+    current_user.llm_website = req.llm_website
+    # API Key 只在有新值时更新（跳过脱敏值和空值）
+    if req.llm_api_key and "***" not in req.llm_api_key:
+        current_user.llm_api_key = req.llm_api_key
+    current_user.llm_api_key_url = req.llm_api_key_url
     current_user.llm_api_url = req.llm_api_url
     current_user.llm_model = req.llm_model
     db.commit()
     db.refresh(current_user)
     return {"success": True, "data": _user_to_dict(current_user)}
+
+
+class LLMTestRequest(BaseModel):
+    """LLM测试连接请求（可传入表单当前值）"""
+    llm_api_key: str | None = None
+    llm_api_url: str | None = None
+    llm_model: str | None = None
+
+
+@router.post("/me/llm-test")
+def test_llm_connection(
+    req: LLMTestRequest | None = None,
+    current_user: User = Depends(get_current_user),
+):
+    """测试 LLM 连接（优先用请求参数，回退到数据库，再回退到 .env）"""
+    import httpx
+    from app.config import settings
+
+    api_key = (req.llm_api_key if req and req.llm_api_key else None) or current_user.llm_api_key or settings.DEEPSEEK_API_KEY
+    base_url = (req.llm_api_url if req and req.llm_api_url else None) or current_user.llm_api_url or settings.DEEPSEEK_BASE_URL
+    model = (req.llm_model if req and req.llm_model else None) or current_user.llm_model or "mimo-v2.5"
+
+    # 清理模型名称（去掉 [1M] 等标注）
+    if "[" in model:
+        model = model.split("[")[0].strip()
+
+    url = f"{base_url}/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+    }
+    payload = {
+        "model": model,
+        "messages": [{"role": "user", "content": "你好，请回复OK"}],
+        "temperature": 0.7,
+        "max_tokens": 50,
+    }
+
+    try:
+        response = httpx.post(url, json=payload, headers=headers, timeout=15)
+        if response.status_code == 200:
+            data = response.json()
+            reply = data.get("choices", [{}])[0].get("message", {}).get("content", "")
+            return {
+                "success": True,
+                "data": {
+                    "status": "connected",
+                    "message": f"连接成功！模型回复：{reply[:50]}",
+                    "model": model,
+                    "provider": current_user.llm_provider or "未知",
+                },
+            }
+        else:
+            return {
+                "success": False,
+                "error": {
+                    "code": "LLM_CONNECTION_FAILED",
+                    "message": f"连接失败，HTTP {response.status_code}：{response.text[:200]}",
+                },
+            }
+    except httpx.TimeoutException:
+        return {
+            "success": False,
+            "error": {"code": "LLM_TIMEOUT", "message": "连接超时，请检查 API URL 是否正确"},
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": {"code": "LLM_ERROR", "message": f"连接异常：{str(e)[:200]}"},
+        }
 
 
 @router.delete("/me")

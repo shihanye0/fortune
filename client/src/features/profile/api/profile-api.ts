@@ -17,7 +17,10 @@ export interface UserProfile {
   push_time: string | null
   feishu_webhook: string | null
   llm_provider: string | null
+  llm_notes: string | null
+  llm_website: string | null
   llm_api_key: string | null
+  llm_api_key_url: string | null
   llm_api_url: string | null
   llm_model: string | null
   created_at: string
@@ -55,11 +58,23 @@ export async function updatePushSettings(data: {
 
 export async function updateLLMSettings(data: {
   llm_provider?: string
+  llm_notes?: string
+  llm_website?: string
   llm_api_key?: string
+  llm_api_key_url?: string
   llm_api_url?: string
   llm_model?: string
 }): Promise<ApiResponse<UserProfile>> {
   const res = await client.put('/api/v1/users/me/llm-settings', data)
+  return res.data
+}
+
+export async function testLLMConnection(data?: {
+  llm_api_key?: string
+  llm_api_url?: string
+  llm_model?: string
+}): Promise<ApiResponse<{ status: string; message: string; model: string; provider: string }>> {
+  const res = await client.post('/api/v1/users/me/llm-test', data || {})
   return res.data
 }
 
