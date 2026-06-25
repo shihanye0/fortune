@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """概率事件推算引擎：基于八字+运势推算今日可能发生的具体事件"""
 from datetime import date
-from fortune_engine.common.wuxing import Wuxing, sheng, ke
+from fortune_engine.common.wuxing import Wuxing, sheng, ke, SHENG_MAP
 
 
 # 事件模板库（按五行+十神分类）- 扩展版
@@ -172,29 +172,139 @@ EVENT_ICONS = {
 }
 
 
-def _calculate_probability(score: int, is_favorable: bool, ten_god: str) -> int:
-    """计算事件发生概率 (30-85%)"""
-    base = 30
+def _judge_day_master_strength(bazi: dict) -> str:
+    """判断日主强弱
 
-    # 基于评分
-    if score >= 5:
+    基于八字中五行数量分布，日主同五行+生我五行 > 我生+克我+我克 → 强。
+
+    Returns:
+        "strong" / "weak" / "balanced"
+    """
+    from fortune_engine.common.tiangan import Tiangan
+
+    dm = Tiangan.from_name(bazi["day_master"])
+    dm_wx = dm.wuxing
+    five = bazi.get("five_elements") or {}
+    if not five:
+        return "balanced"
+
+    # sheng(x) 返回 x 所生的五行（食伤方向）
+    # 需要反向查表才能得到"谁生 x"（印方向）
+    _BEI_SHENG = {v: k for k, v in SHENG_MAP.items()}  # 反向：被生 → 生者
+
+    # 同类：比肩（同五行）+ 印（生我者）
+    same_val = five.get(dm_wx.value, 0)
+    yin_wx = _BEI_SHENG.get(dm_wx)  # 印的五行（谁生 dm_wx）
+    yin_val = five.get(yin_wx.value, 0) if yin_wx else 0
+    supportive = same_val + yin_val
+
+    # 异类：食伤（我生）+ 财（我生之生）+ 官杀（克我者）
+    food_god_wx = sheng(dm_wx)  # 我生 = 食伤
+    wealth_wx = sheng(food_god_wx)  # 食伤生 = 财
+    officer_wx = sheng(wealth_wx)  # 财生 = 官杀
+
+    weakening = (
+        five.get(food_god_wx.value, 0)
+        + five.get(wealth_wx.value, 0)
+        + five.get(officer_wx.value, 0)
+    )
+
+    if supportive >= weakening + 2:
+        return "strong"
+    elif weakening >= supportive + 2:
+        return "weak"
+    return "balanced"
+
+
+def _parse_feedback_summary(feedback_summary: str) -> dict:
+    """解析用户历史反馈摘要，提取各维度发生率"""
+    import re
+    result = {"total_rate": None, "dim_rates": {}}
+    if not feedback_summary:
+        return result
+
+    # 提取总体发生率：如"发生率60%"
+    m = re.search(r"发生率(\d+)%", feedback_summary)
+    if m:
+        result["total_rate"] = int(m.group(1)) / 100
+
+    # 提取各维度发生率：如"career=70%"、"wealth=50%"
+    for m in re.finditer(r"(\w+)=(\d+)%", feedback_summary):
+        result["dim_rates"][m.group(1)] = int(m.group(2)) / 100
+
+    return result
+
+
+def _calculate_probability(
+    score: int,
+    daily_score: int,
+    is_favorable: bool,
+    ten_god: str,
+    feedback_summary: str = "",
+    dimension: str = "",
+) -> int:
+    """计算事件发生概率 (30-85%)
+
+    融合日运评分(40%) + 时辰评分(60%)，叠加喜用神、十神、用户反馈修正。
+
+    Args:
+        score: 时辰运势评分 (1-5)
+        daily_score: 每日运势评分 (1-5)
+        is_favorable: 是否喜用神
+        ten_god: 十神名称
+        feedback_summary: 用户历史反馈摘要
+        dimension: 事件维度（用于查反馈历史）
+    """
+    # 日运 40% + 时运 60% 的融合评分
+    blended = daily_score * 0.4 + score * 0.6
+
+    base = 30
+    if blended >= 4.5:
         base += 35
-    elif score >= 4:
+    elif blended >= 3.5:
         base += 25
-    elif score >= 3:
+    elif blended >= 2.5:
         base += 15
-    elif score >= 2:
+    elif blended >= 1.5:
         base += 5
 
     # 喜用神加分
     if is_favorable:
         base += 10
 
-    # 十神加分
-    positive_gods = ["正印", "食神", "正官", "正财"]
-    if ten_god in positive_gods:
-        base += 5
+    # 十神加分（区分吉凶程度）
+    strong_positive = ["正印", "食神", "正财"]
+    mild_positive = ["正官", "偏印"]
+    mild_negative = ["伤官", "偏财"]
+    strong_negative = ["劫财", "偏官"]
 
+    if ten_god in strong_positive:
+        base += 8
+    elif ten_god in mild_positive:
+        base += 5
+    elif ten_god in mild_negative:
+        base += 2
+    elif ten_god in strong_negative:
+        base -= 3
+
+    # 用户历史反馈修正
+    feedback = _parse_feedback_summary(feedback_summary)
+    if feedback["dim_rates"] and dimension in feedback["dim_rates"]:
+        dim_rate = feedback["dim_rates"][dimension]
+        # 维度历史发生率高 → 微调 +5；低 → 微调 -5
+        if dim_rate >= 0.6:
+            base += 5
+        elif dim_rate <= 0.3:
+            base -= 5
+    elif feedback["total_rate"] is not None:
+        # 无维度数据时用总体发生率修正
+        if feedback["total_rate"] >= 0.6:
+            base += 3
+        elif feedback["total_rate"] <= 0.3:
+            base -= 3
+
+    # 所有修正项叠加后理论最大值：30+35+10+8+5=88，clamp 到 85
+    # 最小值：30-3-3=24，clamp 到 30
     return min(85, max(30, base))
 
 
@@ -253,6 +363,11 @@ def generate_probability_events(
     # 喜用神
     fav = set(bazi.get("favorable_elements", []))
 
+    # 日主强弱判断（影响事件概率微调）
+    dm_strength = _judge_day_master_strength(bazi)
+    # 强日主：能承担更多，高概率事件+3；弱日主：宜保守，高概率事件-3
+    strength_bias = {"strong": 3, "weak": -3, "balanced": 0}.get(dm_strength, 0)
+
     # 主维度评分
     main_dimensions = {
         "career": daily.get("career_fortune", {}).get("score", 3),
@@ -261,12 +376,40 @@ def generate_probability_events(
         "health": daily.get("health_fortune", {}).get("score", 3),
     }
 
-    # 扩展维度（基于五行推算）
+    # 扩展维度（基于主维度+五行特征推算）
     overall_score = daily.get("overall_score", 3)
+    dm_name = bazi.get("day_master", "")
+
+    # 当日流日五行（用于扩展维度推算）
+    from fortune_engine.common.tiangan import Tiangan
+    flow_wx = None
+    if daily.get("heavenly_stem"):
+        try:
+            flow_wx = Tiangan.from_name(daily["heavenly_stem"]).wuxing
+        except Exception:
+            pass
+
+    # 出行：健康好+事业顺→出行佳，受克则不利
+    travel_base = round((main_dimensions["health"] + main_dimensions["career"]) / 2)
+    if flow_wx in [Wuxing.JIN, Wuxing.SHUI]:  # 金水流动性强，利出行
+        travel_base = min(5, travel_base + 1)
+
+    # 学业：日主为甲/壬（文昌星）加分，水木利学习
+    study_base = overall_score
+    if dm_name in ["甲", "壬", "癸"]:
+        study_base = min(5, study_base + 1)
+    if flow_wx in [Wuxing.SHUI, Wuxing.MU]:
+        study_base = min(5, study_base + 1)
+
+    # 社交：感情好→社交佳，火土利人际
+    social_base = main_dimensions["love"]
+    if flow_wx in [Wuxing.HUO, Wuxing.TU]:
+        social_base = min(5, social_base + 1)
+
     extended_dimensions = {
-        "travel": min(5, max(1, overall_score + (1 if daily.get("lucky_direction") else 0))),
-        "study": min(5, max(1, overall_score + (1 if bazi.get("day_master") in ["甲", "乙", "丙"] else 0))),
-        "social": min(5, max(1, overall_score + (1 if daily.get("love_fortune", {}).get("score", 3) >= 4 else 0))),
+        "travel": min(5, max(1, travel_base)),
+        "study": min(5, max(1, study_base)),
+        "social": min(5, max(1, social_base)),
     }
 
     all_dimensions = {**main_dimensions, **extended_dimensions}
@@ -292,8 +435,21 @@ def generate_probability_events(
         if best_hour and best_hour.get("element"):
             is_favorable = best_hour["element"] in fav
 
-        # 计算概率
-        probability = _calculate_probability(score, is_favorable, best_hour.get("ten_god", ""))
+        # 取该维度的日运评分
+        dim_daily_score = main_dimensions.get(dim, overall_score)
+
+        # 计算概率（融合日运+时运+反馈）
+        probability = _calculate_probability(
+            score=score,
+            daily_score=dim_daily_score,
+            is_favorable=is_favorable,
+            ten_god=best_hour.get("ten_god", ""),
+            feedback_summary=feedback_summary,
+            dimension=dim,
+        )
+
+        # 日主强弱修正：强日主更敢做，弱日主宜保守
+        probability = min(85, max(30, probability + strength_bias))
 
         # 选择事件模板
         templates = EVENT_TEMPLATES.get(dim, {})
@@ -309,12 +465,13 @@ def generate_probability_events(
             continue
 
         # 根据日期选择具体事件（确保同一天相同）
+        # 使用 ord(dim[0]) 替代 hash(dim)，避免 PYTHONHASHSEED 导致不同进程结果不同
         day_seed = today.year * 10000 + today.month * 100 + today.day
 
         # 主维度生成 2 个事件，扩展维度生成 1 个
         count = 2 if dim in main_dimensions else 1
         for i in range(count):
-            idx = (day_seed + hash(dim) + i * 7) % len(template_list)
+            idx = (day_seed + ord(dim[0]) + i * 7) % len(template_list)
             selected = template_list[idx]
 
             # 时间范围
