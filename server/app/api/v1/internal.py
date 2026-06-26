@@ -36,17 +36,45 @@ def daily_push(req: DailyPushRequest, db: Session = Depends(get_db)):
 
     target_time = f"{req.hour:02d}:00"
 
-    # 查询匹配小时的开启用户
-    # push_time 格式 "HH:MM"，匹配前两位
+    # 查询所有开启推送的用户
     users = (
         db.query(User)
         .filter(User.push_enabled.is_(True))
         .all()
     )
-    # Python 层过滤小时匹配
-    target_users = [u for u in users if u.push_time and u.push_time[:2] == f"{req.hour:02d}"]
 
+    # 分两类用户：
+    # 1. 正常推送：push_time 匹配当前小时
+    # 2. 补推：今日还没推送过，且当前时间已过其 push_time
+    target_user_ids = set()
+    target_users = []
     today = date.today()
+
+    for u in users:
+        if not u.push_time:
+            continue
+
+        push_hour = u.push_time[:2]
+        current_hour = f"{req.hour:02d}"
+
+        # 正常推送：小时匹配
+        if push_hour == current_hour:
+            target_users.append(u)
+            target_user_ids.add(u.id)
+            continue
+
+        # 补推：当前时间已过其 push_time，且今日未推送
+        if int(current_hour) > int(push_hour) and u.id not in target_user_ids:
+            already_pushed = (
+                db.query(DailyFortune.id)
+                .filter(DailyFortune.user_id == u.id, DailyFortune.date == today)
+                .first()
+            )
+            if not already_pushed:
+                target_users.append(u)
+                target_user_ids.add(u.id)
+                logger.info("补推用户 user=%d, 原定时间 %s, 当前 %s", u.id, u.push_time, target_time)
+
     pushed_count = 0
     failed_count = 0
 
