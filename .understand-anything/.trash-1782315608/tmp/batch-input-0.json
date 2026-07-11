@@ -1,0 +1,1 @@
+{"projectRoot": "E:\\fortune", "batchFiles": [{"path": ".github/workflows/daily-push.yml", "language": "yaml", "sizeLines": 57, "fileCategory": "infra"}, {"path": ".github/workflows/test.yml", "language": "yaml", "sizeLines": 56, "fileCategory": "infra"}], "batchImportData": {".github/workflows/daily-push.yml": [], ".github/workflows/test.yml": []}}

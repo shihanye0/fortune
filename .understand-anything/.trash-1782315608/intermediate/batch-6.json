@@ -1,0 +1,116 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 3,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "server/.env.example",
+      "language": "config",
+      "fileCategory": "config",
+      "totalLines": 20,
+      "nonEmptyLines": 16,
+      "definitions": [
+        {
+          "name": "DATABASE_URL",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 2,
+          "endLine": 2
+        },
+        {
+          "name": "DEEPSEEK_API_KEY",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 5,
+          "endLine": 5
+        },
+        {
+          "name": "DEEPSEEK_BASE_URL",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 6,
+          "endLine": 6
+        },
+        {
+          "name": "SMTP_HOST",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 9,
+          "endLine": 9
+        },
+        {
+          "name": "SMTP_PORT",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 10,
+          "endLine": 10
+        },
+        {
+          "name": "SMTP_USER",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 11,
+          "endLine": 11
+        },
+        {
+          "name": "SMTP_PASSWORD",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 12,
+          "endLine": 12
+        },
+        {
+          "name": "JWT_SECRET",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 15,
+          "endLine": 15
+        },
+        {
+          "name": "JWT_EXPIRE_HOURS",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 16,
+          "endLine": 16
+        },
+        {
+          "name": "APP_PORT",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 19,
+          "endLine": 19
+        },
+        {
+          "name": "APP_ENV",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 20,
+          "endLine": 20
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 11
+      }
+    },
+    {
+      "path": "server/alembic.ini",
+      "language": "config",
+      "fileCategory": "config",
+      "totalLines": 150,
+      "nonEmptyLines": 124,
+      "metrics": {}
+    },
+    {
+      "path": "server/requirements.txt",
+      "language": "txt",
+      "fileCategory": "docs",
+      "totalLines": 15,
+      "nonEmptyLines": 15,
+      "metrics": {}
+    }
+  ]
+}

@@ -1,0 +1,488 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 11,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "docs/specs/021-运势详情与反馈.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 51,
+      "nonEmptyLines": 37,
+      "sections": [
+        {
+          "heading": "Spec 021: 运势详情与反馈",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "功能描述",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "API",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "验收标准",
+          "level": 2,
+          "line": 25
+        },
+        {
+          "heading": "技术要点",
+          "level": 2,
+          "line": 44
+        },
+        {
+          "heading": "依赖项",
+          "level": 2,
+          "line": 49
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 6
+      }
+    },
+    {
+      "path": "docs/specs/022-六爻占卜交互.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 55,
+      "nonEmptyLines": 43,
+      "sections": [
+        {
+          "heading": "Spec 022: 六爻占卜交互",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "功能描述",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "API",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "验收标准",
+          "level": 2,
+          "line": 36
+        },
+        {
+          "heading": "依赖项",
+          "level": 2,
+          "line": 53
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 5
+      }
+    },
+    {
+      "path": "docs/specs/023-奇门遁甲交互.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 42,
+      "nonEmptyLines": 31,
+      "sections": [
+        {
+          "heading": "Spec 023: 奇门遁甲交互",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "功能描述",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "API",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "验收标准",
+          "level": 2,
+          "line": 23
+        },
+        {
+          "heading": "依赖项",
+          "level": 2,
+          "line": 40
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 5
+      }
+    },
+    {
+      "path": "docs/specs/024-占卜历史与反馈.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 33,
+      "nonEmptyLines": 23,
+      "sections": [
+        {
+          "heading": "Spec 024: 占卜历史与反馈",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "功能描述",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "API",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "验收标准",
+          "level": 2,
+          "line": 16
+        },
+        {
+          "heading": "依赖项",
+          "level": 2,
+          "line": 31
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 5
+      }
+    },
+    {
+      "path": "docs/specs/025-首页与导航.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 40,
+      "nonEmptyLines": 30,
+      "sections": [
+        {
+          "heading": "Spec 025: 首页与导航",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "功能描述",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "页面结构",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "验收标准",
+          "level": 2,
+          "line": 24
+        },
+        {
+          "heading": "依赖项",
+          "level": 2,
+          "line": 38
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 5
+      }
+    },
+    {
+      "path": "docs/specs/026-注册页面.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 41,
+      "nonEmptyLines": 31,
+      "sections": [
+        {
+          "heading": "Spec 026: 注册页面",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "功能描述",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "页面结构",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "验收标准",
+          "level": 2,
+          "line": 24
+        },
+        {
+          "heading": "依赖项",
+          "level": 2,
+          "line": 39
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 5
+      }
+    },
+    {
+      "path": "docs/specs/027-登录页面.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 25,
+      "nonEmptyLines": 17,
+      "sections": [
+        {
+          "heading": "Spec 027: 登录页面",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "功能描述",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "验收标准",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "依赖项",
+          "level": 2,
+          "line": 23
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 4
+      }
+    },
+    {
+      "path": "docs/specs/028-每日运势页面.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 48,
+      "nonEmptyLines": 38,
+      "sections": [
+        {
+          "heading": "Spec 028: 每日运势页面",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "功能描述",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "页面结构",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "验收标准",
+          "level": 2,
+          "line": 32
+        },
+        {
+          "heading": "依赖项",
+          "level": 2,
+          "line": 46
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 5
+      }
+    },
+    {
+      "path": "docs/specs/029-占卜中心页面.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 47,
+      "nonEmptyLines": 37,
+      "sections": [
+        {
+          "heading": "Spec 029: 占卜中心页面",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "功能描述",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "页面结构",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "验收标准",
+          "level": 2,
+          "line": 31
+        },
+        {
+          "heading": "依赖项",
+          "level": 2,
+          "line": 45
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 5
+      }
+    },
+    {
+      "path": "docs/specs/030-个人中心页面.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 56,
+      "nonEmptyLines": 46,
+      "sections": [
+        {
+          "heading": "Spec 030: 个人中心页面",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "功能描述",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "页面结构",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "验收标准",
+          "level": 2,
+          "line": 39
+        },
+        {
+          "heading": "依赖项",
+          "level": 2,
+          "line": 54
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 5
+      }
+    },
+    {
+      "path": "docs/specs/README.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 94,
+      "nonEmptyLines": 72,
+      "sections": [
+        {
+          "heading": "命理运势系统 Spec 索引",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "模块一：基础设施（3 个）",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "模块二：用户管理（5 个）",
+          "level": 2,
+          "line": 13
+        },
+        {
+          "heading": "模块三：命理计算引擎（5 个）",
+          "level": 2,
+          "line": 23
+        },
+        {
+          "heading": "模块四：LLM 解读服务（2 个）",
+          "level": 2,
+          "line": 33
+        },
+        {
+          "heading": "模块五：推送服务（3 个）",
+          "level": 2,
+          "line": 40
+        },
+        {
+          "heading": "模块六：运势查看（3 个）",
+          "level": 2,
+          "line": 48
+        },
+        {
+          "heading": "模块七：占卜功能（3 个）",
+          "level": 2,
+          "line": 56
+        },
+        {
+          "heading": "模块八：前端页面（6 个）",
+          "level": 2,
+          "line": 64
+        },
+        {
+          "heading": "统计",
+          "level": 2,
+          "line": 77
+        },
+        {
+          "heading": "开发顺序",
+          "level": 2,
+          "line": 85
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 11
+      }
+    }
+  ]
+}

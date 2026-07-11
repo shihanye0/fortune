@@ -1,0 +1,3213 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 25,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "server/fortune_engine/bazi/__init__.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 1,
+      "nonEmptyLines": 0,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/fortune_engine/bazi/daily_fortune.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 137,
+      "nonEmptyLines": 115,
+      "functions": [
+        {
+          "name": "_score_from_relation",
+          "startLine": 46,
+          "endLine": 58,
+          "params": [
+            "dm_wx",
+            "other_wx"
+          ]
+        },
+        {
+          "name": "_score_to_detail",
+          "startLine": 61,
+          "endLine": 70,
+          "params": [
+            "score",
+            "dimension"
+          ]
+        },
+        {
+          "name": "calculate_daily_fortune",
+          "startLine": 73,
+          "endLine": 137,
+          "params": [
+            "bazi",
+            "year",
+            "month",
+            "day"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "_score_from_relation",
+          "line": 46,
+          "isDefault": false
+        },
+        {
+          "name": "_score_to_detail",
+          "line": 61,
+          "isDefault": false
+        },
+        {
+          "name": "calculate_daily_fortune",
+          "line": 73,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_score_from_relation",
+          "callee": "sheng",
+          "lineNumber": 50
+        },
+        {
+          "caller": "_score_from_relation",
+          "callee": "sheng",
+          "lineNumber": 52
+        },
+        {
+          "caller": "_score_from_relation",
+          "callee": "ke",
+          "lineNumber": 54
+        },
+        {
+          "caller": "_score_from_relation",
+          "callee": "ke",
+          "lineNumber": 56
+        },
+        {
+          "caller": "_score_to_detail",
+          "callee": "details.get",
+          "lineNumber": 70
+        },
+        {
+          "caller": "calculate_daily_fortune",
+          "callee": "Solar.fromYmd",
+          "lineNumber": 92
+        },
+        {
+          "caller": "calculate_daily_fortune",
+          "callee": "solar.getLunar",
+          "lineNumber": 93
+        },
+        {
+          "caller": "calculate_daily_fortune",
+          "callee": "lunar.getDayGan",
+          "lineNumber": 94
+        },
+        {
+          "caller": "calculate_daily_fortune",
+          "callee": "lunar.getDayZhi",
+          "lineNumber": 95
+        },
+        {
+          "caller": "calculate_daily_fortune",
+          "callee": "Tiangan.from_name",
+          "lineNumber": 98
+        },
+        {
+          "caller": "calculate_daily_fortune",
+          "callee": "Tiangan.from_name",
+          "lineNumber": 102
+        },
+        {
+          "caller": "calculate_daily_fortune",
+          "callee": "_score_from_relation",
+          "lineNumber": 106
+        },
+        {
+          "caller": "calculate_daily_fortune",
+          "callee": "set",
+          "lineNumber": 109
+        },
+        {
+          "caller": "calculate_daily_fortune",
+          "callee": "bazi.get",
+          "lineNumber": 109
+        },
+        {
+          "caller": "calculate_daily_fortune",
+          "callee": "min",
+          "lineNumber": 115
+        },
+        {
+          "caller": "calculate_daily_fortune",
+          "callee": "max",
+          "lineNumber": 115
+        },
+        {
+          "caller": "calculate_daily_fortune",
+          "callee": "min",
+          "lineNumber": 116
+        },
+        {
+          "caller": "calculate_daily_fortune",
+          "callee": "max",
+          "lineNumber": 116
+        },
+        {
+          "caller": "calculate_daily_fortune",
+          "callee": "min",
+          "lineNumber": 117
+        },
+        {
+          "caller": "calculate_daily_fortune",
+          "callee": "max",
+          "lineNumber": 117
+        },
+        {
+          "caller": "calculate_daily_fortune",
+          "callee": "min",
+          "lineNumber": 118
+        },
+        {
+          "caller": "calculate_daily_fortune",
+          "callee": "max",
+          "lineNumber": 118
+        },
+        {
+          "caller": "calculate_daily_fortune",
+          "callee": "round",
+          "lineNumber": 120
+        },
+        {
+          "caller": "calculate_daily_fortune",
+          "callee": "Wuxing",
+          "lineNumber": 123
+        },
+        {
+          "caller": "calculate_daily_fortune",
+          "callee": "fav.pop",
+          "lineNumber": 123
+        },
+        {
+          "caller": "calculate_daily_fortune",
+          "callee": "_score_to_detail",
+          "lineNumber": 130
+        },
+        {
+          "caller": "calculate_daily_fortune",
+          "callee": "_score_to_detail",
+          "lineNumber": 131
+        },
+        {
+          "caller": "calculate_daily_fortune",
+          "callee": "_score_to_detail",
+          "lineNumber": 132
+        },
+        {
+          "caller": "calculate_daily_fortune",
+          "callee": "_score_to_detail",
+          "lineNumber": 133
+        },
+        {
+          "caller": "calculate_daily_fortune",
+          "callee": "WX_LUCKY_COLOR.get",
+          "lineNumber": 134
+        },
+        {
+          "caller": "calculate_daily_fortune",
+          "callee": "WX_LUCKY_NUMBER.get",
+          "lineNumber": 135
+        },
+        {
+          "caller": "calculate_daily_fortune",
+          "callee": "WX_LUCKY_DIRECTION.get",
+          "lineNumber": 136
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 3,
+        "functionCount": 3,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/fortune_engine/bazi/hourly_fortune.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 201,
+      "nonEmptyLines": 177,
+      "functions": [
+        {
+          "name": "_get_ten_god_name",
+          "startLine": 74,
+          "endLine": 86,
+          "params": [
+            "dm_wx",
+            "other_wx",
+            "same_yinyang"
+          ]
+        },
+        {
+          "name": "_score_from_hourly_relation",
+          "startLine": 89,
+          "endLine": 106,
+          "params": [
+            "dm_wx",
+            "hour_wx",
+            "is_favorable"
+          ]
+        },
+        {
+          "name": "calculate_hourly_fortune",
+          "startLine": 109,
+          "endLine": 180,
+          "params": [
+            "bazi",
+            "year",
+            "month",
+            "day",
+            "hour"
+          ]
+        },
+        {
+          "name": "calculate_all_hours_fortune",
+          "startLine": 183,
+          "endLine": 201,
+          "params": [
+            "bazi",
+            "year",
+            "month",
+            "day"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "_get_ten_god_name",
+          "line": 74,
+          "isDefault": false
+        },
+        {
+          "name": "_score_from_hourly_relation",
+          "line": 89,
+          "isDefault": false
+        },
+        {
+          "name": "calculate_hourly_fortune",
+          "line": 109,
+          "isDefault": false
+        },
+        {
+          "name": "calculate_all_hours_fortune",
+          "line": 183,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_get_ten_god_name",
+          "callee": "sheng",
+          "lineNumber": 78
+        },
+        {
+          "caller": "_get_ten_god_name",
+          "callee": "sheng",
+          "lineNumber": 80
+        },
+        {
+          "caller": "_get_ten_god_name",
+          "callee": "ke",
+          "lineNumber": 82
+        },
+        {
+          "caller": "_get_ten_god_name",
+          "callee": "ke",
+          "lineNumber": 84
+        },
+        {
+          "caller": "_score_from_hourly_relation",
+          "callee": "sheng",
+          "lineNumber": 94
+        },
+        {
+          "caller": "_score_from_hourly_relation",
+          "callee": "sheng",
+          "lineNumber": 96
+        },
+        {
+          "caller": "_score_from_hourly_relation",
+          "callee": "ke",
+          "lineNumber": 98
+        },
+        {
+          "caller": "_score_from_hourly_relation",
+          "callee": "ke",
+          "lineNumber": 100
+        },
+        {
+          "caller": "_score_from_hourly_relation",
+          "callee": "min",
+          "lineNumber": 105
+        },
+        {
+          "caller": "calculate_hourly_fortune",
+          "callee": "hour_to_shichen",
+          "lineNumber": 130
+        },
+        {
+          "caller": "calculate_hourly_fortune",
+          "callee": "SHICHEN_NAMES.index",
+          "lineNumber": 131
+        },
+        {
+          "caller": "calculate_hourly_fortune",
+          "callee": "Solar.fromYmd",
+          "lineNumber": 134
+        },
+        {
+          "caller": "calculate_hourly_fortune",
+          "callee": "solar.getLunar",
+          "lineNumber": 135
+        },
+        {
+          "caller": "calculate_hourly_fortune",
+          "callee": "lunar.getDayGan",
+          "lineNumber": 136
+        },
+        {
+          "caller": "calculate_hourly_fortune",
+          "callee": "TIANGAN_LIST.index",
+          "lineNumber": 137
+        },
+        {
+          "caller": "calculate_hourly_fortune",
+          "callee": "Tiangan.from_name",
+          "lineNumber": 137
+        },
+        {
+          "caller": "calculate_hourly_fortune",
+          "callee": "Tiangan.from_name",
+          "lineNumber": 143
+        },
+        {
+          "caller": "calculate_hourly_fortune",
+          "callee": "Tiangan.from_name",
+          "lineNumber": 147
+        },
+        {
+          "caller": "calculate_hourly_fortune",
+          "callee": "set",
+          "lineNumber": 151
+        },
+        {
+          "caller": "calculate_hourly_fortune",
+          "callee": "bazi.get",
+          "lineNumber": 151
+        },
+        {
+          "caller": "calculate_hourly_fortune",
+          "callee": "_score_from_hourly_relation",
+          "lineNumber": 155
+        },
+        {
+          "caller": "calculate_hourly_fortune",
+          "callee": "_get_ten_god_name",
+          "lineNumber": 159
+        },
+        {
+          "caller": "calculate_hourly_fortune",
+          "callee": "HOURLY_EVENTS.get",
+          "lineNumber": 162
+        },
+        {
+          "caller": "calculate_hourly_fortune",
+          "callee": "WUXING_SHICHEN_TRAIT.get",
+          "lineNumber": 165
+        },
+        {
+          "caller": "calculate_all_hours_fortune",
+          "callee": "range",
+          "lineNumber": 197
+        },
+        {
+          "caller": "calculate_all_hours_fortune",
+          "callee": "calculate_hourly_fortune",
+          "lineNumber": 199
+        },
+        {
+          "caller": "calculate_all_hours_fortune",
+          "callee": "results.append",
+          "lineNumber": 200
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 4,
+        "functionCount": 4,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/fortune_engine/bazi/pillar.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 205,
+      "nonEmptyLines": 172,
+      "functions": [
+        {
+          "name": "_get_relation",
+          "startLine": 27,
+          "endLine": 40,
+          "params": [
+            "dm_wx",
+            "other_wx"
+          ]
+        },
+        {
+          "name": "_calc_ten_god",
+          "startLine": 43,
+          "endLine": 51,
+          "params": [
+            "dm_name",
+            "other_name"
+          ]
+        },
+        {
+          "name": "_count_five_elements",
+          "startLine": 54,
+          "endLine": 61,
+          "params": [
+            "tg_list"
+          ]
+        },
+        {
+          "name": "_get_favorable",
+          "startLine": 64,
+          "endLine": 80,
+          "params": [
+            "day_master",
+            "five_elements"
+          ]
+        },
+        {
+          "name": "calculate_bazi",
+          "startLine": 83,
+          "endLine": 165,
+          "params": [
+            "birth_year",
+            "birth_month",
+            "birth_day",
+            "birth_hour",
+            "gender"
+          ]
+        },
+        {
+          "name": "_calc_luck_cycles",
+          "startLine": 168,
+          "endLine": 205,
+          "params": [
+            "birth_year",
+            "birth_month",
+            "birth_day",
+            "birth_hour",
+            "gender"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "_get_relation",
+          "line": 27,
+          "isDefault": false
+        },
+        {
+          "name": "_calc_ten_god",
+          "line": 43,
+          "isDefault": false
+        },
+        {
+          "name": "_count_five_elements",
+          "line": 54,
+          "isDefault": false
+        },
+        {
+          "name": "_get_favorable",
+          "line": 64,
+          "isDefault": false
+        },
+        {
+          "name": "calculate_bazi",
+          "line": 83,
+          "isDefault": false
+        },
+        {
+          "name": "_calc_luck_cycles",
+          "line": 168,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_get_relation",
+          "callee": "sheng",
+          "lineNumber": 32
+        },
+        {
+          "caller": "_get_relation",
+          "callee": "sheng",
+          "lineNumber": 34
+        },
+        {
+          "caller": "_get_relation",
+          "callee": "ke",
+          "lineNumber": 36
+        },
+        {
+          "caller": "_get_relation",
+          "callee": "ke",
+          "lineNumber": 38
+        },
+        {
+          "caller": "_calc_ten_god",
+          "callee": "Tiangan.from_name",
+          "lineNumber": 45
+        },
+        {
+          "caller": "_calc_ten_god",
+          "callee": "Tiangan.from_name",
+          "lineNumber": 46
+        },
+        {
+          "caller": "_calc_ten_god",
+          "callee": "_get_relation",
+          "lineNumber": 49
+        },
+        {
+          "caller": "_calc_ten_god",
+          "callee": "TEN_GOD_NAMES.get",
+          "lineNumber": 51
+        },
+        {
+          "caller": "_count_five_elements",
+          "callee": "Tiangan.from_name",
+          "lineNumber": 58
+        },
+        {
+          "caller": "_get_favorable",
+          "callee": "Tiangan.from_name",
+          "lineNumber": 67
+        },
+        {
+          "caller": "_get_favorable",
+          "callee": "five_elements.get",
+          "lineNumber": 71
+        },
+        {
+          "caller": "_get_favorable",
+          "callee": "Wuxing.__members__.items",
+          "lineNumber": 73
+        },
+        {
+          "caller": "_get_favorable",
+          "callee": "sheng",
+          "lineNumber": 73
+        },
+        {
+          "caller": "_get_favorable",
+          "callee": "sheng",
+          "lineNumber": 77
+        },
+        {
+          "caller": "_get_favorable",
+          "callee": "ke",
+          "lineNumber": 80
+        },
+        {
+          "caller": "_get_favorable",
+          "callee": "sheng",
+          "lineNumber": 80
+        },
+        {
+          "caller": "calculate_bazi",
+          "callee": "Solar.fromYmdHms",
+          "lineNumber": 104
+        },
+        {
+          "caller": "calculate_bazi",
+          "callee": "solar.getLunar",
+          "lineNumber": 105
+        },
+        {
+          "caller": "calculate_bazi",
+          "callee": "lunar.getYearGan",
+          "lineNumber": 108
+        },
+        {
+          "caller": "calculate_bazi",
+          "callee": "lunar.getYearZhi",
+          "lineNumber": 109
+        },
+        {
+          "caller": "calculate_bazi",
+          "callee": "lunar.getMonthGan",
+          "lineNumber": 113
+        },
+        {
+          "caller": "calculate_bazi",
+          "callee": "lunar.getMonthZhi",
+          "lineNumber": 114
+        },
+        {
+          "caller": "calculate_bazi",
+          "callee": "lunar.getDayGan",
+          "lineNumber": 118
+        },
+        {
+          "caller": "calculate_bazi",
+          "callee": "lunar.getDayZhi",
+          "lineNumber": 119
+        },
+        {
+          "caller": "calculate_bazi",
+          "callee": "hour_to_shichen",
+          "lineNumber": 124
+        },
+        {
+          "caller": "calculate_bazi",
+          "callee": "TIANGAN_LIST.index",
+          "lineNumber": 126
+        },
+        {
+          "caller": "calculate_bazi",
+          "callee": "Tiangan.from_name",
+          "lineNumber": 126
+        },
+        {
+          "caller": "calculate_bazi",
+          "callee": "DIZHI_LIST.index",
+          "lineNumber": 127
+        },
+        {
+          "caller": "calculate_bazi",
+          "callee": "Dizhi.from_name",
+          "lineNumber": 127
+        },
+        {
+          "caller": "calculate_bazi",
+          "callee": "_count_five_elements",
+          "lineNumber": 137
+        },
+        {
+          "caller": "calculate_bazi",
+          "callee": "_calc_ten_god",
+          "lineNumber": 141
+        },
+        {
+          "caller": "calculate_bazi",
+          "callee": "_calc_ten_god",
+          "lineNumber": 142
+        },
+        {
+          "caller": "calculate_bazi",
+          "callee": "_calc_ten_god",
+          "lineNumber": 144
+        },
+        {
+          "caller": "calculate_bazi",
+          "callee": "_calc_luck_cycles",
+          "lineNumber": 148
+        },
+        {
+          "caller": "calculate_bazi",
+          "callee": "_get_favorable",
+          "lineNumber": 153
+        },
+        {
+          "caller": "_calc_luck_cycles",
+          "callee": "Solar.fromYmdHms",
+          "lineNumber": 173
+        },
+        {
+          "caller": "_calc_luck_cycles",
+          "callee": "solar.getLunar",
+          "lineNumber": 174
+        },
+        {
+          "caller": "_calc_luck_cycles",
+          "callee": "lunar.getYearGan",
+          "lineNumber": 176
+        },
+        {
+          "caller": "_calc_luck_cycles",
+          "callee": "lunar.getMonthGan",
+          "lineNumber": 177
+        },
+        {
+          "caller": "_calc_luck_cycles",
+          "callee": "lunar.getMonthZhi",
+          "lineNumber": 178
+        },
+        {
+          "caller": "_calc_luck_cycles",
+          "callee": "Tiangan.from_name",
+          "lineNumber": 181
+        },
+        {
+          "caller": "_calc_luck_cycles",
+          "callee": "TIANGAN_LIST.index",
+          "lineNumber": 188
+        },
+        {
+          "caller": "_calc_luck_cycles",
+          "callee": "Tiangan.from_name",
+          "lineNumber": 188
+        },
+        {
+          "caller": "_calc_luck_cycles",
+          "callee": "DIZHI_LIST.index",
+          "lineNumber": 189
+        },
+        {
+          "caller": "_calc_luck_cycles",
+          "callee": "Dizhi.from_name",
+          "lineNumber": 189
+        },
+        {
+          "caller": "_calc_luck_cycles",
+          "callee": "range",
+          "lineNumber": 192
+        },
+        {
+          "caller": "_calc_luck_cycles",
+          "callee": "cycles.append",
+          "lineNumber": 200
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 6,
+        "functionCount": 6,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/fortune_engine/common/__init__.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 1,
+      "nonEmptyLines": 0,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/fortune_engine/common/dizhi.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 43,
+      "nonEmptyLines": 37,
+      "classes": [
+        {
+          "name": "Dizhi",
+          "startLine": 8,
+          "endLine": 27,
+          "methods": [
+            "from_name",
+            "from_index"
+          ],
+          "properties": [
+            "name",
+            "index",
+            "wuxing",
+            "yinyang",
+            "canggan"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "Dizhi",
+          "line": 7,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "server/fortune_engine/common/shichen.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 39,
+      "nonEmptyLines": 32,
+      "functions": [
+        {
+          "name": "hour_to_shichen",
+          "startLine": 23,
+          "endLine": 25,
+          "params": [
+            "hour"
+          ]
+        },
+        {
+          "name": "shichen_to_hours",
+          "startLine": 28,
+          "endLine": 39,
+          "params": [
+            "name"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "hour_to_shichen",
+          "line": 23,
+          "isDefault": false
+        },
+        {
+          "name": "shichen_to_hours",
+          "line": 28,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "shichen_to_hours",
+          "callee": "SHICHEN_MAP.items",
+          "lineNumber": 30
+        },
+        {
+          "caller": "shichen_to_hours",
+          "callee": "range",
+          "lineNumber": 35
+        },
+        {
+          "caller": "shichen_to_hours",
+          "callee": "SHICHEN_MAP.get",
+          "lineNumber": 36
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/fortune_engine/common/tiangan.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 40,
+      "nonEmptyLines": 34,
+      "classes": [
+        {
+          "name": "Tiangan",
+          "startLine": 8,
+          "endLine": 26,
+          "methods": [
+            "from_name",
+            "from_index"
+          ],
+          "properties": [
+            "name",
+            "index",
+            "wuxing",
+            "yinyang"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "Tiangan",
+          "line": 7,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "server/fortune_engine/common/wuxing.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 55,
+      "nonEmptyLines": 42,
+      "functions": [
+        {
+          "name": "sheng",
+          "startLine": 34,
+          "endLine": 36,
+          "params": [
+            "wx"
+          ]
+        },
+        {
+          "name": "ke",
+          "startLine": 39,
+          "endLine": 41,
+          "params": [
+            "wx"
+          ]
+        },
+        {
+          "name": "get_wuxing_of_tiangan",
+          "startLine": 44,
+          "endLine": 48,
+          "params": [
+            "name"
+          ]
+        },
+        {
+          "name": "get_wuxing_of_dizhi",
+          "startLine": 51,
+          "endLine": 55,
+          "params": [
+            "name"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "Wuxing",
+          "startLine": 6,
+          "endLine": 12,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "Wuxing",
+          "line": 6,
+          "isDefault": false
+        },
+        {
+          "name": "sheng",
+          "line": 34,
+          "isDefault": false
+        },
+        {
+          "name": "ke",
+          "line": 39,
+          "isDefault": false
+        },
+        {
+          "name": "get_wuxing_of_tiangan",
+          "line": 44,
+          "isDefault": false
+        },
+        {
+          "name": "get_wuxing_of_dizhi",
+          "line": 51,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "get_wuxing_of_tiangan",
+          "callee": "Tiangan.from_name",
+          "lineNumber": 47
+        },
+        {
+          "caller": "get_wuxing_of_dizhi",
+          "callee": "Dizhi.from_name",
+          "lineNumber": 54
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 5,
+        "functionCount": 4,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "server/fortune_engine/liuyao/__init__.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 1,
+      "nonEmptyLines": 0,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/fortune_engine/liuyao/hexagram.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 192,
+      "nonEmptyLines": 163,
+      "functions": [
+        {
+          "name": "_lines_to_trigram",
+          "startLine": 73,
+          "endLine": 76,
+          "params": [
+            "lines"
+          ]
+        },
+        {
+          "name": "_get_hexagram_name",
+          "startLine": 79,
+          "endLine": 81,
+          "params": [
+            "upper",
+            "lower"
+          ]
+        },
+        {
+          "name": "_coin_toss",
+          "startLine": 84,
+          "endLine": 88,
+          "params": []
+        },
+        {
+          "name": "coin_divination",
+          "startLine": 91,
+          "endLine": 135,
+          "params": [
+            "question"
+          ]
+        },
+        {
+          "name": "time_divination",
+          "startLine": 138,
+          "endLine": 192,
+          "params": [
+            "question",
+            "year",
+            "month",
+            "day",
+            "hour"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "_lines_to_trigram",
+          "line": 73,
+          "isDefault": false
+        },
+        {
+          "name": "_get_hexagram_name",
+          "line": 79,
+          "isDefault": false
+        },
+        {
+          "name": "_coin_toss",
+          "line": 84,
+          "isDefault": false
+        },
+        {
+          "name": "coin_divination",
+          "line": 91,
+          "isDefault": false
+        },
+        {
+          "name": "time_divination",
+          "line": 138,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_lines_to_trigram",
+          "callee": "tuple",
+          "lineNumber": 75
+        },
+        {
+          "caller": "_lines_to_trigram",
+          "callee": "TRIGRAM_BINARY.get",
+          "lineNumber": 76
+        },
+        {
+          "caller": "_get_hexagram_name",
+          "callee": "HEXAGRAM_MAP.get",
+          "lineNumber": 81
+        },
+        {
+          "caller": "_coin_toss",
+          "callee": "sum",
+          "lineNumber": 86
+        },
+        {
+          "caller": "_coin_toss",
+          "callee": "random.choice",
+          "lineNumber": 86
+        },
+        {
+          "caller": "_coin_toss",
+          "callee": "range",
+          "lineNumber": 86
+        },
+        {
+          "caller": "coin_divination",
+          "callee": "_coin_toss",
+          "lineNumber": 102
+        },
+        {
+          "caller": "coin_divination",
+          "callee": "range",
+          "lineNumber": 102
+        },
+        {
+          "caller": "coin_divination",
+          "callee": "_lines_to_trigram",
+          "lineNumber": 105
+        },
+        {
+          "caller": "coin_divination",
+          "callee": "_lines_to_trigram",
+          "lineNumber": 106
+        },
+        {
+          "caller": "coin_divination",
+          "callee": "_get_hexagram_name",
+          "lineNumber": 107
+        },
+        {
+          "caller": "coin_divination",
+          "callee": "enumerate",
+          "lineNumber": 110
+        },
+        {
+          "caller": "coin_divination",
+          "callee": "lines.copy",
+          "lineNumber": 113
+        },
+        {
+          "caller": "coin_divination",
+          "callee": "_lines_to_trigram",
+          "lineNumber": 117
+        },
+        {
+          "caller": "coin_divination",
+          "callee": "_lines_to_trigram",
+          "lineNumber": 118
+        },
+        {
+          "caller": "coin_divination",
+          "callee": "_get_hexagram_name",
+          "lineNumber": 119
+        },
+        {
+          "caller": "time_divination",
+          "callee": "_get_hexagram_name",
+          "lineNumber": 152
+        },
+        {
+          "caller": "time_divination",
+          "callee": "range",
+          "lineNumber": 156
+        },
+        {
+          "caller": "time_divination",
+          "callee": "list",
+          "lineNumber": 159
+        },
+        {
+          "caller": "time_divination",
+          "callee": "TRIGRAM_BINARY.keys",
+          "lineNumber": 159
+        },
+        {
+          "caller": "time_divination",
+          "callee": "list(TRIGRAM_BINARY.values()).index",
+          "lineNumber": 159
+        },
+        {
+          "caller": "time_divination",
+          "callee": "list",
+          "lineNumber": 159
+        },
+        {
+          "caller": "time_divination",
+          "callee": "TRIGRAM_BINARY.values",
+          "lineNumber": 159
+        },
+        {
+          "caller": "time_divination",
+          "callee": "lines.append",
+          "lineNumber": 160
+        },
+        {
+          "caller": "time_divination",
+          "callee": "list",
+          "lineNumber": 162
+        },
+        {
+          "caller": "time_divination",
+          "callee": "TRIGRAM_BINARY.keys",
+          "lineNumber": 162
+        },
+        {
+          "caller": "time_divination",
+          "callee": "list(TRIGRAM_BINARY.values()).index",
+          "lineNumber": 162
+        },
+        {
+          "caller": "time_divination",
+          "callee": "list",
+          "lineNumber": 162
+        },
+        {
+          "caller": "time_divination",
+          "callee": "TRIGRAM_BINARY.values",
+          "lineNumber": 162
+        },
+        {
+          "caller": "time_divination",
+          "callee": "lines.append",
+          "lineNumber": 163
+        },
+        {
+          "caller": "time_divination",
+          "callee": "lines.copy",
+          "lineNumber": 169
+        },
+        {
+          "caller": "time_divination",
+          "callee": "_lines_to_trigram",
+          "lineNumber": 174
+        },
+        {
+          "caller": "time_divination",
+          "callee": "_lines_to_trigram",
+          "lineNumber": 175
+        },
+        {
+          "caller": "time_divination",
+          "callee": "_get_hexagram_name",
+          "lineNumber": 176
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 5,
+        "functionCount": 5,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/fortune_engine/probability_events.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 364,
+      "nonEmptyLines": 325,
+      "functions": [
+        {
+          "name": "_calculate_probability",
+          "startLine": 175,
+          "endLine": 198,
+          "params": [
+            "score",
+            "is_favorable",
+            "ten_god"
+          ]
+        },
+        {
+          "name": "_get_best_hour_for_dimension",
+          "startLine": 201,
+          "endLine": 228,
+          "params": [
+            "hourly",
+            "dimension"
+          ]
+        },
+        {
+          "name": "generate_probability_events",
+          "startLine": 231,
+          "endLine": 364,
+          "params": [
+            "bazi",
+            "daily",
+            "hourly",
+            "today",
+            "feedback_summary"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "_calculate_probability",
+          "line": 175,
+          "isDefault": false
+        },
+        {
+          "name": "_get_best_hour_for_dimension",
+          "line": 201,
+          "isDefault": false
+        },
+        {
+          "name": "generate_probability_events",
+          "line": 231,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_calculate_probability",
+          "callee": "min",
+          "lineNumber": 198
+        },
+        {
+          "caller": "_calculate_probability",
+          "callee": "max",
+          "lineNumber": 198
+        },
+        {
+          "caller": "_get_best_hour_for_dimension",
+          "callee": "dimension_element_map.get",
+          "lineNumber": 211
+        },
+        {
+          "caller": "_get_best_hour_for_dimension",
+          "callee": "h.get",
+          "lineNumber": 216
+        },
+        {
+          "caller": "_get_best_hour_for_dimension",
+          "callee": "h.get",
+          "lineNumber": 217
+        },
+        {
+          "caller": "_get_best_hour_for_dimension",
+          "callee": "Wuxing",
+          "lineNumber": 218
+        },
+        {
+          "caller": "_get_best_hour_for_dimension",
+          "callee": "max",
+          "lineNumber": 226
+        },
+        {
+          "caller": "_get_best_hour_for_dimension",
+          "callee": "x.get",
+          "lineNumber": 226
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "set",
+          "lineNumber": 254
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "bazi.get",
+          "lineNumber": 254
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "daily.get(\"career_fortune\", {}).get",
+          "lineNumber": 258
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "daily.get",
+          "lineNumber": 258
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "daily.get(\"wealth_fortune\", {}).get",
+          "lineNumber": 259
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "daily.get",
+          "lineNumber": 259
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "daily.get(\"love_fortune\", {}).get",
+          "lineNumber": 260
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "daily.get",
+          "lineNumber": 260
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "daily.get(\"health_fortune\", {}).get",
+          "lineNumber": 261
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "daily.get",
+          "lineNumber": 261
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "daily.get",
+          "lineNumber": 265
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "min",
+          "lineNumber": 267
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "max",
+          "lineNumber": 267
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "daily.get",
+          "lineNumber": 267
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "min",
+          "lineNumber": 268
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "max",
+          "lineNumber": 268
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "bazi.get",
+          "lineNumber": 268
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "min",
+          "lineNumber": 269
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "max",
+          "lineNumber": 269
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "daily.get(\"love_fortune\", {}).get",
+          "lineNumber": 269
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "daily.get",
+          "lineNumber": 269
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "datetime.datetime.now",
+          "lineNumber": 278
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "h.get(\"shichen_range\", \"\").startswith",
+          "lineNumber": 280
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "h.get",
+          "lineNumber": 280
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "h.get",
+          "lineNumber": 281
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "h.get",
+          "lineNumber": 282
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "all_dimensions.items",
+          "lineNumber": 286
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "_get_best_hour_for_dimension",
+          "lineNumber": 288
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "best_hour.get",
+          "lineNumber": 292
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "_calculate_probability",
+          "lineNumber": 296
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "best_hour.get",
+          "lineNumber": 296
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "EVENT_TEMPLATES.get",
+          "lineNumber": 299
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "templates.get",
+          "lineNumber": 307
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "templates.get",
+          "lineNumber": 307
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "range",
+          "lineNumber": 316
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "hash",
+          "lineNumber": 317
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "len",
+          "lineNumber": 317
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "best_hour.get",
+          "lineNumber": 323
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "min",
+          "lineNumber": 327
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "max",
+          "lineNumber": 327
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "events.append",
+          "lineNumber": 329
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "EVENT_ICONS.get",
+          "lineNumber": 331
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "best_hour.get",
+          "lineNumber": 336
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "best_hour.get",
+          "lineNumber": 337
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "best_hour.get",
+          "lineNumber": 338
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "Wuxing",
+          "lineNumber": 344
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "enumerate",
+          "lineNumber": 347
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "events.append",
+          "lineNumber": 348
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "lucky.get",
+          "lineNumber": 350
+        },
+        {
+          "caller": "generate_probability_events",
+          "callee": "events.sort",
+          "lineNumber": 362
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 3,
+        "functionCount": 3,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/fortune_engine/qimen/__init__.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 1,
+      "nonEmptyLines": 0,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/fortune_engine/qimen/chart.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 117,
+      "nonEmptyLines": 95,
+      "functions": [
+        {
+          "name": "_get_yin_yang_dun",
+          "startLine": 18,
+          "endLine": 40,
+          "params": [
+            "year",
+            "month",
+            "day"
+          ]
+        },
+        {
+          "name": "_rotate_list",
+          "startLine": 43,
+          "endLine": 46,
+          "params": [
+            "lst",
+            "n"
+          ]
+        },
+        {
+          "name": "calculate_qimen",
+          "startLine": 49,
+          "endLine": 117,
+          "params": [
+            "year",
+            "month",
+            "day",
+            "hour"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "_get_yin_yang_dun",
+          "line": 18,
+          "isDefault": false
+        },
+        {
+          "name": "_rotate_list",
+          "line": 43,
+          "isDefault": false
+        },
+        {
+          "name": "calculate_qimen",
+          "line": 49,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_get_yin_yang_dun",
+          "callee": "Solar.fromYmd",
+          "lineNumber": 27
+        },
+        {
+          "caller": "_get_yin_yang_dun",
+          "callee": "solar.getLunar",
+          "lineNumber": 28
+        },
+        {
+          "caller": "_rotate_list",
+          "callee": "len",
+          "lineNumber": 45
+        },
+        {
+          "caller": "calculate_qimen",
+          "callee": "_get_yin_yang_dun",
+          "lineNumber": 63
+        },
+        {
+          "caller": "calculate_qimen",
+          "callee": "_rotate_list",
+          "lineNumber": 74
+        },
+        {
+          "caller": "calculate_qimen",
+          "callee": "_rotate_list",
+          "lineNumber": 76
+        },
+        {
+          "caller": "calculate_qimen",
+          "callee": "_rotate_list",
+          "lineNumber": 81
+        },
+        {
+          "caller": "calculate_qimen",
+          "callee": "_rotate_list",
+          "lineNumber": 83
+        },
+        {
+          "caller": "calculate_qimen",
+          "callee": "range",
+          "lineNumber": 87
+        },
+        {
+          "caller": "calculate_qimen",
+          "callee": "gates_reordered.append",
+          "lineNumber": 89
+        },
+        {
+          "caller": "calculate_qimen",
+          "callee": "gates_reordered.append",
+          "lineNumber": 92
+        },
+        {
+          "caller": "calculate_qimen",
+          "callee": "_rotate_list",
+          "lineNumber": 97
+        },
+        {
+          "caller": "calculate_qimen",
+          "callee": "_rotate_list",
+          "lineNumber": 99
+        },
+        {
+          "caller": "calculate_qimen",
+          "callee": "range",
+          "lineNumber": 100
+        },
+        {
+          "caller": "calculate_qimen",
+          "callee": "range",
+          "lineNumber": 104
+        },
+        {
+          "caller": "calculate_qimen",
+          "callee": "str",
+          "lineNumber": 105
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 3,
+        "functionCount": 3,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/fortune_engine/services/__init__.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 1,
+      "nonEmptyLines": 0,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/fortune_engine/services/deepseek.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 340,
+      "nonEmptyLines": 277,
+      "functions": [
+        {
+          "name": "_strip_markdown",
+          "startLine": 8,
+          "endLine": 24,
+          "params": [
+            "text"
+          ]
+        },
+        {
+          "name": "_call_deepseek",
+          "startLine": 74,
+          "endLine": 111,
+          "params": [
+            "prompt",
+            "max_retries",
+            "api_key",
+            "base_url",
+            "model"
+          ]
+        },
+        {
+          "name": "interpret_fortune",
+          "startLine": 114,
+          "endLine": 154,
+          "params": [
+            "gender",
+            "birth_info",
+            "bazi",
+            "five_elements",
+            "favorable_elements",
+            "user_feedback_summary",
+            "dimension_preference"
+          ]
+        },
+        {
+          "name": "interpret_daily",
+          "startLine": 157,
+          "endLine": 201,
+          "params": [
+            "bazi_summary",
+            "daily_fortune",
+            "user_feedback_summary",
+            "accuracy_info",
+            "llm_api_key",
+            "llm_api_url",
+            "llm_model"
+          ]
+        },
+        {
+          "name": "interpret_liuyao",
+          "startLine": 235,
+          "endLine": 269,
+          "params": [
+            "hexagram_data",
+            "bazi_info",
+            "outcome_history"
+          ]
+        },
+        {
+          "name": "interpret_qimen",
+          "startLine": 307,
+          "endLine": 340,
+          "params": [
+            "chart_data",
+            "question",
+            "bazi_info",
+            "outcome_history"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "_strip_markdown",
+          "line": 8,
+          "isDefault": false
+        },
+        {
+          "name": "_call_deepseek",
+          "line": 74,
+          "isDefault": false
+        },
+        {
+          "name": "interpret_fortune",
+          "line": 114,
+          "isDefault": false
+        },
+        {
+          "name": "interpret_daily",
+          "line": 157,
+          "isDefault": false
+        },
+        {
+          "name": "interpret_liuyao",
+          "line": 235,
+          "isDefault": false
+        },
+        {
+          "name": "interpret_qimen",
+          "line": 307,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_strip_markdown",
+          "callee": "re.sub",
+          "lineNumber": 13
+        },
+        {
+          "caller": "_strip_markdown",
+          "callee": "re.sub",
+          "lineNumber": 15
+        },
+        {
+          "caller": "_strip_markdown",
+          "callee": "re.sub",
+          "lineNumber": 17
+        },
+        {
+          "caller": "_strip_markdown",
+          "callee": "re.sub",
+          "lineNumber": 19
+        },
+        {
+          "caller": "_strip_markdown",
+          "callee": "re.sub",
+          "lineNumber": 21
+        },
+        {
+          "caller": "_strip_markdown",
+          "callee": "re.sub",
+          "lineNumber": 23
+        },
+        {
+          "caller": "_strip_markdown",
+          "callee": "text.strip",
+          "lineNumber": 24
+        },
+        {
+          "caller": "_call_deepseek",
+          "callee": "_model.split(\"[\")[0].strip",
+          "lineNumber": 87
+        },
+        {
+          "caller": "_call_deepseek",
+          "callee": "_model.split",
+          "lineNumber": 87
+        },
+        {
+          "caller": "_call_deepseek",
+          "callee": "range",
+          "lineNumber": 101
+        },
+        {
+          "caller": "_call_deepseek",
+          "callee": "httpx.post",
+          "lineNumber": 103
+        },
+        {
+          "caller": "_call_deepseek",
+          "callee": "response.json",
+          "lineNumber": 105
+        },
+        {
+          "caller": "interpret_fortune",
+          "callee": "\"、\".join",
+          "lineNumber": 138
+        },
+        {
+          "caller": "interpret_fortune",
+          "callee": "five_elements.items",
+          "lineNumber": 138
+        },
+        {
+          "caller": "interpret_fortune",
+          "callee": "\"、\".join",
+          "lineNumber": 139
+        },
+        {
+          "caller": "interpret_fortune",
+          "callee": "FORTUNE_PROMPT.format",
+          "lineNumber": 141
+        },
+        {
+          "caller": "interpret_fortune",
+          "callee": "_call_deepseek",
+          "lineNumber": 153
+        },
+        {
+          "caller": "interpret_fortune",
+          "callee": "_strip_markdown",
+          "lineNumber": 154
+        },
+        {
+          "caller": "interpret_daily",
+          "callee": "fortune_lines.append",
+          "lineNumber": 181
+        },
+        {
+          "caller": "interpret_daily",
+          "callee": "dim.split",
+          "lineNumber": 185
+        },
+        {
+          "caller": "interpret_daily",
+          "callee": "fortune_lines.append",
+          "lineNumber": 186
+        },
+        {
+          "caller": "interpret_daily",
+          "callee": "d.get",
+          "lineNumber": 186
+        },
+        {
+          "caller": "interpret_daily",
+          "callee": "d.get",
+          "lineNumber": 186
+        },
+        {
+          "caller": "interpret_daily",
+          "callee": "DAILY_PROMPT.format",
+          "lineNumber": 188
+        },
+        {
+          "caller": "interpret_daily",
+          "callee": "\"\\n\".join",
+          "lineNumber": 190
+        },
+        {
+          "caller": "interpret_daily",
+          "callee": "_call_deepseek",
+          "lineNumber": 195
+        },
+        {
+          "caller": "interpret_daily",
+          "callee": "_strip_markdown",
+          "lineNumber": 201
+        },
+        {
+          "caller": "interpret_liuyao",
+          "callee": "hexagram_data.get",
+          "lineNumber": 249
+        },
+        {
+          "caller": "interpret_liuyao",
+          "callee": "hexagram_data.get",
+          "lineNumber": 252
+        },
+        {
+          "caller": "interpret_liuyao",
+          "callee": "LIUYAO_PROMPT.format",
+          "lineNumber": 254
+        },
+        {
+          "caller": "interpret_liuyao",
+          "callee": "TRIGRAM_IMAGE.get",
+          "lineNumber": 258
+        },
+        {
+          "caller": "interpret_liuyao",
+          "callee": "TRIGRAM_IMAGE.get",
+          "lineNumber": 260
+        },
+        {
+          "caller": "interpret_liuyao",
+          "callee": "hexagram_data.get",
+          "lineNumber": 262
+        },
+        {
+          "caller": "interpret_liuyao",
+          "callee": "_call_deepseek",
+          "lineNumber": 268
+        },
+        {
+          "caller": "interpret_liuyao",
+          "callee": "_strip_markdown",
+          "lineNumber": 269
+        },
+        {
+          "caller": "interpret_qimen",
+          "callee": "chart_data.get(\"palace\", {}).items",
+          "lineNumber": 324
+        },
+        {
+          "caller": "interpret_qimen",
+          "callee": "chart_data.get",
+          "lineNumber": 324
+        },
+        {
+          "caller": "interpret_qimen",
+          "callee": "palace_lines.append",
+          "lineNumber": 325
+        },
+        {
+          "caller": "interpret_qimen",
+          "callee": "QIMEN_PROMPT.format",
+          "lineNumber": 329
+        },
+        {
+          "caller": "interpret_qimen",
+          "callee": "chart_data.get",
+          "lineNumber": 333
+        },
+        {
+          "caller": "interpret_qimen",
+          "callee": "\"\\n\".join",
+          "lineNumber": 334
+        },
+        {
+          "caller": "interpret_qimen",
+          "callee": "_call_deepseek",
+          "lineNumber": 339
+        },
+        {
+          "caller": "interpret_qimen",
+          "callee": "_strip_markdown",
+          "lineNumber": 340
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 6,
+        "functionCount": 6,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/migrate_llm_fields.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 36,
+      "nonEmptyLines": 27,
+      "functions": [
+        {
+          "name": "migrate",
+          "startLine": 9,
+          "endLine": 32,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "migrate",
+          "line": 9,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "migrate",
+          "callee": "sqlite3.connect",
+          "lineNumber": 10
+        },
+        {
+          "caller": "migrate",
+          "callee": "conn.cursor",
+          "lineNumber": 11
+        },
+        {
+          "caller": "migrate",
+          "callee": "cursor.execute",
+          "lineNumber": 14
+        },
+        {
+          "caller": "migrate",
+          "callee": "cursor.fetchall",
+          "lineNumber": 15
+        },
+        {
+          "caller": "migrate",
+          "callee": "cursor.execute",
+          "lineNumber": 25
+        },
+        {
+          "caller": "migrate",
+          "callee": "print",
+          "lineNumber": 26
+        },
+        {
+          "caller": "migrate",
+          "callee": "print",
+          "lineNumber": 28
+        },
+        {
+          "caller": "migrate",
+          "callee": "conn.commit",
+          "lineNumber": 30
+        },
+        {
+          "caller": "migrate",
+          "callee": "conn.close",
+          "lineNumber": 31
+        },
+        {
+          "caller": "migrate",
+          "callee": "print",
+          "lineNumber": 32
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/scripts/init_db.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 32,
+      "nonEmptyLines": 24,
+      "functions": [
+        {
+          "name": "init_db",
+          "startLine": 18,
+          "endLine": 28,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "init_db",
+          "line": 18,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "init_db",
+          "callee": "print",
+          "lineNumber": 20
+        },
+        {
+          "caller": "init_db",
+          "callee": "Base.metadata.create_all",
+          "lineNumber": 21
+        },
+        {
+          "caller": "init_db",
+          "callee": "print",
+          "lineNumber": 22
+        },
+        {
+          "caller": "init_db",
+          "callee": "inspect",
+          "lineNumber": 26
+        },
+        {
+          "caller": "init_db",
+          "callee": "inspector.get_table_names",
+          "lineNumber": 27
+        },
+        {
+          "caller": "init_db",
+          "callee": "print",
+          "lineNumber": 28
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/test.db",
+      "language": "db",
+      "fileCategory": "code",
+      "totalLines": 400,
+      "nonEmptyLines": 347,
+      "metrics": {}
+    },
+    {
+      "path": "server/tests/__init__.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 1,
+      "nonEmptyLines": 1,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/tests/conftest.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 65,
+      "nonEmptyLines": 52,
+      "functions": [
+        {
+          "name": "db_session",
+          "startLine": 26,
+          "endLine": 48,
+          "params": []
+        },
+        {
+          "name": "client",
+          "startLine": 52,
+          "endLine": 65,
+          "params": [
+            "db_session"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "db_session",
+          "line": 25,
+          "isDefault": false
+        },
+        {
+          "name": "client",
+          "line": 51,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "db_session",
+          "callee": "create_engine",
+          "lineNumber": 28
+        },
+        {
+          "caller": "db_session",
+          "callee": "event.listens_for",
+          "lineNumber": 36
+        },
+        {
+          "caller": "set_sqlite_pragma",
+          "callee": "dbapi_connection.cursor",
+          "lineNumber": 38
+        },
+        {
+          "caller": "set_sqlite_pragma",
+          "callee": "cursor.execute",
+          "lineNumber": 39
+        },
+        {
+          "caller": "set_sqlite_pragma",
+          "callee": "cursor.close",
+          "lineNumber": 40
+        },
+        {
+          "caller": "db_session",
+          "callee": "Base.metadata.create_all",
+          "lineNumber": 42
+        },
+        {
+          "caller": "db_session",
+          "callee": "sessionmaker",
+          "lineNumber": 43
+        },
+        {
+          "caller": "db_session",
+          "callee": "TestingSessionLocal",
+          "lineNumber": 45
+        },
+        {
+          "caller": "db_session",
+          "callee": "session.close",
+          "lineNumber": 47
+        },
+        {
+          "caller": "db_session",
+          "callee": "Base.metadata.drop_all",
+          "lineNumber": 48
+        },
+        {
+          "caller": "client",
+          "callee": "TestClient",
+          "lineNumber": 63
+        },
+        {
+          "caller": "client",
+          "callee": "fastapi_app.dependency_overrides.clear",
+          "lineNumber": 65
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/tests/test_auth_login.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 62,
+      "nonEmptyLines": 49,
+      "functions": [
+        {
+          "name": "test_login_success",
+          "startLine": 21,
+          "endLine": 34,
+          "params": [
+            "client"
+          ]
+        },
+        {
+          "name": "test_login_wrong_password",
+          "startLine": 37,
+          "endLine": 49,
+          "params": [
+            "client"
+          ]
+        },
+        {
+          "name": "test_login_nonexistent_email",
+          "startLine": 52,
+          "endLine": 62,
+          "params": [
+            "client"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "test_login_success",
+          "line": 21,
+          "isDefault": false
+        },
+        {
+          "name": "test_login_wrong_password",
+          "line": 37,
+          "isDefault": false
+        },
+        {
+          "name": "test_login_nonexistent_email",
+          "line": 52,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "test_login_success",
+          "callee": "client.post",
+          "lineNumber": 23
+        },
+        {
+          "caller": "test_login_success",
+          "callee": "client.post",
+          "lineNumber": 25
+        },
+        {
+          "caller": "test_login_success",
+          "callee": "response.json",
+          "lineNumber": 31
+        },
+        {
+          "caller": "test_login_success",
+          "callee": "len",
+          "lineNumber": 34
+        },
+        {
+          "caller": "test_login_wrong_password",
+          "callee": "client.post",
+          "lineNumber": 39
+        },
+        {
+          "caller": "test_login_wrong_password",
+          "callee": "client.post",
+          "lineNumber": 41
+        },
+        {
+          "caller": "test_login_wrong_password",
+          "callee": "response.json",
+          "lineNumber": 47
+        },
+        {
+          "caller": "test_login_nonexistent_email",
+          "callee": "client.post",
+          "lineNumber": 54
+        },
+        {
+          "caller": "test_login_nonexistent_email",
+          "callee": "response.json",
+          "lineNumber": 60
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 3,
+        "functionCount": 3,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/tests/test_auth_register.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 84,
+      "nonEmptyLines": 58,
+      "functions": [
+        {
+          "name": "test_register_success",
+          "startLine": 22,
+          "endLine": 32,
+          "params": [
+            "client"
+          ]
+        },
+        {
+          "name": "test_register_duplicate_email",
+          "startLine": 35,
+          "endLine": 44,
+          "params": [
+            "client"
+          ]
+        },
+        {
+          "name": "test_register_weak_password",
+          "startLine": 47,
+          "endLine": 53,
+          "params": [
+            "client"
+          ]
+        },
+        {
+          "name": "test_register_invalid_email",
+          "startLine": 56,
+          "endLine": 62,
+          "params": [
+            "client"
+          ]
+        },
+        {
+          "name": "test_register_missing_fields",
+          "startLine": 65,
+          "endLine": 71,
+          "params": [
+            "client"
+          ]
+        },
+        {
+          "name": "test_register_password_hashed",
+          "startLine": 74,
+          "endLine": 84,
+          "params": [
+            "client",
+            "db_session"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "test_register_success",
+          "line": 22,
+          "isDefault": false
+        },
+        {
+          "name": "test_register_duplicate_email",
+          "line": 35,
+          "isDefault": false
+        },
+        {
+          "name": "test_register_weak_password",
+          "line": 47,
+          "isDefault": false
+        },
+        {
+          "name": "test_register_invalid_email",
+          "line": 56,
+          "isDefault": false
+        },
+        {
+          "name": "test_register_missing_fields",
+          "line": 65,
+          "isDefault": false
+        },
+        {
+          "name": "test_register_password_hashed",
+          "line": 74,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "test_register_success",
+          "callee": "client.post",
+          "lineNumber": 24
+        },
+        {
+          "caller": "test_register_success",
+          "callee": "response.json",
+          "lineNumber": 27
+        },
+        {
+          "caller": "test_register_success",
+          "callee": "len",
+          "lineNumber": 32
+        },
+        {
+          "caller": "test_register_duplicate_email",
+          "callee": "client.post",
+          "lineNumber": 37
+        },
+        {
+          "caller": "test_register_duplicate_email",
+          "callee": "client.post",
+          "lineNumber": 39
+        },
+        {
+          "caller": "test_register_duplicate_email",
+          "callee": "response.json",
+          "lineNumber": 42
+        },
+        {
+          "caller": "test_register_weak_password",
+          "callee": "client.post",
+          "lineNumber": 51
+        },
+        {
+          "caller": "test_register_invalid_email",
+          "callee": "client.post",
+          "lineNumber": 60
+        },
+        {
+          "caller": "test_register_missing_fields",
+          "callee": "client.post",
+          "lineNumber": 69
+        },
+        {
+          "caller": "test_register_password_hashed",
+          "callee": "client.post",
+          "lineNumber": 76
+        },
+        {
+          "caller": "test_register_password_hashed",
+          "callee": "db_session.query(User).filter(User.email == \"zhangsan@qq.com\").first",
+          "lineNumber": 80
+        },
+        {
+          "caller": "test_register_password_hashed",
+          "callee": "db_session.query(User).filter",
+          "lineNumber": 80
+        },
+        {
+          "caller": "test_register_password_hashed",
+          "callee": "db_session.query",
+          "lineNumber": 80
+        },
+        {
+          "caller": "test_register_password_hashed",
+          "callee": "user.password_hash.startswith",
+          "lineNumber": 84
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 6,
+        "functionCount": 6,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/tests/test_bazi.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 89,
+      "nonEmptyLines": 78,
+      "classes": [
+        {
+          "name": "TestBaziCalculation",
+          "startLine": 7,
+          "endLine": 89,
+          "methods": [
+            "test_basic_bazi",
+            "test_day_master",
+            "test_five_elements_count",
+            "test_ten_gods",
+            "test_zi_hour_midnight",
+            "test_zi_hour_date_change",
+            "test_major_luck_cycles",
+            "test_favorable_elements",
+            "test_different_genders_different_luck"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "TestBaziCalculation",
+          "line": 7,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "test_basic_bazi",
+          "callee": "calculate_bazi",
+          "lineNumber": 12
+        },
+        {
+          "caller": "test_basic_bazi",
+          "callee": "len",
+          "lineNumber": 19
+        },
+        {
+          "caller": "test_basic_bazi",
+          "callee": "len",
+          "lineNumber": 20
+        },
+        {
+          "caller": "test_basic_bazi",
+          "callee": "len",
+          "lineNumber": 21
+        },
+        {
+          "caller": "test_basic_bazi",
+          "callee": "len",
+          "lineNumber": 22
+        },
+        {
+          "caller": "test_day_master",
+          "callee": "calculate_bazi",
+          "lineNumber": 26
+        },
+        {
+          "caller": "test_five_elements_count",
+          "callee": "calculate_bazi",
+          "lineNumber": 32
+        },
+        {
+          "caller": "test_five_elements_count",
+          "callee": "set",
+          "lineNumber": 34
+        },
+        {
+          "caller": "test_five_elements_count",
+          "callee": "fe.keys",
+          "lineNumber": 34
+        },
+        {
+          "caller": "test_five_elements_count",
+          "callee": "sum",
+          "lineNumber": 35
+        },
+        {
+          "caller": "test_five_elements_count",
+          "callee": "fe.values",
+          "lineNumber": 35
+        },
+        {
+          "caller": "test_ten_gods",
+          "callee": "calculate_bazi",
+          "lineNumber": 39
+        },
+        {
+          "caller": "test_zi_hour_midnight",
+          "callee": "calculate_bazi",
+          "lineNumber": 47
+        },
+        {
+          "caller": "test_zi_hour_date_change",
+          "callee": "calculate_bazi",
+          "lineNumber": 53
+        },
+        {
+          "caller": "test_zi_hour_date_change",
+          "callee": "calculate_bazi",
+          "lineNumber": 54
+        },
+        {
+          "caller": "test_zi_hour_date_change",
+          "callee": "len",
+          "lineNumber": 57
+        },
+        {
+          "caller": "test_major_luck_cycles",
+          "callee": "calculate_bazi",
+          "lineNumber": 61
+        },
+        {
+          "caller": "test_major_luck_cycles",
+          "callee": "isinstance",
+          "lineNumber": 63
+        },
+        {
+          "caller": "test_major_luck_cycles",
+          "callee": "len",
+          "lineNumber": 64
+        },
+        {
+          "caller": "test_major_luck_cycles",
+          "callee": "len",
+          "lineNumber": 69
+        },
+        {
+          "caller": "test_favorable_elements",
+          "callee": "calculate_bazi",
+          "lineNumber": 73
+        },
+        {
+          "caller": "test_favorable_elements",
+          "callee": "isinstance",
+          "lineNumber": 75
+        },
+        {
+          "caller": "test_favorable_elements",
+          "callee": "len",
+          "lineNumber": 76
+        },
+        {
+          "caller": "test_favorable_elements",
+          "callee": "all",
+          "lineNumber": 77
+        },
+        {
+          "caller": "test_different_genders_different_luck",
+          "callee": "calculate_bazi",
+          "lineNumber": 81
+        },
+        {
+          "caller": "test_different_genders_different_luck",
+          "callee": "calculate_bazi",
+          "lineNumber": 82
+        },
+        {
+          "caller": "test_different_genders_different_luck",
+          "callee": "len",
+          "lineNumber": 89
+        },
+        {
+          "caller": "test_different_genders_different_luck",
+          "callee": "len",
+          "lineNumber": 89
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "server/tests/test_common_module.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 160,
+      "nonEmptyLines": 135,
+      "classes": [
+        {
+          "name": "TestTiangan",
+          "startLine": 12,
+          "endLine": 52,
+          "methods": [
+            "test_tiangan_count",
+            "test_tiangan_order",
+            "test_tiangan_wuxing",
+            "test_tiangan_yinyang",
+            "test_tiangan_from_index",
+            "test_tiangan_from_name_invalid"
+          ],
+          "properties": []
+        },
+        {
+          "name": "TestDizhi",
+          "startLine": 57,
+          "endLine": 105,
+          "methods": [
+            "test_dizhi_count",
+            "test_dizhi_order",
+            "test_dizhi_wuxing",
+            "test_dizhi_canggan",
+            "test_dizhi_from_index"
+          ],
+          "properties": []
+        },
+        {
+          "name": "TestWuxing",
+          "startLine": 110,
+          "endLine": 135,
+          "methods": [
+            "test_sheng",
+            "test_ke",
+            "test_get_wuxing_of_tiangan",
+            "test_get_wuxing_of_dizhi"
+          ],
+          "properties": []
+        },
+        {
+          "name": "TestShichen",
+          "startLine": 140,
+          "endLine": 160,
+          "methods": [
+            "test_hour_to_shichen",
+            "test_shichen_map_has_12_unique"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "TestTiangan",
+          "line": 12,
+          "isDefault": false
+        },
+        {
+          "name": "TestDizhi",
+          "line": 57,
+          "isDefault": false
+        },
+        {
+          "name": "TestWuxing",
+          "line": 110,
+          "isDefault": false
+        },
+        {
+          "name": "TestShichen",
+          "line": 140,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "test_tiangan_count",
+          "callee": "len",
+          "lineNumber": 15
+        },
+        {
+          "caller": "test_tiangan_wuxing",
+          "callee": "cases.items",
+          "lineNumber": 31
+        },
+        {
+          "caller": "test_tiangan_wuxing",
+          "callee": "Tiangan.from_name",
+          "lineNumber": 32
+        },
+        {
+          "caller": "test_tiangan_yinyang",
+          "callee": "Tiangan.from_name",
+          "lineNumber": 40
+        },
+        {
+          "caller": "test_tiangan_yinyang",
+          "callee": "Tiangan.from_name",
+          "lineNumber": 42
+        },
+        {
+          "caller": "test_tiangan_from_index",
+          "callee": "Tiangan.from_index",
+          "lineNumber": 46
+        },
+        {
+          "caller": "test_tiangan_from_index",
+          "callee": "Tiangan.from_index",
+          "lineNumber": 47
+        },
+        {
+          "caller": "test_tiangan_from_index",
+          "callee": "Tiangan.from_index",
+          "lineNumber": 48
+        },
+        {
+          "caller": "test_tiangan_from_name_invalid",
+          "callee": "Tiangan.from_name",
+          "lineNumber": 52
+        },
+        {
+          "caller": "test_dizhi_count",
+          "callee": "len",
+          "lineNumber": 60
+        },
+        {
+          "caller": "test_dizhi_wuxing",
+          "callee": "cases.items",
+          "lineNumber": 77
+        },
+        {
+          "caller": "test_dizhi_wuxing",
+          "callee": "Dizhi.from_name",
+          "lineNumber": 78
+        },
+        {
+          "caller": "test_dizhi_canggan",
+          "callee": "cases.items",
+          "lineNumber": 97
+        },
+        {
+          "caller": "test_dizhi_canggan",
+          "callee": "Dizhi.from_name",
+          "lineNumber": 98
+        },
+        {
+          "caller": "test_dizhi_from_index",
+          "callee": "Dizhi.from_index",
+          "lineNumber": 103
+        },
+        {
+          "caller": "test_dizhi_from_index",
+          "callee": "Dizhi.from_index",
+          "lineNumber": 104
+        },
+        {
+          "caller": "test_dizhi_from_index",
+          "callee": "Dizhi.from_index",
+          "lineNumber": 105
+        },
+        {
+          "caller": "test_sheng",
+          "callee": "sheng",
+          "lineNumber": 113
+        },
+        {
+          "caller": "test_sheng",
+          "callee": "sheng",
+          "lineNumber": 114
+        },
+        {
+          "caller": "test_sheng",
+          "callee": "sheng",
+          "lineNumber": 115
+        },
+        {
+          "caller": "test_sheng",
+          "callee": "sheng",
+          "lineNumber": 116
+        },
+        {
+          "caller": "test_sheng",
+          "callee": "sheng",
+          "lineNumber": 117
+        },
+        {
+          "caller": "test_ke",
+          "callee": "ke",
+          "lineNumber": 121
+        },
+        {
+          "caller": "test_ke",
+          "callee": "ke",
+          "lineNumber": 122
+        },
+        {
+          "caller": "test_ke",
+          "callee": "ke",
+          "lineNumber": 123
+        },
+        {
+          "caller": "test_ke",
+          "callee": "ke",
+          "lineNumber": 124
+        },
+        {
+          "caller": "test_ke",
+          "callee": "ke",
+          "lineNumber": 125
+        },
+        {
+          "caller": "test_get_wuxing_of_tiangan",
+          "callee": "get_wuxing_of_tiangan",
+          "lineNumber": 129
+        },
+        {
+          "caller": "test_get_wuxing_of_tiangan",
+          "callee": "get_wuxing_of_tiangan",
+          "lineNumber": 130
+        },
+        {
+          "caller": "test_get_wuxing_of_dizhi",
+          "callee": "get_wuxing_of_dizhi",
+          "lineNumber": 134
+        },
+        {
+          "caller": "test_get_wuxing_of_dizhi",
+          "callee": "get_wuxing_of_dizhi",
+          "lineNumber": 135
+        },
+        {
+          "caller": "test_hour_to_shichen",
+          "callee": "hour_to_shichen",
+          "lineNumber": 143
+        },
+        {
+          "caller": "test_hour_to_shichen",
+          "callee": "hour_to_shichen",
+          "lineNumber": 144
+        },
+        {
+          "caller": "test_hour_to_shichen",
+          "callee": "hour_to_shichen",
+          "lineNumber": 145
+        },
+        {
+          "caller": "test_hour_to_shichen",
+          "callee": "hour_to_shichen",
+          "lineNumber": 146
+        },
+        {
+          "caller": "test_hour_to_shichen",
+          "callee": "hour_to_shichen",
+          "lineNumber": 147
+        },
+        {
+          "caller": "test_hour_to_shichen",
+          "callee": "hour_to_shichen",
+          "lineNumber": 148
+        },
+        {
+          "caller": "test_hour_to_shichen",
+          "callee": "hour_to_shichen",
+          "lineNumber": 149
+        },
+        {
+          "caller": "test_hour_to_shichen",
+          "callee": "hour_to_shichen",
+          "lineNumber": 150
+        },
+        {
+          "caller": "test_hour_to_shichen",
+          "callee": "hour_to_shichen",
+          "lineNumber": 151
+        },
+        {
+          "caller": "test_hour_to_shichen",
+          "callee": "hour_to_shichen",
+          "lineNumber": 152
+        },
+        {
+          "caller": "test_hour_to_shichen",
+          "callee": "hour_to_shichen",
+          "lineNumber": 153
+        },
+        {
+          "caller": "test_hour_to_shichen",
+          "callee": "hour_to_shichen",
+          "lineNumber": 154
+        },
+        {
+          "caller": "test_hour_to_shichen",
+          "callee": "hour_to_shichen",
+          "lineNumber": 155
+        },
+        {
+          "caller": "test_shichen_map_has_12_unique",
+          "callee": "set",
+          "lineNumber": 159
+        },
+        {
+          "caller": "test_shichen_map_has_12_unique",
+          "callee": "SHICHEN_MAP.values",
+          "lineNumber": 159
+        },
+        {
+          "caller": "test_shichen_map_has_12_unique",
+          "callee": "len",
+          "lineNumber": 160
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 4,
+        "functionCount": 0,
+        "classCount": 4
+      }
+    }
+  ]
+}

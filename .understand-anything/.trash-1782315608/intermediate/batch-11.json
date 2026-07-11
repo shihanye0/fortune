@@ -1,0 +1,2812 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 15,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "server/tests/test_config.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 20,
+      "nonEmptyLines": 14,
+      "functions": [
+        {
+          "name": "test_config_reads_database_url",
+          "startLine": 5,
+          "endLine": 11,
+          "params": []
+        },
+        {
+          "name": "test_config_has_default_values",
+          "startLine": 14,
+          "endLine": 20,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "test_config_reads_database_url",
+          "line": 5,
+          "isDefault": false
+        },
+        {
+          "name": "test_config_has_default_values",
+          "line": 14,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "test_config_reads_database_url",
+          "callee": "len",
+          "lineNumber": 11
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/tests/test_daily_fortune.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 69,
+      "nonEmptyLines": 61,
+      "classes": [
+        {
+          "name": "TestDailyFortune",
+          "startLine": 7,
+          "endLine": 69,
+          "methods": [
+            "_sample_bazi",
+            "test_returns_four_dimensions",
+            "test_scores_in_range",
+            "test_lucky_info",
+            "test_stem_and_branch",
+            "test_different_days_different_scores"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "TestDailyFortune",
+          "line": 7,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "test_returns_four_dimensions",
+          "callee": "self._sample_bazi",
+          "lineNumber": 24
+        },
+        {
+          "caller": "test_returns_four_dimensions",
+          "callee": "calculate_daily_fortune",
+          "lineNumber": 25
+        },
+        {
+          "caller": "test_scores_in_range",
+          "callee": "self._sample_bazi",
+          "lineNumber": 33
+        },
+        {
+          "caller": "test_scores_in_range",
+          "callee": "calculate_daily_fortune",
+          "lineNumber": 34
+        },
+        {
+          "caller": "test_lucky_info",
+          "callee": "self._sample_bazi",
+          "lineNumber": 43
+        },
+        {
+          "caller": "test_lucky_info",
+          "callee": "calculate_daily_fortune",
+          "lineNumber": 44
+        },
+        {
+          "caller": "test_lucky_info",
+          "callee": "isinstance",
+          "lineNumber": 48
+        },
+        {
+          "caller": "test_lucky_info",
+          "callee": "len",
+          "lineNumber": 49
+        },
+        {
+          "caller": "test_stem_and_branch",
+          "callee": "self._sample_bazi",
+          "lineNumber": 53
+        },
+        {
+          "caller": "test_stem_and_branch",
+          "callee": "calculate_daily_fortune",
+          "lineNumber": 54
+        },
+        {
+          "caller": "test_stem_and_branch",
+          "callee": "len",
+          "lineNumber": 57
+        },
+        {
+          "caller": "test_stem_and_branch",
+          "callee": "len",
+          "lineNumber": 58
+        },
+        {
+          "caller": "test_different_days_different_scores",
+          "callee": "self._sample_bazi",
+          "lineNumber": 62
+        },
+        {
+          "caller": "test_different_days_different_scores",
+          "callee": "calculate_daily_fortune",
+          "lineNumber": 63
+        },
+        {
+          "caller": "test_different_days_different_scores",
+          "callee": "calculate_daily_fortune",
+          "lineNumber": 64
+        },
+        {
+          "caller": "test_different_days_different_scores",
+          "callee": "len",
+          "lineNumber": 69
+        },
+        {
+          "caller": "test_different_days_different_scores",
+          "callee": "len",
+          "lineNumber": 69
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "server/tests/test_daily_push.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 140,
+      "nonEmptyLines": 119,
+      "functions": [
+        {
+          "name": "_create_user",
+          "startLine": 13,
+          "endLine": 30,
+          "params": [
+            "db",
+            "push_enabled",
+            "push_channel",
+            "push_time",
+            "feishu_webhook",
+            "email"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "TestDailyPushAPI",
+          "startLine": 33,
+          "endLine": 140,
+          "methods": [
+            "test_push_to_enabled_users",
+            "test_skip_disabled_users",
+            "test_push_only_matching_hour",
+            "test_push_to_feishu",
+            "test_push_both_channels",
+            "test_llm_failure_degrades_gracefully",
+            "test_stores_fortune_to_db"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "_create_user",
+          "line": 13,
+          "isDefault": false
+        },
+        {
+          "name": "TestDailyPushAPI",
+          "line": 33,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_create_user",
+          "callee": "User",
+          "lineNumber": 16
+        },
+        {
+          "caller": "_create_user",
+          "callee": "hash_password",
+          "lineNumber": 19
+        },
+        {
+          "caller": "_create_user",
+          "callee": "db.add",
+          "lineNumber": 27
+        },
+        {
+          "caller": "_create_user",
+          "callee": "db.commit",
+          "lineNumber": 28
+        },
+        {
+          "caller": "_create_user",
+          "callee": "db.refresh",
+          "lineNumber": 29
+        },
+        {
+          "caller": "test_push_to_enabled_users",
+          "callee": "_create_user",
+          "lineNumber": 40
+        },
+        {
+          "caller": "test_push_to_enabled_users",
+          "callee": "client.post",
+          "lineNumber": 42
+        },
+        {
+          "caller": "test_push_to_enabled_users",
+          "callee": "res.json",
+          "lineNumber": 47
+        },
+        {
+          "caller": "test_skip_disabled_users",
+          "callee": "_create_user",
+          "lineNumber": 54
+        },
+        {
+          "caller": "test_skip_disabled_users",
+          "callee": "client.post",
+          "lineNumber": 56
+        },
+        {
+          "caller": "test_skip_disabled_users",
+          "callee": "res.json",
+          "lineNumber": 61
+        },
+        {
+          "caller": "test_skip_disabled_users",
+          "callee": "mock_email.assert_not_called",
+          "lineNumber": 63
+        },
+        {
+          "caller": "test_push_only_matching_hour",
+          "callee": "_create_user",
+          "lineNumber": 68
+        },
+        {
+          "caller": "test_push_only_matching_hour",
+          "callee": "_create_user",
+          "lineNumber": 69
+        },
+        {
+          "caller": "test_push_only_matching_hour",
+          "callee": "client.post",
+          "lineNumber": 71
+        },
+        {
+          "caller": "test_push_only_matching_hour",
+          "callee": "res.json",
+          "lineNumber": 76
+        },
+        {
+          "caller": "test_push_to_feishu",
+          "callee": "_create_user",
+          "lineNumber": 83
+        },
+        {
+          "caller": "test_push_to_feishu",
+          "callee": "client.post",
+          "lineNumber": 88
+        },
+        {
+          "caller": "test_push_to_feishu",
+          "callee": "mock_feishu.assert_called_once",
+          "lineNumber": 93
+        },
+        {
+          "caller": "test_push_both_channels",
+          "callee": "_create_user",
+          "lineNumber": 100
+        },
+        {
+          "caller": "test_push_both_channels",
+          "callee": "client.post",
+          "lineNumber": 105
+        },
+        {
+          "caller": "test_push_both_channels",
+          "callee": "mock_email.assert_called_once",
+          "lineNumber": 110
+        },
+        {
+          "caller": "test_push_both_channels",
+          "callee": "mock_feishu.assert_called_once",
+          "lineNumber": 111
+        },
+        {
+          "caller": "test_llm_failure_degrades_gracefully",
+          "callee": "_create_user",
+          "lineNumber": 117
+        },
+        {
+          "caller": "test_llm_failure_degrades_gracefully",
+          "callee": "client.post",
+          "lineNumber": 119
+        },
+        {
+          "caller": "test_llm_failure_degrades_gracefully",
+          "callee": "mock_email.assert_called_once",
+          "lineNumber": 125
+        },
+        {
+          "caller": "test_stores_fortune_to_db",
+          "callee": "_create_user",
+          "lineNumber": 129
+        },
+        {
+          "caller": "test_stores_fortune_to_db",
+          "callee": "patch",
+          "lineNumber": 131
+        },
+        {
+          "caller": "test_stores_fortune_to_db",
+          "callee": "patch",
+          "lineNumber": 132
+        },
+        {
+          "caller": "test_stores_fortune_to_db",
+          "callee": "client.post",
+          "lineNumber": 133
+        },
+        {
+          "caller": "test_stores_fortune_to_db",
+          "callee": "db_session.query(DailyFortune).filter(\n            DailyFortune.user_id == user.id\n        ).first",
+          "lineNumber": 136
+        },
+        {
+          "caller": "test_stores_fortune_to_db",
+          "callee": "db_session.query(DailyFortune).filter",
+          "lineNumber": 136
+        },
+        {
+          "caller": "test_stores_fortune_to_db",
+          "callee": "db_session.query",
+          "lineNumber": 136
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 1,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "server/tests/test_deepseek_service.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 76,
+      "nonEmptyLines": 66,
+      "classes": [
+        {
+          "name": "TestInterpretFortune",
+          "startLine": 8,
+          "endLine": 40,
+          "methods": [
+            "test_returns_string",
+            "test_api_error_returns_fallback"
+          ],
+          "properties": []
+        },
+        {
+          "name": "TestInterpretDaily",
+          "startLine": 43,
+          "endLine": 76,
+          "methods": [
+            "test_returns_string",
+            "test_timeout_returns_fallback"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "TestInterpretFortune",
+          "line": 8,
+          "isDefault": false
+        },
+        {
+          "name": "TestInterpretDaily",
+          "line": 43,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "test_returns_string",
+          "callee": "MagicMock",
+          "lineNumber": 13
+        },
+        {
+          "caller": "test_returns_string",
+          "callee": "patch",
+          "lineNumber": 19
+        },
+        {
+          "caller": "test_returns_string",
+          "callee": "interpret_fortune",
+          "lineNumber": 20
+        },
+        {
+          "caller": "test_returns_string",
+          "callee": "isinstance",
+          "lineNumber": 27
+        },
+        {
+          "caller": "test_returns_string",
+          "callee": "len",
+          "lineNumber": 28
+        },
+        {
+          "caller": "test_api_error_returns_fallback",
+          "callee": "patch",
+          "lineNumber": 32
+        },
+        {
+          "caller": "test_api_error_returns_fallback",
+          "callee": "Exception",
+          "lineNumber": 32
+        },
+        {
+          "caller": "test_api_error_returns_fallback",
+          "callee": "interpret_fortune",
+          "lineNumber": 33
+        },
+        {
+          "caller": "test_api_error_returns_fallback",
+          "callee": "len",
+          "lineNumber": 40
+        },
+        {
+          "caller": "test_returns_string",
+          "callee": "MagicMock",
+          "lineNumber": 48
+        },
+        {
+          "caller": "test_returns_string",
+          "callee": "patch",
+          "lineNumber": 54
+        },
+        {
+          "caller": "test_returns_string",
+          "callee": "interpret_daily",
+          "lineNumber": 55
+        },
+        {
+          "caller": "test_returns_string",
+          "callee": "isinstance",
+          "lineNumber": 64
+        },
+        {
+          "caller": "test_returns_string",
+          "callee": "len",
+          "lineNumber": 65
+        },
+        {
+          "caller": "test_timeout_returns_fallback",
+          "callee": "patch",
+          "lineNumber": 69
+        },
+        {
+          "caller": "test_timeout_returns_fallback",
+          "callee": "TimeoutError",
+          "lineNumber": 69
+        },
+        {
+          "caller": "test_timeout_returns_fallback",
+          "callee": "interpret_daily",
+          "lineNumber": 70
+        },
+        {
+          "caller": "test_timeout_returns_fallback",
+          "callee": "isinstance",
+          "lineNumber": 75
+        },
+        {
+          "caller": "test_timeout_returns_fallback",
+          "callee": "len",
+          "lineNumber": 76
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 0,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "server/tests/test_divination_api.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 168,
+      "nonEmptyLines": 142,
+      "functions": [
+        {
+          "name": "auth_user",
+          "startLine": 14,
+          "endLine": 30,
+          "params": [
+            "db_session"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "TestLiuyaoDivination",
+          "startLine": 36,
+          "endLine": 98,
+          "methods": [
+            "test_liuyao_with_question",
+            "test_liuyao_without_question",
+            "test_liuyao_unauthenticated",
+            "test_liuyao_llm_failure"
+          ],
+          "properties": []
+        },
+        {
+          "name": "TestQimenDivination",
+          "startLine": 104,
+          "endLine": 168,
+          "methods": [
+            "test_qimen_question_mode",
+            "test_qimen_realtime_mode",
+            "test_qimen_unauthenticated",
+            "test_qimen_llm_failure"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "auth_user",
+          "line": 13,
+          "isDefault": false
+        },
+        {
+          "name": "TestLiuyaoDivination",
+          "line": 36,
+          "isDefault": false
+        },
+        {
+          "name": "TestQimenDivination",
+          "line": 104,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "auth_user",
+          "callee": "User",
+          "lineNumber": 16
+        },
+        {
+          "caller": "auth_user",
+          "callee": "hash_password",
+          "lineNumber": 19
+        },
+        {
+          "caller": "auth_user",
+          "callee": "db_session.add",
+          "lineNumber": 26
+        },
+        {
+          "caller": "auth_user",
+          "callee": "db_session.commit",
+          "lineNumber": 27
+        },
+        {
+          "caller": "auth_user",
+          "callee": "db_session.refresh",
+          "lineNumber": 28
+        },
+        {
+          "caller": "auth_user",
+          "callee": "create_access_token",
+          "lineNumber": 29
+        },
+        {
+          "caller": "test_liuyao_with_question",
+          "callee": "client.post",
+          "lineNumber": 44
+        },
+        {
+          "caller": "test_liuyao_with_question",
+          "callee": "resp.json",
+          "lineNumber": 50
+        },
+        {
+          "caller": "test_liuyao_with_question",
+          "callee": "mock_llm.assert_called_once",
+          "lineNumber": 59
+        },
+        {
+          "caller": "test_liuyao_without_question",
+          "callee": "client.post",
+          "lineNumber": 66
+        },
+        {
+          "caller": "test_liuyao_without_question",
+          "callee": "resp.json",
+          "lineNumber": 72
+        },
+        {
+          "caller": "test_liuyao_unauthenticated",
+          "callee": "client.post",
+          "lineNumber": 78
+        },
+        {
+          "caller": "test_liuyao_llm_failure",
+          "callee": "client.post",
+          "lineNumber": 89
+        },
+        {
+          "caller": "test_liuyao_llm_failure",
+          "callee": "resp.json",
+          "lineNumber": 95
+        },
+        {
+          "caller": "test_qimen_question_mode",
+          "callee": "client.post",
+          "lineNumber": 112
+        },
+        {
+          "caller": "test_qimen_question_mode",
+          "callee": "resp.json",
+          "lineNumber": 118
+        },
+        {
+          "caller": "test_qimen_question_mode",
+          "callee": "len",
+          "lineNumber": 126
+        },
+        {
+          "caller": "test_qimen_question_mode",
+          "callee": "mock_llm.assert_called_once",
+          "lineNumber": 128
+        },
+        {
+          "caller": "test_qimen_realtime_mode",
+          "callee": "client.post",
+          "lineNumber": 135
+        },
+        {
+          "caller": "test_qimen_realtime_mode",
+          "callee": "resp.json",
+          "lineNumber": 141
+        },
+        {
+          "caller": "test_qimen_unauthenticated",
+          "callee": "client.post",
+          "lineNumber": 149
+        },
+        {
+          "caller": "test_qimen_llm_failure",
+          "callee": "client.post",
+          "lineNumber": 160
+        },
+        {
+          "caller": "test_qimen_llm_failure",
+          "callee": "resp.json",
+          "lineNumber": 166
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 3,
+        "functionCount": 1,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "server/tests/test_divination_history.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 192,
+      "nonEmptyLines": 160,
+      "functions": [
+        {
+          "name": "auth_user",
+          "startLine": 15,
+          "endLine": 31,
+          "params": [
+            "db_session"
+          ]
+        },
+        {
+          "name": "record_factory",
+          "startLine": 35,
+          "endLine": 61,
+          "params": [
+            "db_session",
+            "auth_user"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "TestDivinationHistory",
+          "startLine": 67,
+          "endLine": 133,
+          "methods": [
+            "test_history_with_records",
+            "test_history_empty",
+            "test_history_pagination",
+            "test_history_filter_by_type"
+          ],
+          "properties": []
+        },
+        {
+          "name": "TestDivinationFeedback",
+          "startLine": 139,
+          "endLine": 192,
+          "methods": [
+            "test_submit_feedback",
+            "test_update_feedback",
+            "test_feedback_not_found",
+            "test_feedback_invalid_rating"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "auth_user",
+          "line": 14,
+          "isDefault": false
+        },
+        {
+          "name": "record_factory",
+          "line": 34,
+          "isDefault": false
+        },
+        {
+          "name": "TestDivinationHistory",
+          "line": 67,
+          "isDefault": false
+        },
+        {
+          "name": "TestDivinationFeedback",
+          "line": 139,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "auth_user",
+          "callee": "User",
+          "lineNumber": 17
+        },
+        {
+          "caller": "auth_user",
+          "callee": "hash_password",
+          "lineNumber": 20
+        },
+        {
+          "caller": "auth_user",
+          "callee": "db_session.add",
+          "lineNumber": 27
+        },
+        {
+          "caller": "auth_user",
+          "callee": "db_session.commit",
+          "lineNumber": 28
+        },
+        {
+          "caller": "auth_user",
+          "callee": "db_session.refresh",
+          "lineNumber": 29
+        },
+        {
+          "caller": "auth_user",
+          "callee": "create_access_token",
+          "lineNumber": 30
+        },
+        {
+          "caller": "_create",
+          "callee": "DivinationRecord",
+          "lineNumber": 47
+        },
+        {
+          "caller": "_create",
+          "callee": "db_session.add",
+          "lineNumber": 56
+        },
+        {
+          "caller": "_create",
+          "callee": "db_session.commit",
+          "lineNumber": 57
+        },
+        {
+          "caller": "_create",
+          "callee": "db_session.refresh",
+          "lineNumber": 58
+        },
+        {
+          "caller": "test_history_with_records",
+          "callee": "record_factory",
+          "lineNumber": 73
+        },
+        {
+          "caller": "test_history_with_records",
+          "callee": "record_factory",
+          "lineNumber": 74
+        },
+        {
+          "caller": "test_history_with_records",
+          "callee": "client.get",
+          "lineNumber": 76
+        },
+        {
+          "caller": "test_history_with_records",
+          "callee": "resp.json",
+          "lineNumber": 81
+        },
+        {
+          "caller": "test_history_with_records",
+          "callee": "len",
+          "lineNumber": 83
+        },
+        {
+          "caller": "test_history_empty",
+          "callee": "client.get",
+          "lineNumber": 96
+        },
+        {
+          "caller": "test_history_empty",
+          "callee": "resp.json",
+          "lineNumber": 101
+        },
+        {
+          "caller": "test_history_pagination",
+          "callee": "range",
+          "lineNumber": 108
+        },
+        {
+          "caller": "test_history_pagination",
+          "callee": "record_factory",
+          "lineNumber": 109
+        },
+        {
+          "caller": "test_history_pagination",
+          "callee": "client.get",
+          "lineNumber": 111
+        },
+        {
+          "caller": "test_history_pagination",
+          "callee": "resp.json",
+          "lineNumber": 115
+        },
+        {
+          "caller": "test_history_pagination",
+          "callee": "len",
+          "lineNumber": 116
+        },
+        {
+          "caller": "test_history_filter_by_type",
+          "callee": "record_factory",
+          "lineNumber": 123
+        },
+        {
+          "caller": "test_history_filter_by_type",
+          "callee": "record_factory",
+          "lineNumber": 124
+        },
+        {
+          "caller": "test_history_filter_by_type",
+          "callee": "record_factory",
+          "lineNumber": 125
+        },
+        {
+          "caller": "test_history_filter_by_type",
+          "callee": "client.get",
+          "lineNumber": 127
+        },
+        {
+          "caller": "test_history_filter_by_type",
+          "callee": "resp.json",
+          "lineNumber": 131
+        },
+        {
+          "caller": "test_history_filter_by_type",
+          "callee": "len",
+          "lineNumber": 132
+        },
+        {
+          "caller": "test_history_filter_by_type",
+          "callee": "all",
+          "lineNumber": 133
+        },
+        {
+          "caller": "test_submit_feedback",
+          "callee": "record_factory",
+          "lineNumber": 145
+        },
+        {
+          "caller": "test_submit_feedback",
+          "callee": "client.post",
+          "lineNumber": 147
+        },
+        {
+          "caller": "test_submit_feedback",
+          "callee": "resp.json",
+          "lineNumber": 153
+        },
+        {
+          "caller": "test_update_feedback",
+          "callee": "record_factory",
+          "lineNumber": 160
+        },
+        {
+          "caller": "test_update_feedback",
+          "callee": "client.post",
+          "lineNumber": 162
+        },
+        {
+          "caller": "test_update_feedback",
+          "callee": "resp.json",
+          "lineNumber": 168
+        },
+        {
+          "caller": "test_feedback_not_found",
+          "callee": "client.post",
+          "lineNumber": 175
+        },
+        {
+          "caller": "test_feedback_invalid_rating",
+          "callee": "record_factory",
+          "lineNumber": 185
+        },
+        {
+          "caller": "test_feedback_invalid_rating",
+          "callee": "client.post",
+          "lineNumber": 187
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 4,
+        "functionCount": 2,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "server/tests/test_feedback_summary.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 149,
+      "nonEmptyLines": 126,
+      "functions": [
+        {
+          "name": "_create_user",
+          "startLine": 11,
+          "endLine": 25,
+          "params": [
+            "db"
+          ]
+        },
+        {
+          "name": "_add_fortune_feedback",
+          "startLine": 28,
+          "endLine": 41,
+          "params": [
+            "db",
+            "user_id",
+            "rating",
+            "tags",
+            "text",
+            "d"
+          ]
+        },
+        {
+          "name": "_add_divination_feedback",
+          "startLine": 44,
+          "endLine": 55,
+          "params": [
+            "db",
+            "user_id",
+            "rating",
+            "text"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "TestFeedbackSummary",
+          "startLine": 58,
+          "endLine": 149,
+          "methods": [
+            "test_no_feedback_returns_default",
+            "test_with_fortune_feedback",
+            "test_dimension_preference",
+            "test_tag_statistics",
+            "test_divination_feedback",
+            "test_mixed_feedback",
+            "test_summary_length_limit"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "_create_user",
+          "line": 11,
+          "isDefault": false
+        },
+        {
+          "name": "_add_fortune_feedback",
+          "line": 28,
+          "isDefault": false
+        },
+        {
+          "name": "_add_divination_feedback",
+          "line": 44,
+          "isDefault": false
+        },
+        {
+          "name": "TestFeedbackSummary",
+          "line": 58,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_create_user",
+          "callee": "User",
+          "lineNumber": 15
+        },
+        {
+          "caller": "_create_user",
+          "callee": "hash_password",
+          "lineNumber": 18
+        },
+        {
+          "caller": "_create_user",
+          "callee": "db.add",
+          "lineNumber": 22
+        },
+        {
+          "caller": "_create_user",
+          "callee": "db.commit",
+          "lineNumber": 23
+        },
+        {
+          "caller": "_create_user",
+          "callee": "db.refresh",
+          "lineNumber": 24
+        },
+        {
+          "caller": "_add_fortune_feedback",
+          "callee": "DailyFortune",
+          "lineNumber": 30
+        },
+        {
+          "caller": "_add_fortune_feedback",
+          "callee": "date",
+          "lineNumber": 32
+        },
+        {
+          "caller": "_add_fortune_feedback",
+          "callee": "db.add",
+          "lineNumber": 39
+        },
+        {
+          "caller": "_add_fortune_feedback",
+          "callee": "db.commit",
+          "lineNumber": 40
+        },
+        {
+          "caller": "_add_divination_feedback",
+          "callee": "DivinationRecord",
+          "lineNumber": 46
+        },
+        {
+          "caller": "_add_divination_feedback",
+          "callee": "db.add",
+          "lineNumber": 53
+        },
+        {
+          "caller": "_add_divination_feedback",
+          "callee": "db.commit",
+          "lineNumber": 54
+        },
+        {
+          "caller": "test_no_feedback_returns_default",
+          "callee": "_create_user",
+          "lineNumber": 63
+        },
+        {
+          "caller": "test_no_feedback_returns_default",
+          "callee": "generate_feedback_summary",
+          "lineNumber": 64
+        },
+        {
+          "caller": "test_with_fortune_feedback",
+          "callee": "_create_user",
+          "lineNumber": 69
+        },
+        {
+          "caller": "test_with_fortune_feedback",
+          "callee": "_add_fortune_feedback",
+          "lineNumber": 70
+        },
+        {
+          "caller": "test_with_fortune_feedback",
+          "callee": "date",
+          "lineNumber": 73
+        },
+        {
+          "caller": "test_with_fortune_feedback",
+          "callee": "_add_fortune_feedback",
+          "lineNumber": 75
+        },
+        {
+          "caller": "test_with_fortune_feedback",
+          "callee": "date",
+          "lineNumber": 78
+        },
+        {
+          "caller": "test_with_fortune_feedback",
+          "callee": "generate_feedback_summary",
+          "lineNumber": 81
+        },
+        {
+          "caller": "test_dimension_preference",
+          "callee": "_create_user",
+          "lineNumber": 89
+        },
+        {
+          "caller": "test_dimension_preference",
+          "callee": "range",
+          "lineNumber": 90
+        },
+        {
+          "caller": "test_dimension_preference",
+          "callee": "_add_fortune_feedback",
+          "lineNumber": 91
+        },
+        {
+          "caller": "test_dimension_preference",
+          "callee": "date",
+          "lineNumber": 94
+        },
+        {
+          "caller": "test_dimension_preference",
+          "callee": "generate_feedback_summary",
+          "lineNumber": 97
+        },
+        {
+          "caller": "test_tag_statistics",
+          "callee": "_create_user",
+          "lineNumber": 102
+        },
+        {
+          "caller": "test_tag_statistics",
+          "callee": "range",
+          "lineNumber": 103
+        },
+        {
+          "caller": "test_tag_statistics",
+          "callee": "_add_fortune_feedback",
+          "lineNumber": 104
+        },
+        {
+          "caller": "test_tag_statistics",
+          "callee": "date",
+          "lineNumber": 107
+        },
+        {
+          "caller": "test_tag_statistics",
+          "callee": "generate_feedback_summary",
+          "lineNumber": 110
+        },
+        {
+          "caller": "test_divination_feedback",
+          "callee": "_create_user",
+          "lineNumber": 115
+        },
+        {
+          "caller": "test_divination_feedback",
+          "callee": "_add_divination_feedback",
+          "lineNumber": 116
+        },
+        {
+          "caller": "test_divination_feedback",
+          "callee": "_add_divination_feedback",
+          "lineNumber": 117
+        },
+        {
+          "caller": "test_divination_feedback",
+          "callee": "generate_feedback_summary",
+          "lineNumber": 119
+        },
+        {
+          "caller": "test_mixed_feedback",
+          "callee": "_create_user",
+          "lineNumber": 125
+        },
+        {
+          "caller": "test_mixed_feedback",
+          "callee": "_add_fortune_feedback",
+          "lineNumber": 126
+        },
+        {
+          "caller": "test_mixed_feedback",
+          "callee": "date",
+          "lineNumber": 129
+        },
+        {
+          "caller": "test_mixed_feedback",
+          "callee": "_add_divination_feedback",
+          "lineNumber": 131
+        },
+        {
+          "caller": "test_mixed_feedback",
+          "callee": "generate_feedback_summary",
+          "lineNumber": 133
+        },
+        {
+          "caller": "test_summary_length_limit",
+          "callee": "_create_user",
+          "lineNumber": 139
+        },
+        {
+          "caller": "test_summary_length_limit",
+          "callee": "range",
+          "lineNumber": 140
+        },
+        {
+          "caller": "test_summary_length_limit",
+          "callee": "_add_fortune_feedback",
+          "lineNumber": 141
+        },
+        {
+          "caller": "test_summary_length_limit",
+          "callee": "str",
+          "lineNumber": 143
+        },
+        {
+          "caller": "test_summary_length_limit",
+          "callee": "range",
+          "lineNumber": 143
+        },
+        {
+          "caller": "test_summary_length_limit",
+          "callee": "date",
+          "lineNumber": 145
+        },
+        {
+          "caller": "test_summary_length_limit",
+          "callee": "__import__(\"datetime\").timedelta",
+          "lineNumber": 145
+        },
+        {
+          "caller": "test_summary_length_limit",
+          "callee": "__import__",
+          "lineNumber": 145
+        },
+        {
+          "caller": "test_summary_length_limit",
+          "callee": "generate_feedback_summary",
+          "lineNumber": 148
+        },
+        {
+          "caller": "test_summary_length_limit",
+          "callee": "len",
+          "lineNumber": 149
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 4,
+        "functionCount": 3,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "server/tests/test_fortunes_api.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 321,
+      "nonEmptyLines": 270,
+      "functions": [
+        {
+          "name": "auth_user",
+          "startLine": 16,
+          "endLine": 32,
+          "params": [
+            "db_session"
+          ]
+        },
+        {
+          "name": "fortune_factory",
+          "startLine": 36,
+          "endLine": 76,
+          "params": [
+            "db_session",
+            "auth_user"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "TestTodayFortune",
+          "startLine": 82,
+          "endLine": 128,
+          "methods": [
+            "test_today_fortune_exists",
+            "test_today_fortune_auto_generated",
+            "test_today_fortune_unauthenticated"
+          ],
+          "properties": []
+        },
+        {
+          "name": "TestFortuneHistory",
+          "startLine": 134,
+          "endLine": 204,
+          "methods": [
+            "test_history_with_records",
+            "test_history_empty",
+            "test_history_pagination"
+          ],
+          "properties": []
+        },
+        {
+          "name": "TestFortuneDetail",
+          "startLine": 210,
+          "endLine": 265,
+          "methods": [
+            "test_detail_exists",
+            "test_detail_not_found",
+            "test_detail_other_user_forbidden"
+          ],
+          "properties": []
+        },
+        {
+          "name": "TestFortuneFeedback",
+          "startLine": 268,
+          "endLine": 321,
+          "methods": [
+            "test_submit_feedback",
+            "test_update_feedback",
+            "test_feedback_invalid_rating",
+            "test_feedback_not_found"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "auth_user",
+          "line": 15,
+          "isDefault": false
+        },
+        {
+          "name": "fortune_factory",
+          "line": 35,
+          "isDefault": false
+        },
+        {
+          "name": "TestTodayFortune",
+          "line": 82,
+          "isDefault": false
+        },
+        {
+          "name": "TestFortuneHistory",
+          "line": 134,
+          "isDefault": false
+        },
+        {
+          "name": "TestFortuneDetail",
+          "line": 210,
+          "isDefault": false
+        },
+        {
+          "name": "TestFortuneFeedback",
+          "line": 268,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "auth_user",
+          "callee": "User",
+          "lineNumber": 18
+        },
+        {
+          "caller": "auth_user",
+          "callee": "hash_password",
+          "lineNumber": 21
+        },
+        {
+          "caller": "auth_user",
+          "callee": "db_session.add",
+          "lineNumber": 28
+        },
+        {
+          "caller": "auth_user",
+          "callee": "db_session.commit",
+          "lineNumber": 29
+        },
+        {
+          "caller": "auth_user",
+          "callee": "db_session.refresh",
+          "lineNumber": 30
+        },
+        {
+          "caller": "auth_user",
+          "callee": "create_access_token",
+          "lineNumber": 31
+        },
+        {
+          "caller": "_create",
+          "callee": "date.today",
+          "lineNumber": 52
+        },
+        {
+          "caller": "_create",
+          "callee": "DailyFortune",
+          "lineNumber": 53
+        },
+        {
+          "caller": "_create",
+          "callee": "db_session.add",
+          "lineNumber": 71
+        },
+        {
+          "caller": "_create",
+          "callee": "db_session.commit",
+          "lineNumber": 72
+        },
+        {
+          "caller": "_create",
+          "callee": "db_session.refresh",
+          "lineNumber": 73
+        },
+        {
+          "caller": "test_today_fortune_exists",
+          "callee": "fortune_factory",
+          "lineNumber": 88
+        },
+        {
+          "caller": "test_today_fortune_exists",
+          "callee": "client.get",
+          "lineNumber": 90
+        },
+        {
+          "caller": "test_today_fortune_exists",
+          "callee": "resp.json",
+          "lineNumber": 95
+        },
+        {
+          "caller": "test_today_fortune_exists",
+          "callee": "date.today().isoformat",
+          "lineNumber": 98
+        },
+        {
+          "caller": "test_today_fortune_exists",
+          "callee": "date.today",
+          "lineNumber": 98
+        },
+        {
+          "caller": "test_today_fortune_auto_generated",
+          "callee": "client.get",
+          "lineNumber": 113
+        },
+        {
+          "caller": "test_today_fortune_auto_generated",
+          "callee": "resp.json",
+          "lineNumber": 118
+        },
+        {
+          "caller": "test_today_fortune_unauthenticated",
+          "callee": "client.get",
+          "lineNumber": 127
+        },
+        {
+          "caller": "test_history_with_records",
+          "callee": "fortune_factory",
+          "lineNumber": 143
+        },
+        {
+          "caller": "test_history_with_records",
+          "callee": "date.today",
+          "lineNumber": 143
+        },
+        {
+          "caller": "test_history_with_records",
+          "callee": "fortune_factory",
+          "lineNumber": 144
+        },
+        {
+          "caller": "test_history_with_records",
+          "callee": "date.today",
+          "lineNumber": 145
+        },
+        {
+          "caller": "test_history_with_records",
+          "callee": "timedelta",
+          "lineNumber": 145
+        },
+        {
+          "caller": "test_history_with_records",
+          "callee": "fortune_factory",
+          "lineNumber": 147
+        },
+        {
+          "caller": "test_history_with_records",
+          "callee": "date.today",
+          "lineNumber": 148
+        },
+        {
+          "caller": "test_history_with_records",
+          "callee": "timedelta",
+          "lineNumber": 148
+        },
+        {
+          "caller": "test_history_with_records",
+          "callee": "client.get",
+          "lineNumber": 151
+        },
+        {
+          "caller": "test_history_with_records",
+          "callee": "resp.json",
+          "lineNumber": 156
+        },
+        {
+          "caller": "test_history_with_records",
+          "callee": "len",
+          "lineNumber": 158
+        },
+        {
+          "caller": "test_history_with_records",
+          "callee": "date.today().isoformat",
+          "lineNumber": 160
+        },
+        {
+          "caller": "test_history_with_records",
+          "callee": "date.today",
+          "lineNumber": 160
+        },
+        {
+          "caller": "test_history_empty",
+          "callee": "client.get",
+          "lineNumber": 168
+        },
+        {
+          "caller": "test_history_empty",
+          "callee": "resp.json",
+          "lineNumber": 173
+        },
+        {
+          "caller": "test_history_pagination",
+          "callee": "range",
+          "lineNumber": 183
+        },
+        {
+          "caller": "test_history_pagination",
+          "callee": "fortune_factory",
+          "lineNumber": 184
+        },
+        {
+          "caller": "test_history_pagination",
+          "callee": "date.today",
+          "lineNumber": 185
+        },
+        {
+          "caller": "test_history_pagination",
+          "callee": "timedelta",
+          "lineNumber": 185
+        },
+        {
+          "caller": "test_history_pagination",
+          "callee": "client.get",
+          "lineNumber": 189
+        },
+        {
+          "caller": "test_history_pagination",
+          "callee": "resp.json",
+          "lineNumber": 193
+        },
+        {
+          "caller": "test_history_pagination",
+          "callee": "len",
+          "lineNumber": 194
+        },
+        {
+          "caller": "test_history_pagination",
+          "callee": "client.get",
+          "lineNumber": 199
+        },
+        {
+          "caller": "test_history_pagination",
+          "callee": "resp.json",
+          "lineNumber": 203
+        },
+        {
+          "caller": "test_history_pagination",
+          "callee": "len",
+          "lineNumber": 204
+        },
+        {
+          "caller": "test_detail_exists",
+          "callee": "fortune_factory",
+          "lineNumber": 216
+        },
+        {
+          "caller": "test_detail_exists",
+          "callee": "client.get",
+          "lineNumber": 218
+        },
+        {
+          "caller": "test_detail_exists",
+          "callee": "resp.json",
+          "lineNumber": 223
+        },
+        {
+          "caller": "test_detail_not_found",
+          "callee": "client.get",
+          "lineNumber": 232
+        },
+        {
+          "caller": "test_detail_other_user_forbidden",
+          "callee": "fortune_factory",
+          "lineNumber": 243
+        },
+        {
+          "caller": "test_detail_other_user_forbidden",
+          "callee": "User",
+          "lineNumber": 246
+        },
+        {
+          "caller": "test_detail_other_user_forbidden",
+          "callee": "hash_password",
+          "lineNumber": 249
+        },
+        {
+          "caller": "test_detail_other_user_forbidden",
+          "callee": "db_session.add",
+          "lineNumber": 256
+        },
+        {
+          "caller": "test_detail_other_user_forbidden",
+          "callee": "db_session.commit",
+          "lineNumber": 257
+        },
+        {
+          "caller": "test_detail_other_user_forbidden",
+          "callee": "db_session.refresh",
+          "lineNumber": 258
+        },
+        {
+          "caller": "test_detail_other_user_forbidden",
+          "callee": "create_access_token",
+          "lineNumber": 259
+        },
+        {
+          "caller": "test_detail_other_user_forbidden",
+          "callee": "client.get",
+          "lineNumber": 261
+        },
+        {
+          "caller": "test_submit_feedback",
+          "callee": "fortune_factory",
+          "lineNumber": 274
+        },
+        {
+          "caller": "test_submit_feedback",
+          "callee": "client.post",
+          "lineNumber": 276
+        },
+        {
+          "caller": "test_submit_feedback",
+          "callee": "resp.json",
+          "lineNumber": 282
+        },
+        {
+          "caller": "test_update_feedback",
+          "callee": "fortune_factory",
+          "lineNumber": 289
+        },
+        {
+          "caller": "test_update_feedback",
+          "callee": "client.post",
+          "lineNumber": 291
+        },
+        {
+          "caller": "test_update_feedback",
+          "callee": "resp.json",
+          "lineNumber": 297
+        },
+        {
+          "caller": "test_feedback_invalid_rating",
+          "callee": "fortune_factory",
+          "lineNumber": 303
+        },
+        {
+          "caller": "test_feedback_invalid_rating",
+          "callee": "client.post",
+          "lineNumber": 305
+        },
+        {
+          "caller": "test_feedback_not_found",
+          "callee": "client.post",
+          "lineNumber": 316
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 6,
+        "functionCount": 2,
+        "classCount": 4
+      }
+    },
+    {
+      "path": "server/tests/test_health.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 16,
+      "nonEmptyLines": 12,
+      "functions": [
+        {
+          "name": "test_health_endpoint_returns_ok",
+          "startLine": 6,
+          "endLine": 16,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "test_health_endpoint_returns_ok",
+          "line": 6,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "test_health_endpoint_returns_ok",
+          "callee": "TestClient",
+          "lineNumber": 10
+        },
+        {
+          "caller": "test_health_endpoint_returns_ok",
+          "callee": "client.get",
+          "lineNumber": 11
+        },
+        {
+          "caller": "test_health_endpoint_returns_ok",
+          "callee": "response.json",
+          "lineNumber": 14
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/tests/test_liuyao.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 80,
+      "nonEmptyLines": 66,
+      "classes": [
+        {
+          "name": "TestCoinDivination",
+          "startLine": 12,
+          "endLine": 55,
+          "methods": [
+            "test_returns_six_lines",
+            "test_lines_valid_values",
+            "test_has_hexagram_name",
+            "test_has_upper_lower_trigram",
+            "test_has_changing_lines",
+            "test_has_changed_hexagram",
+            "test_question_preserved"
+          ],
+          "properties": []
+        },
+        {
+          "name": "TestTimeDivination",
+          "startLine": 58,
+          "endLine": 80,
+          "methods": [
+            "test_time_divination_basic",
+            "test_deterministic",
+            "test_different_times_different_hexagram"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "TestCoinDivination",
+          "line": 12,
+          "isDefault": false
+        },
+        {
+          "name": "TestTimeDivination",
+          "line": 58,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "test_returns_six_lines",
+          "callee": "coin_divination",
+          "lineNumber": 17
+        },
+        {
+          "caller": "test_returns_six_lines",
+          "callee": "len",
+          "lineNumber": 18
+        },
+        {
+          "caller": "test_lines_valid_values",
+          "callee": "coin_divination",
+          "lineNumber": 22
+        },
+        {
+          "caller": "test_has_hexagram_name",
+          "callee": "coin_divination",
+          "lineNumber": 28
+        },
+        {
+          "caller": "test_has_hexagram_name",
+          "callee": "len",
+          "lineNumber": 30
+        },
+        {
+          "caller": "test_has_upper_lower_trigram",
+          "callee": "coin_divination",
+          "lineNumber": 34
+        },
+        {
+          "caller": "test_has_changing_lines",
+          "callee": "coin_divination",
+          "lineNumber": 42
+        },
+        {
+          "caller": "test_has_changing_lines",
+          "callee": "isinstance",
+          "lineNumber": 44
+        },
+        {
+          "caller": "test_has_changed_hexagram",
+          "callee": "coin_divination",
+          "lineNumber": 48
+        },
+        {
+          "caller": "test_question_preserved",
+          "callee": "coin_divination",
+          "lineNumber": 54
+        },
+        {
+          "caller": "test_time_divination_basic",
+          "callee": "time_divination",
+          "lineNumber": 63
+        },
+        {
+          "caller": "test_time_divination_basic",
+          "callee": "len",
+          "lineNumber": 64
+        },
+        {
+          "caller": "test_deterministic",
+          "callee": "time_divination",
+          "lineNumber": 69
+        },
+        {
+          "caller": "test_deterministic",
+          "callee": "time_divination",
+          "lineNumber": 70
+        },
+        {
+          "caller": "test_different_times_different_hexagram",
+          "callee": "time_divination",
+          "lineNumber": 76
+        },
+        {
+          "caller": "test_different_times_different_hexagram",
+          "callee": "time_divination",
+          "lineNumber": 77
+        },
+        {
+          "caller": "test_different_times_different_hexagram",
+          "callee": "len",
+          "lineNumber": 79
+        },
+        {
+          "caller": "test_different_times_different_hexagram",
+          "callee": "len",
+          "lineNumber": 80
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 0,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "server/tests/test_models.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 93,
+      "nonEmptyLines": 74,
+      "functions": [
+        {
+          "name": "test_user_model_fields",
+          "startLine": 6,
+          "endLine": 33,
+          "params": []
+        },
+        {
+          "name": "test_user_model_table_name",
+          "startLine": 36,
+          "endLine": 40,
+          "params": []
+        },
+        {
+          "name": "test_bazi_profile_model",
+          "startLine": 43,
+          "endLine": 60,
+          "params": []
+        },
+        {
+          "name": "test_daily_fortune_model",
+          "startLine": 63,
+          "endLine": 78,
+          "params": []
+        },
+        {
+          "name": "test_divination_record_model",
+          "startLine": 81,
+          "endLine": 93,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "test_user_model_fields",
+          "line": 6,
+          "isDefault": false
+        },
+        {
+          "name": "test_user_model_table_name",
+          "line": 36,
+          "isDefault": false
+        },
+        {
+          "name": "test_bazi_profile_model",
+          "line": 43,
+          "isDefault": false
+        },
+        {
+          "name": "test_daily_fortune_model",
+          "line": 63,
+          "isDefault": false
+        },
+        {
+          "name": "test_divination_record_model",
+          "line": 81,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "test_user_model_fields",
+          "callee": "User",
+          "lineNumber": 10
+        },
+        {
+          "caller": "test_bazi_profile_model",
+          "callee": "BaziProfile",
+          "lineNumber": 47
+        },
+        {
+          "caller": "test_daily_fortune_model",
+          "callee": "DailyFortune",
+          "lineNumber": 67
+        },
+        {
+          "caller": "test_divination_record_model",
+          "callee": "DivinationRecord",
+          "lineNumber": 85
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 5,
+        "functionCount": 5,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/tests/test_push_services.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 175,
+      "nonEmptyLines": 139,
+      "classes": [
+        {
+          "name": "TestSendFortuneEmail",
+          "startLine": 15,
+          "endLine": 92,
+          "methods": [
+            "test_send_email_success",
+            "test_send_email_failure",
+            "test_email_subject_format",
+            "test_email_content_is_html"
+          ],
+          "properties": []
+        },
+        {
+          "name": "TestSendFortuneFeishu",
+          "startLine": 98,
+          "endLine": 175,
+          "methods": [
+            "test_send_feishu_success",
+            "test_send_feishu_failure",
+            "test_send_feishu_timeout",
+            "test_feishu_card_contains_score"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "TestSendFortuneEmail",
+          "line": 15,
+          "isDefault": false
+        },
+        {
+          "name": "TestSendFortuneFeishu",
+          "line": 98,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "test_send_email_success",
+          "callee": "MagicMock",
+          "lineNumber": 21
+        },
+        {
+          "caller": "test_send_email_success",
+          "callee": "send_fortune_email",
+          "lineNumber": 37
+        },
+        {
+          "caller": "test_send_email_success",
+          "callee": "mock_server.login.assert_called_once",
+          "lineNumber": 43
+        },
+        {
+          "caller": "test_send_email_success",
+          "callee": "mock_server.send_message.assert_called_once",
+          "lineNumber": 44
+        },
+        {
+          "caller": "test_send_email_failure",
+          "callee": "smtplib.SMTPException",
+          "lineNumber": 49
+        },
+        {
+          "caller": "test_send_email_failure",
+          "callee": "send_fortune_email",
+          "lineNumber": 51
+        },
+        {
+          "caller": "test_email_subject_format",
+          "callee": "MagicMock",
+          "lineNumber": 61
+        },
+        {
+          "caller": "test_email_subject_format",
+          "callee": "send_fortune_email",
+          "lineNumber": 64
+        },
+        {
+          "caller": "test_email_content_is_html",
+          "callee": "MagicMock",
+          "lineNumber": 77
+        },
+        {
+          "caller": "test_email_content_is_html",
+          "callee": "send_fortune_email",
+          "lineNumber": 80
+        },
+        {
+          "caller": "test_email_content_is_html",
+          "callee": "sent_msg.get_payload",
+          "lineNumber": 90
+        },
+        {
+          "caller": "test_email_content_is_html",
+          "callee": "payload[0].get_payload(decode=True).decode",
+          "lineNumber": 91
+        },
+        {
+          "caller": "test_email_content_is_html",
+          "callee": "payload[0].get_payload",
+          "lineNumber": 91
+        },
+        {
+          "caller": "test_email_content_is_html",
+          "callee": "body.lower",
+          "lineNumber": 92
+        },
+        {
+          "caller": "test_send_feishu_success",
+          "callee": "MagicMock",
+          "lineNumber": 104
+        },
+        {
+          "caller": "test_send_feishu_success",
+          "callee": "send_fortune_feishu",
+          "lineNumber": 120
+        },
+        {
+          "caller": "test_send_feishu_success",
+          "callee": "mock_post.assert_called_once",
+          "lineNumber": 126
+        },
+        {
+          "caller": "test_send_feishu_failure",
+          "callee": "MagicMock",
+          "lineNumber": 131
+        },
+        {
+          "caller": "test_send_feishu_failure",
+          "callee": "send_fortune_feishu",
+          "lineNumber": 136
+        },
+        {
+          "caller": "test_send_feishu_timeout",
+          "callee": "httpx.TimeoutException",
+          "lineNumber": 147
+        },
+        {
+          "caller": "test_send_feishu_timeout",
+          "callee": "send_fortune_feishu",
+          "lineNumber": 149
+        },
+        {
+          "caller": "test_feishu_card_contains_score",
+          "callee": "MagicMock",
+          "lineNumber": 159
+        },
+        {
+          "caller": "test_feishu_card_contains_score",
+          "callee": "send_fortune_feishu",
+          "lineNumber": 164
+        },
+        {
+          "caller": "test_feishu_card_contains_score",
+          "callee": "str",
+          "lineNumber": 174
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 0,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "server/tests/test_qimen.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 70,
+      "nonEmptyLines": 59,
+      "classes": [
+        {
+          "name": "TestQimenChart",
+          "startLine": 7,
+          "endLine": 70,
+          "methods": [
+            "test_basic_structure",
+            "test_nine_palaces",
+            "test_palace_contents",
+            "test_valid_star_names",
+            "test_valid_gate_names",
+            "test_valid_god_names",
+            "test_yin_yang_dun",
+            "test_ju_shu_range",
+            "test_deterministic"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "TestQimenChart",
+          "line": 7,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "test_basic_structure",
+          "callee": "calculate_qimen",
+          "lineNumber": 12
+        },
+        {
+          "caller": "test_nine_palaces",
+          "callee": "calculate_qimen",
+          "lineNumber": 20
+        },
+        {
+          "caller": "test_nine_palaces",
+          "callee": "len",
+          "lineNumber": 22
+        },
+        {
+          "caller": "test_nine_palaces",
+          "callee": "range",
+          "lineNumber": 23
+        },
+        {
+          "caller": "test_nine_palaces",
+          "callee": "str",
+          "lineNumber": 24
+        },
+        {
+          "caller": "test_palace_contents",
+          "callee": "calculate_qimen",
+          "lineNumber": 28
+        },
+        {
+          "caller": "test_palace_contents",
+          "callee": "result[\"palace\"].items",
+          "lineNumber": 29
+        },
+        {
+          "caller": "test_valid_star_names",
+          "callee": "calculate_qimen",
+          "lineNumber": 37
+        },
+        {
+          "caller": "test_valid_star_names",
+          "callee": "result[\"palace\"].values",
+          "lineNumber": 38
+        },
+        {
+          "caller": "test_valid_gate_names",
+          "callee": "calculate_qimen",
+          "lineNumber": 44
+        },
+        {
+          "caller": "test_valid_gate_names",
+          "callee": "result[\"palace\"].values",
+          "lineNumber": 45
+        },
+        {
+          "caller": "test_valid_god_names",
+          "callee": "calculate_qimen",
+          "lineNumber": 51
+        },
+        {
+          "caller": "test_valid_god_names",
+          "callee": "result[\"palace\"].values",
+          "lineNumber": 52
+        },
+        {
+          "caller": "test_yin_yang_dun",
+          "callee": "calculate_qimen",
+          "lineNumber": 57
+        },
+        {
+          "caller": "test_ju_shu_range",
+          "callee": "calculate_qimen",
+          "lineNumber": 62
+        },
+        {
+          "caller": "test_deterministic",
+          "callee": "calculate_qimen",
+          "lineNumber": 67
+        },
+        {
+          "caller": "test_deterministic",
+          "callee": "calculate_qimen",
+          "lineNumber": 68
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "server/tests/test_security.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 49,
+      "nonEmptyLines": 32,
+      "functions": [
+        {
+          "name": "test_password_hash_and_verify",
+          "startLine": 10,
+          "endLine": 19,
+          "params": []
+        },
+        {
+          "name": "test_jwt_token_creation",
+          "startLine": 22,
+          "endLine": 29,
+          "params": []
+        },
+        {
+          "name": "test_jwt_token_verification",
+          "startLine": 32,
+          "endLine": 40,
+          "params": []
+        },
+        {
+          "name": "test_jwt_token_invalid",
+          "startLine": 43,
+          "endLine": 49,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "test_password_hash_and_verify",
+          "line": 10,
+          "isDefault": false
+        },
+        {
+          "name": "test_jwt_token_creation",
+          "line": 22,
+          "isDefault": false
+        },
+        {
+          "name": "test_jwt_token_verification",
+          "line": 32,
+          "isDefault": false
+        },
+        {
+          "name": "test_jwt_token_invalid",
+          "line": 43,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "test_password_hash_and_verify",
+          "callee": "hash_password",
+          "lineNumber": 15
+        },
+        {
+          "caller": "test_password_hash_and_verify",
+          "callee": "verify_password",
+          "lineNumber": 18
+        },
+        {
+          "caller": "test_password_hash_and_verify",
+          "callee": "verify_password",
+          "lineNumber": 19
+        },
+        {
+          "caller": "test_jwt_token_creation",
+          "callee": "create_access_token",
+          "lineNumber": 26
+        },
+        {
+          "caller": "test_jwt_token_creation",
+          "callee": "isinstance",
+          "lineNumber": 28
+        },
+        {
+          "caller": "test_jwt_token_creation",
+          "callee": "len",
+          "lineNumber": 29
+        },
+        {
+          "caller": "test_jwt_token_verification",
+          "callee": "create_access_token",
+          "lineNumber": 36
+        },
+        {
+          "caller": "test_jwt_token_verification",
+          "callee": "verify_token",
+          "lineNumber": 37
+        },
+        {
+          "caller": "test_jwt_token_invalid",
+          "callee": "verify_token",
+          "lineNumber": 47
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 4,
+        "functionCount": 4,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/tests/test_user_profile.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 281,
+      "nonEmptyLines": 246,
+      "functions": [
+        {
+          "name": "_register_and_login",
+          "startLine": 6,
+          "endLine": 19,
+          "params": [
+            "client"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "TestGetProfile",
+          "startLine": 22,
+          "endLine": 53,
+          "methods": [
+            "test_get_profile_success",
+            "test_get_profile_no_token",
+            "test_get_profile_invalid_token"
+          ],
+          "properties": []
+        },
+        {
+          "name": "TestUpdateProfile",
+          "startLine": 56,
+          "endLine": 80,
+          "methods": [
+            "test_update_username",
+            "test_update_username_invalid"
+          ],
+          "properties": []
+        },
+        {
+          "name": "TestUpdateBirth",
+          "startLine": 83,
+          "endLine": 114,
+          "methods": [
+            "test_update_birth_info",
+            "test_update_birth_invalid_date"
+          ],
+          "properties": []
+        },
+        {
+          "name": "TestPushSettings",
+          "startLine": 120,
+          "endLine": 227,
+          "methods": [
+            "test_enable_push",
+            "test_disable_push",
+            "test_set_feishu_channel",
+            "test_feishu_without_webhook_rejected",
+            "test_set_both_channel",
+            "test_push_time_format",
+            "test_push_settings_no_auth"
+          ],
+          "properties": []
+        },
+        {
+          "name": "TestAccountDeletion",
+          "startLine": 233,
+          "endLine": 281,
+          "methods": [
+            "test_delete_account_success",
+            "test_delete_account_wrong_password",
+            "test_delete_account_no_auth"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "_register_and_login",
+          "line": 6,
+          "isDefault": false
+        },
+        {
+          "name": "TestGetProfile",
+          "line": 22,
+          "isDefault": false
+        },
+        {
+          "name": "TestUpdateProfile",
+          "line": 56,
+          "isDefault": false
+        },
+        {
+          "name": "TestUpdateBirth",
+          "line": 83,
+          "isDefault": false
+        },
+        {
+          "name": "TestPushSettings",
+          "line": 120,
+          "isDefault": false
+        },
+        {
+          "name": "TestAccountDeletion",
+          "line": 233,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_register_and_login",
+          "callee": "client.post",
+          "lineNumber": 8
+        },
+        {
+          "caller": "_register_and_login",
+          "callee": "client.post",
+          "lineNumber": 15
+        },
+        {
+          "caller": "_register_and_login",
+          "callee": "res.json",
+          "lineNumber": 19
+        },
+        {
+          "caller": "test_get_profile_success",
+          "callee": "_register_and_login",
+          "lineNumber": 27
+        },
+        {
+          "caller": "test_get_profile_success",
+          "callee": "client.get",
+          "lineNumber": 28
+        },
+        {
+          "caller": "test_get_profile_success",
+          "callee": "res.json",
+          "lineNumber": 33
+        },
+        {
+          "caller": "test_get_profile_no_token",
+          "callee": "client.get",
+          "lineNumber": 44
+        },
+        {
+          "caller": "test_get_profile_invalid_token",
+          "callee": "client.get",
+          "lineNumber": 49
+        },
+        {
+          "caller": "test_update_username",
+          "callee": "_register_and_login",
+          "lineNumber": 61
+        },
+        {
+          "caller": "test_update_username",
+          "callee": "client.put",
+          "lineNumber": 62
+        },
+        {
+          "caller": "test_update_username",
+          "callee": "res.json",
+          "lineNumber": 68
+        },
+        {
+          "caller": "test_update_username_invalid",
+          "callee": "_register_and_login",
+          "lineNumber": 74
+        },
+        {
+          "caller": "test_update_username_invalid",
+          "callee": "client.put",
+          "lineNumber": 75
+        },
+        {
+          "caller": "test_update_birth_info",
+          "callee": "_register_and_login",
+          "lineNumber": 88
+        },
+        {
+          "caller": "test_update_birth_info",
+          "callee": "client.put",
+          "lineNumber": 89
+        },
+        {
+          "caller": "test_update_birth_info",
+          "callee": "res.json",
+          "lineNumber": 98
+        },
+        {
+          "caller": "test_update_birth_invalid_date",
+          "callee": "_register_and_login",
+          "lineNumber": 105
+        },
+        {
+          "caller": "test_update_birth_invalid_date",
+          "callee": "client.put",
+          "lineNumber": 106
+        },
+        {
+          "caller": "test_enable_push",
+          "callee": "_register_and_login",
+          "lineNumber": 125
+        },
+        {
+          "caller": "test_enable_push",
+          "callee": "client.put",
+          "lineNumber": 126
+        },
+        {
+          "caller": "test_enable_push",
+          "callee": "res.json",
+          "lineNumber": 136
+        },
+        {
+          "caller": "test_disable_push",
+          "callee": "_register_and_login",
+          "lineNumber": 144
+        },
+        {
+          "caller": "test_disable_push",
+          "callee": "client.put",
+          "lineNumber": 145
+        },
+        {
+          "caller": "test_disable_push",
+          "callee": "client.put",
+          "lineNumber": 150
+        },
+        {
+          "caller": "test_disable_push",
+          "callee": "res.json",
+          "lineNumber": 156
+        },
+        {
+          "caller": "test_set_feishu_channel",
+          "callee": "_register_and_login",
+          "lineNumber": 160
+        },
+        {
+          "caller": "test_set_feishu_channel",
+          "callee": "client.put",
+          "lineNumber": 161
+        },
+        {
+          "caller": "test_set_feishu_channel",
+          "callee": "res.json",
+          "lineNumber": 172
+        },
+        {
+          "caller": "test_feishu_without_webhook_rejected",
+          "callee": "_register_and_login",
+          "lineNumber": 178
+        },
+        {
+          "caller": "test_feishu_without_webhook_rejected",
+          "callee": "client.put",
+          "lineNumber": 179
+        },
+        {
+          "caller": "test_feishu_without_webhook_rejected",
+          "callee": "res.json()[\"detail\"].lower",
+          "lineNumber": 189
+        },
+        {
+          "caller": "test_feishu_without_webhook_rejected",
+          "callee": "res.json",
+          "lineNumber": 189
+        },
+        {
+          "caller": "test_set_both_channel",
+          "callee": "_register_and_login",
+          "lineNumber": 193
+        },
+        {
+          "caller": "test_set_both_channel",
+          "callee": "client.put",
+          "lineNumber": 194
+        },
+        {
+          "caller": "test_set_both_channel",
+          "callee": "res.json",
+          "lineNumber": 205
+        },
+        {
+          "caller": "test_push_time_format",
+          "callee": "_register_and_login",
+          "lineNumber": 209
+        },
+        {
+          "caller": "test_push_time_format",
+          "callee": "client.put",
+          "lineNumber": 210
+        },
+        {
+          "caller": "test_push_settings_no_auth",
+          "callee": "client.put",
+          "lineNumber": 223
+        },
+        {
+          "caller": "test_delete_account_success",
+          "callee": "_register_and_login",
+          "lineNumber": 238
+        },
+        {
+          "caller": "test_delete_account_success",
+          "callee": "client.request",
+          "lineNumber": 239
+        },
+        {
+          "caller": "test_delete_account_success",
+          "callee": "res.json",
+          "lineNumber": 246
+        },
+        {
+          "caller": "test_delete_account_success",
+          "callee": "client.get",
+          "lineNumber": 249
+        },
+        {
+          "caller": "test_delete_account_wrong_password",
+          "callee": "_register_and_login",
+          "lineNumber": 257
+        },
+        {
+          "caller": "test_delete_account_wrong_password",
+          "callee": "client.request",
+          "lineNumber": 258
+        },
+        {
+          "caller": "test_delete_account_wrong_password",
+          "callee": "res.json",
+          "lineNumber": 265
+        },
+        {
+          "caller": "test_delete_account_wrong_password",
+          "callee": "client.get",
+          "lineNumber": 268
+        },
+        {
+          "caller": "test_delete_account_no_auth",
+          "callee": "client.request",
+          "lineNumber": 276
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 6,
+        "functionCount": 1,
+        "classCount": 5
+      }
+    }
+  ]
+}

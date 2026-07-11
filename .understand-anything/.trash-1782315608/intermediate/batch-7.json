@@ -1,0 +1,918 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 25,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": ".understand-anything/.understandignore",
+      "language": "unknown",
+      "fileCategory": "code",
+      "totalLines": 48,
+      "nonEmptyLines": 42,
+      "metrics": {}
+    },
+    {
+      "path": "client/playwright.config.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 30,
+      "nonEmptyLines": 29,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "client/src/App.vue",
+      "language": "vue",
+      "fileCategory": "code",
+      "totalLines": 9,
+      "nonEmptyLines": 8,
+      "metrics": {}
+    },
+    {
+      "path": "client/src/components/HelloWorld.vue",
+      "language": "vue",
+      "fileCategory": "code",
+      "totalLines": 95,
+      "nonEmptyLines": 90,
+      "metrics": {}
+    },
+    {
+      "path": "client/src/features/auth/api/auth-api.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 38,
+      "nonEmptyLines": 33,
+      "functions": [
+        {
+          "name": "register",
+          "startLine": 30,
+          "endLine": 33,
+          "params": [
+            "data"
+          ]
+        },
+        {
+          "name": "login",
+          "startLine": 35,
+          "endLine": 38,
+          "params": [
+            "data"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "register",
+          "line": 30,
+          "isDefault": false
+        },
+        {
+          "name": "login",
+          "line": 35,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "register",
+          "callee": "client.post",
+          "lineNumber": 31
+        },
+        {
+          "caller": "login",
+          "callee": "client.post",
+          "lineNumber": 36
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "client/src/features/auth/stores/auth.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 40,
+      "nonEmptyLines": 34,
+      "exports": [
+        {
+          "name": "useAuthStore",
+          "line": 7,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "login",
+          "callee": "loginApi",
+          "lineNumber": 14
+        },
+        {
+          "caller": "login",
+          "callee": "localStorage.setItem",
+          "lineNumber": 17
+        },
+        {
+          "caller": "register",
+          "callee": "registerApi",
+          "lineNumber": 24
+        },
+        {
+          "caller": "register",
+          "callee": "localStorage.setItem",
+          "lineNumber": 27
+        },
+        {
+          "caller": "logout",
+          "callee": "localStorage.removeItem",
+          "lineNumber": 36
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "client/src/features/auth/types/user.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 15,
+      "nonEmptyLines": 15,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "client/src/features/auth/views/__tests__/LoginView.test.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 67,
+      "nonEmptyLines": 56,
+      "functions": [
+        {
+          "name": "createTestRouter",
+          "startLine": 7,
+          "endLine": 16,
+          "params": []
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "createTestRouter",
+          "callee": "createRouter",
+          "lineNumber": 8
+        },
+        {
+          "caller": "createTestRouter",
+          "callee": "createMemoryHistory",
+          "lineNumber": 9
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 0,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "client/src/features/auth/views/__tests__/RegisterView.test.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 81,
+      "nonEmptyLines": 68,
+      "functions": [
+        {
+          "name": "createTestRouter",
+          "startLine": 7,
+          "endLine": 16,
+          "params": []
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "createTestRouter",
+          "callee": "createRouter",
+          "lineNumber": 8
+        },
+        {
+          "caller": "createTestRouter",
+          "callee": "createMemoryHistory",
+          "lineNumber": 9
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 0,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "client/src/features/auth/views/LoginView.vue",
+      "language": "vue",
+      "fileCategory": "code",
+      "totalLines": 74,
+      "nonEmptyLines": 68,
+      "metrics": {}
+    },
+    {
+      "path": "client/src/features/auth/views/RegisterView.vue",
+      "language": "vue",
+      "fileCategory": "code",
+      "totalLines": 130,
+      "nonEmptyLines": 124,
+      "metrics": {}
+    },
+    {
+      "path": "client/src/features/divination/api/divination-api.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 108,
+      "nonEmptyLines": 94,
+      "functions": [
+        {
+          "name": "doLiuyao",
+          "startLine": 66,
+          "endLine": 69,
+          "params": [
+            "data"
+          ]
+        },
+        {
+          "name": "doQimen",
+          "startLine": 71,
+          "endLine": 74,
+          "params": [
+            "data"
+          ]
+        },
+        {
+          "name": "getDivinationRecords",
+          "startLine": 76,
+          "endLine": 83,
+          "params": [
+            "page",
+            "limit",
+            "type"
+          ]
+        },
+        {
+          "name": "getDivinationDetail",
+          "startLine": 85,
+          "endLine": 88,
+          "params": [
+            "id"
+          ]
+        },
+        {
+          "name": "submitDivinationFeedback",
+          "startLine": 90,
+          "endLine": 96,
+          "params": [
+            "id",
+            "data"
+          ]
+        },
+        {
+          "name": "getProbabilityEvents",
+          "startLine": 98,
+          "endLine": 101,
+          "params": []
+        },
+        {
+          "name": "submitEventFeedback",
+          "startLine": 103,
+          "endLine": 108,
+          "params": [
+            "data"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "doLiuyao",
+          "line": 66,
+          "isDefault": false
+        },
+        {
+          "name": "doQimen",
+          "line": 71,
+          "isDefault": false
+        },
+        {
+          "name": "getDivinationRecords",
+          "line": 76,
+          "isDefault": false
+        },
+        {
+          "name": "getDivinationDetail",
+          "line": 85,
+          "isDefault": false
+        },
+        {
+          "name": "submitDivinationFeedback",
+          "line": 90,
+          "isDefault": false
+        },
+        {
+          "name": "getProbabilityEvents",
+          "line": 98,
+          "isDefault": false
+        },
+        {
+          "name": "submitEventFeedback",
+          "line": 103,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "doLiuyao",
+          "callee": "client.post",
+          "lineNumber": 67
+        },
+        {
+          "caller": "doQimen",
+          "callee": "client.post",
+          "lineNumber": 72
+        },
+        {
+          "caller": "getDivinationRecords",
+          "callee": "client.get",
+          "lineNumber": 81
+        },
+        {
+          "caller": "getDivinationDetail",
+          "callee": "client.get",
+          "lineNumber": 86
+        },
+        {
+          "caller": "submitDivinationFeedback",
+          "callee": "client.post",
+          "lineNumber": 94
+        },
+        {
+          "caller": "getProbabilityEvents",
+          "callee": "client.get",
+          "lineNumber": 99
+        },
+        {
+          "caller": "submitEventFeedback",
+          "callee": "client.post",
+          "lineNumber": 106
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 7,
+        "functionCount": 7,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "client/src/features/divination/views/__tests__/DivinationView.test.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 163,
+      "nonEmptyLines": 140,
+      "functions": [
+        {
+          "name": "createTestRouter",
+          "startLine": 24,
+          "endLine": 32,
+          "params": []
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "createTestRouter",
+          "callee": "createRouter",
+          "lineNumber": 25
+        },
+        {
+          "caller": "createTestRouter",
+          "callee": "createMemoryHistory",
+          "lineNumber": 26
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 0,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "client/src/features/divination/views/DivinationView.vue",
+      "language": "vue",
+      "fileCategory": "code",
+      "totalLines": 1026,
+      "nonEmptyLines": 922,
+      "metrics": {}
+    },
+    {
+      "path": "client/src/features/feedback/api/feedback-api.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 57,
+      "nonEmptyLines": 53,
+      "functions": [
+        {
+          "name": "submitFortuneAccuracy",
+          "startLine": 14,
+          "endLine": 22,
+          "params": [
+            "fortuneId",
+            "accuracyMark"
+          ]
+        },
+        {
+          "name": "submitDivinationAccuracy",
+          "startLine": 29,
+          "endLine": 37,
+          "params": [
+            "recordId",
+            "accuracyMark"
+          ]
+        },
+        {
+          "name": "submitPredictionOutcome",
+          "startLine": 43,
+          "endLine": 48,
+          "params": [
+            "data"
+          ]
+        },
+        {
+          "name": "getAccuracyStats",
+          "startLine": 54,
+          "endLine": 57,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "submitFortuneAccuracy",
+          "line": 14,
+          "isDefault": false
+        },
+        {
+          "name": "submitDivinationAccuracy",
+          "line": 29,
+          "isDefault": false
+        },
+        {
+          "name": "submitPredictionOutcome",
+          "line": 43,
+          "isDefault": false
+        },
+        {
+          "name": "getAccuracyStats",
+          "line": 54,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "submitFortuneAccuracy",
+          "callee": "client.post",
+          "lineNumber": 18
+        },
+        {
+          "caller": "submitDivinationAccuracy",
+          "callee": "client.post",
+          "lineNumber": 33
+        },
+        {
+          "caller": "submitPredictionOutcome",
+          "callee": "client.post",
+          "lineNumber": 46
+        },
+        {
+          "caller": "getAccuracyStats",
+          "callee": "client.get",
+          "lineNumber": 55
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 4,
+        "functionCount": 4,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "client/src/features/feedback/index.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 2,
+      "nonEmptyLines": 2,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "client/src/features/feedback/types/feedback.types.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 39,
+      "nonEmptyLines": 35,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "client/src/features/fortune/api/fortune-api.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 82,
+      "nonEmptyLines": 72,
+      "functions": [
+        {
+          "name": "getTodayFortune",
+          "startLine": 56,
+          "endLine": 59,
+          "params": []
+        },
+        {
+          "name": "regenerateTodayFortune",
+          "startLine": 61,
+          "endLine": 64,
+          "params": []
+        },
+        {
+          "name": "getFortuneList",
+          "startLine": 66,
+          "endLine": 69,
+          "params": [
+            "page",
+            "limit"
+          ]
+        },
+        {
+          "name": "getFortuneDetail",
+          "startLine": 71,
+          "endLine": 74,
+          "params": [
+            "id"
+          ]
+        },
+        {
+          "name": "submitFortuneFeedback",
+          "startLine": 76,
+          "endLine": 82,
+          "params": [
+            "id",
+            "data"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "getTodayFortune",
+          "line": 56,
+          "isDefault": false
+        },
+        {
+          "name": "regenerateTodayFortune",
+          "line": 61,
+          "isDefault": false
+        },
+        {
+          "name": "getFortuneList",
+          "line": 66,
+          "isDefault": false
+        },
+        {
+          "name": "getFortuneDetail",
+          "line": 71,
+          "isDefault": false
+        },
+        {
+          "name": "submitFortuneFeedback",
+          "line": 76,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "getTodayFortune",
+          "callee": "client.get",
+          "lineNumber": 57
+        },
+        {
+          "caller": "regenerateTodayFortune",
+          "callee": "client.post",
+          "lineNumber": 62
+        },
+        {
+          "caller": "getFortuneList",
+          "callee": "client.get",
+          "lineNumber": 67
+        },
+        {
+          "caller": "getFortuneDetail",
+          "callee": "client.get",
+          "lineNumber": 72
+        },
+        {
+          "caller": "submitFortuneFeedback",
+          "callee": "client.post",
+          "lineNumber": 80
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 5,
+        "functionCount": 5,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "client/src/features/fortune/views/__tests__/FortuneView.test.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 168,
+      "nonEmptyLines": 147,
+      "functions": [
+        {
+          "name": "createTestRouter",
+          "startLine": 16,
+          "endLine": 24,
+          "params": []
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "createTestRouter",
+          "callee": "createRouter",
+          "lineNumber": 17
+        },
+        {
+          "caller": "createTestRouter",
+          "callee": "createMemoryHistory",
+          "lineNumber": 18
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 0,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "client/src/features/fortune/views/FortuneView.vue",
+      "language": "vue",
+      "fileCategory": "code",
+      "totalLines": 1094,
+      "nonEmptyLines": 964,
+      "metrics": {}
+    },
+    {
+      "path": "client/src/features/home/views/__tests__/HomeView.test.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 78,
+      "nonEmptyLines": 65,
+      "functions": [
+        {
+          "name": "createTestRouter",
+          "startLine": 7,
+          "endLine": 18,
+          "params": []
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "createTestRouter",
+          "callee": "createRouter",
+          "lineNumber": 8
+        },
+        {
+          "caller": "createTestRouter",
+          "callee": "createMemoryHistory",
+          "lineNumber": 9
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 0,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "client/src/features/home/views/HomeView.vue",
+      "language": "vue",
+      "fileCategory": "code",
+      "totalLines": 399,
+      "nonEmptyLines": 350,
+      "metrics": {}
+    },
+    {
+      "path": "client/src/features/profile/api/profile-api.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 84,
+      "nonEmptyLines": 76,
+      "functions": [
+        {
+          "name": "getProfile",
+          "startLine": 29,
+          "endLine": 32,
+          "params": []
+        },
+        {
+          "name": "updateProfile",
+          "startLine": 34,
+          "endLine": 37,
+          "params": [
+            "username"
+          ]
+        },
+        {
+          "name": "updateBirth",
+          "startLine": 39,
+          "endLine": 47,
+          "params": [
+            "data"
+          ]
+        },
+        {
+          "name": "updatePushSettings",
+          "startLine": 49,
+          "endLine": 57,
+          "params": [
+            "data"
+          ]
+        },
+        {
+          "name": "updateLLMSettings",
+          "startLine": 59,
+          "endLine": 70,
+          "params": [
+            "data"
+          ]
+        },
+        {
+          "name": "testLLMConnection",
+          "startLine": 72,
+          "endLine": 79,
+          "params": [
+            "data"
+          ]
+        },
+        {
+          "name": "deleteAccount",
+          "startLine": 81,
+          "endLine": 84,
+          "params": [
+            "password"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "getProfile",
+          "line": 29,
+          "isDefault": false
+        },
+        {
+          "name": "updateProfile",
+          "line": 34,
+          "isDefault": false
+        },
+        {
+          "name": "updateBirth",
+          "line": 39,
+          "isDefault": false
+        },
+        {
+          "name": "updatePushSettings",
+          "line": 49,
+          "isDefault": false
+        },
+        {
+          "name": "updateLLMSettings",
+          "line": 59,
+          "isDefault": false
+        },
+        {
+          "name": "testLLMConnection",
+          "line": 72,
+          "isDefault": false
+        },
+        {
+          "name": "deleteAccount",
+          "line": 81,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "getProfile",
+          "callee": "client.get",
+          "lineNumber": 30
+        },
+        {
+          "caller": "updateProfile",
+          "callee": "client.put",
+          "lineNumber": 35
+        },
+        {
+          "caller": "updateBirth",
+          "callee": "client.put",
+          "lineNumber": 45
+        },
+        {
+          "caller": "updatePushSettings",
+          "callee": "client.put",
+          "lineNumber": 55
+        },
+        {
+          "caller": "updateLLMSettings",
+          "callee": "client.put",
+          "lineNumber": 68
+        },
+        {
+          "caller": "testLLMConnection",
+          "callee": "client.post",
+          "lineNumber": 77
+        },
+        {
+          "caller": "deleteAccount",
+          "callee": "client.delete",
+          "lineNumber": 82
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 7,
+        "functionCount": 7,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "client/src/features/profile/views/__tests__/ProfileView.test.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 151,
+      "nonEmptyLines": 131,
+      "functions": [
+        {
+          "name": "createTestRouter",
+          "startLine": 26,
+          "endLine": 34,
+          "params": []
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "createTestRouter",
+          "callee": "createRouter",
+          "lineNumber": 27
+        },
+        {
+          "caller": "createTestRouter",
+          "callee": "createMemoryHistory",
+          "lineNumber": 28
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 0,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "client/src/features/profile/views/ProfileView.vue",
+      "language": "vue",
+      "fileCategory": "code",
+      "totalLines": 979,
+      "nonEmptyLines": 880,
+      "metrics": {}
+    }
+  ]
+}

@@ -1,0 +1,952 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 20,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "docs/specs/001-项目初始化.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 51,
+      "nonEmptyLines": 37,
+      "sections": [
+        {
+          "heading": "Spec 001: 项目初始化",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "功能描述",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "输入/输出",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "验收标准",
+          "level": 2,
+          "line": 20
+        },
+        {
+          "heading": "技术要点",
+          "level": 2,
+          "line": 41
+        },
+        {
+          "heading": "依赖项",
+          "level": 2,
+          "line": 48
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 6
+      }
+    },
+    {
+      "path": "docs/specs/002-数据库设计.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 43,
+      "nonEmptyLines": 31,
+      "sections": [
+        {
+          "heading": "Spec 002: 数据库设计与 ORM",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "功能描述",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "数据表",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "验收标准",
+          "level": 2,
+          "line": 18
+        },
+        {
+          "heading": "技术要点",
+          "level": 2,
+          "line": 33
+        },
+        {
+          "heading": "依赖项",
+          "level": 2,
+          "line": 40
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 6
+      }
+    },
+    {
+      "path": "docs/specs/003-配置管理.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 47,
+      "nonEmptyLines": 35,
+      "sections": [
+        {
+          "heading": "Spec 003: 配置管理",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "功能描述",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "配置项",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "验收标准",
+          "level": 2,
+          "line": 25
+        },
+        {
+          "heading": "技术要点",
+          "level": 2,
+          "line": 39
+        },
+        {
+          "heading": "依赖项",
+          "level": 2,
+          "line": 45
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 6
+      }
+    },
+    {
+      "path": "docs/specs/004-用户注册.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 85,
+      "nonEmptyLines": 68,
+      "sections": [
+        {
+          "heading": "Spec 004: 用户注册",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "功能描述",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "API",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "验收标准",
+          "level": 2,
+          "line": 43
+        },
+        {
+          "heading": "技术要点",
+          "level": 2,
+          "line": 75
+        },
+        {
+          "heading": "依赖项",
+          "level": 2,
+          "line": 82
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 6
+      }
+    },
+    {
+      "path": "docs/specs/005-用户登录.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 62,
+      "nonEmptyLines": 47,
+      "sections": [
+        {
+          "heading": "Spec 005: 用户登录",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "功能描述",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "API",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "验收标准",
+          "level": 2,
+          "line": 34
+        },
+        {
+          "heading": "技术要点",
+          "level": 2,
+          "line": 54
+        },
+        {
+          "heading": "依赖项",
+          "level": 2,
+          "line": 60
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 6
+      }
+    },
+    {
+      "path": "docs/specs/006-个人信息管理.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 42,
+      "nonEmptyLines": 30,
+      "sections": [
+        {
+          "heading": "Spec 006: 个人信息管理",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "功能描述",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "API",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "验收标准",
+          "level": 2,
+          "line": 17
+        },
+        {
+          "heading": "技术要点",
+          "level": 2,
+          "line": 34
+        },
+        {
+          "heading": "依赖项",
+          "level": 2,
+          "line": 40
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 6
+      }
+    },
+    {
+      "path": "docs/specs/007-推送设置.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 53,
+      "nonEmptyLines": 39,
+      "sections": [
+        {
+          "heading": "Spec 007: 推送设置",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "功能描述",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "API",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "验收标准",
+          "level": 2,
+          "line": 25
+        },
+        {
+          "heading": "技术要点",
+          "level": 2,
+          "line": 45
+        },
+        {
+          "heading": "依赖项",
+          "level": 2,
+          "line": 51
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 6
+      }
+    },
+    {
+      "path": "docs/specs/008-账号注销.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 47,
+      "nonEmptyLines": 34,
+      "sections": [
+        {
+          "heading": "Spec 008: 账号注销",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "功能描述",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "API",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "验收标准",
+          "level": 2,
+          "line": 22
+        },
+        {
+          "heading": "技术要点",
+          "level": 2,
+          "line": 39
+        },
+        {
+          "heading": "依赖项",
+          "level": 2,
+          "line": 45
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 6
+      }
+    },
+    {
+      "path": "docs/specs/009-公共基础模块.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 58,
+      "nonEmptyLines": 43,
+      "sections": [
+        {
+          "heading": "Spec 009: 命理公共基础模块",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "功能描述",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "模块结构",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "核心数据",
+          "level": 2,
+          "line": 19
+        },
+        {
+          "heading": "验收标准",
+          "level": 2,
+          "line": 29
+        },
+        {
+          "heading": "技术要点",
+          "level": 2,
+          "line": 50
+        },
+        {
+          "heading": "依赖项",
+          "level": 2,
+          "line": 56
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 7
+      }
+    },
+    {
+      "path": "docs/specs/010-八字排盘.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 83,
+      "nonEmptyLines": 67,
+      "sections": [
+        {
+          "heading": "Spec 010: 八字排盘",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "功能描述",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "模块结构",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "输入/输出",
+          "level": 2,
+          "line": 21
+        },
+        {
+          "heading": "验收标准",
+          "level": 2,
+          "line": 50
+        },
+        {
+          "heading": "技术要点",
+          "level": 2,
+          "line": 73
+        },
+        {
+          "heading": "依赖项",
+          "level": 2,
+          "line": 80
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 7
+      }
+    },
+    {
+      "path": "docs/specs/011-每日运势推算.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 49,
+      "nonEmptyLines": 37,
+      "sections": [
+        {
+          "heading": "Spec 011: 每日运势推算",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "功能描述",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "输入/输出",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "验收标准",
+          "level": 2,
+          "line": 29
+        },
+        {
+          "heading": "技术要点",
+          "level": 2,
+          "line": 41
+        },
+        {
+          "heading": "依赖项",
+          "level": 2,
+          "line": 47
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 6
+      }
+    },
+    {
+      "path": "docs/specs/012-六爻起卦.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 64,
+      "nonEmptyLines": 49,
+      "sections": [
+        {
+          "heading": "Spec 012: 六爻起卦",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "功能描述",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "模块结构",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "输入/输出",
+          "level": 2,
+          "line": 17
+        },
+        {
+          "heading": "验收标准",
+          "level": 2,
+          "line": 39
+        },
+        {
+          "heading": "技术要点",
+          "level": 2,
+          "line": 55
+        },
+        {
+          "heading": "依赖项",
+          "level": 2,
+          "line": 62
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 7
+      }
+    },
+    {
+      "path": "docs/specs/013-奇门遁甲排盘.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 58,
+      "nonEmptyLines": 44,
+      "sections": [
+        {
+          "heading": "Spec 013: 奇门遁甲排盘",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "功能描述",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "模块结构",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "输入/输出",
+          "level": 2,
+          "line": 17
+        },
+        {
+          "heading": "验收标准",
+          "level": 2,
+          "line": 37
+        },
+        {
+          "heading": "技术要点",
+          "level": 2,
+          "line": 49
+        },
+        {
+          "heading": "依赖项",
+          "level": 2,
+          "line": 56
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 7
+      }
+    },
+    {
+      "path": "docs/specs/014-DeepSeek解读服务.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 84,
+      "nonEmptyLines": 62,
+      "sections": [
+        {
+          "heading": "Spec 014: LLM 解读服务",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "功能描述",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "当前供应商",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "配置层级",
+          "level": 2,
+          "line": 18
+        },
+        {
+          "heading": "核心 Prompt 模板",
+          "level": 2,
+          "line": 27
+        },
+        {
+          "heading": "验收标准",
+          "level": 2,
+          "line": 45
+        },
+        {
+          "heading": "技术要点",
+          "level": 2,
+          "line": 72
+        },
+        {
+          "heading": "依赖项",
+          "level": 2,
+          "line": 81
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 8
+      }
+    },
+    {
+      "path": "docs/specs/015-用户反馈摘要.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 46,
+      "nonEmptyLines": 33,
+      "sections": [
+        {
+          "heading": "Spec 015: 用户反馈摘要",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "功能描述",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "输入/输出",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "验收标准",
+          "level": 2,
+          "line": 22
+        },
+        {
+          "heading": "技术要点",
+          "level": 2,
+          "line": 37
+        },
+        {
+          "heading": "依赖项",
+          "level": 2,
+          "line": 44
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 6
+      }
+    },
+    {
+      "path": "docs/specs/016-QQ邮箱推送.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 44,
+      "nonEmptyLines": 31,
+      "sections": [
+        {
+          "heading": "Spec 016: QQ 邮箱推送",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "功能描述",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "输入/输出",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "验收标准",
+          "level": 2,
+          "line": 17
+        },
+        {
+          "heading": "技术要点",
+          "level": 2,
+          "line": 34
+        },
+        {
+          "heading": "依赖项",
+          "level": 2,
+          "line": 41
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 6
+      }
+    },
+    {
+      "path": "docs/specs/017-飞书推送.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 42,
+      "nonEmptyLines": 29,
+      "sections": [
+        {
+          "heading": "Spec 017: 飞书机器人推送",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "功能描述",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "输入/输出",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "验收标准",
+          "level": 2,
+          "line": 17
+        },
+        {
+          "heading": "技术要点",
+          "level": 2,
+          "line": 33
+        },
+        {
+          "heading": "依赖项",
+          "level": 2,
+          "line": 39
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 6
+      }
+    },
+    {
+      "path": "docs/specs/018-每日推送调度.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 60,
+      "nonEmptyLines": 45,
+      "sections": [
+        {
+          "heading": "Spec 018: 每日推送调度",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "功能描述",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "API",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "推送流程",
+          "level": 2,
+          "line": 15
+        },
+        {
+          "heading": "验收标准",
+          "level": 2,
+          "line": 29
+        },
+        {
+          "heading": "技术要点",
+          "level": 2,
+          "line": 51
+        },
+        {
+          "heading": "依赖项",
+          "level": 2,
+          "line": 58
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 7
+      }
+    },
+    {
+      "path": "docs/specs/019-今日运势查看.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 50,
+      "nonEmptyLines": 39,
+      "sections": [
+        {
+          "heading": "Spec 019: 今日运势查看",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "功能描述",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "API",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "验收标准",
+          "level": 2,
+          "line": 34
+        },
+        {
+          "heading": "依赖项",
+          "level": 2,
+          "line": 48
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 5
+      }
+    },
+    {
+      "path": "docs/specs/020-历史运势列表.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 44,
+      "nonEmptyLines": 33,
+      "sections": [
+        {
+          "heading": "Spec 020: 历史运势列表",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "功能描述",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "API",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "验收标准",
+          "level": 2,
+          "line": 27
+        },
+        {
+          "heading": "依赖项",
+          "level": 2,
+          "line": 42
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 5
+      }
+    }
+  ]
+}

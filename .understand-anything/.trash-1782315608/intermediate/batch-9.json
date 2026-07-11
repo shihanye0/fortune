@@ -1,0 +1,4648 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 25,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "server/app/api/v1/divination.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 315,
+      "nonEmptyLines": 262,
+      "functions": [
+        {
+          "name": "do_liuyao",
+          "startLine": 41,
+          "endLine": 95,
+          "params": [
+            "req",
+            "current_user",
+            "db"
+          ]
+        },
+        {
+          "name": "do_qimen",
+          "startLine": 99,
+          "endLine": 162,
+          "params": [
+            "req",
+            "current_user",
+            "db"
+          ]
+        },
+        {
+          "name": "list_divination_records",
+          "startLine": 166,
+          "endLine": 202,
+          "params": [
+            "page",
+            "limit",
+            "type",
+            "current_user",
+            "db"
+          ]
+        },
+        {
+          "name": "get_divination_detail",
+          "startLine": 206,
+          "endLine": 233,
+          "params": [
+            "record_id",
+            "current_user",
+            "db"
+          ]
+        },
+        {
+          "name": "submit_divination_feedback",
+          "startLine": 237,
+          "endLine": 264,
+          "params": [
+            "record_id",
+            "req",
+            "current_user",
+            "db"
+          ]
+        },
+        {
+          "name": "mark_divination_accuracy",
+          "startLine": 268,
+          "endLine": 294,
+          "params": [
+            "record_id",
+            "req",
+            "current_user",
+            "db"
+          ]
+        },
+        {
+          "name": "_record_to_list_dict",
+          "startLine": 299,
+          "endLine": 315,
+          "params": [
+            "r"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "LiuyaoRequest",
+          "startLine": 19,
+          "endLine": 21,
+          "methods": [],
+          "properties": [
+            "question",
+            "method"
+          ]
+        },
+        {
+          "name": "QimenRequest",
+          "startLine": 24,
+          "endLine": 26,
+          "methods": [],
+          "properties": [
+            "question",
+            "mode"
+          ]
+        },
+        {
+          "name": "DivinationFeedbackRequest",
+          "startLine": 29,
+          "endLine": 31,
+          "methods": [],
+          "properties": [
+            "rating",
+            "feedback_text"
+          ]
+        },
+        {
+          "name": "AccuracyMarkRequest",
+          "startLine": 34,
+          "endLine": 35,
+          "methods": [],
+          "properties": [
+            "accuracy_mark"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "LiuyaoRequest",
+          "line": 19,
+          "isDefault": false
+        },
+        {
+          "name": "QimenRequest",
+          "line": 24,
+          "isDefault": false
+        },
+        {
+          "name": "DivinationFeedbackRequest",
+          "line": 29,
+          "isDefault": false
+        },
+        {
+          "name": "AccuracyMarkRequest",
+          "line": 34,
+          "isDefault": false
+        },
+        {
+          "name": "do_liuyao",
+          "line": 40,
+          "isDefault": false
+        },
+        {
+          "name": "do_qimen",
+          "line": 98,
+          "isDefault": false
+        },
+        {
+          "name": "list_divination_records",
+          "line": 165,
+          "isDefault": false
+        },
+        {
+          "name": "get_divination_detail",
+          "line": 205,
+          "isDefault": false
+        },
+        {
+          "name": "submit_divination_feedback",
+          "line": 236,
+          "isDefault": false
+        },
+        {
+          "name": "mark_divination_accuracy",
+          "line": 267,
+          "isDefault": false
+        },
+        {
+          "name": "_record_to_list_dict",
+          "line": 299,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "do_liuyao",
+          "callee": "Depends",
+          "lineNumber": 43
+        },
+        {
+          "caller": "do_liuyao",
+          "callee": "Depends",
+          "lineNumber": 44
+        },
+        {
+          "caller": "do_liuyao",
+          "callee": "coin_divination",
+          "lineNumber": 53
+        },
+        {
+          "caller": "do_liuyao",
+          "callee": "calculate_bazi",
+          "lineNumber": 58
+        },
+        {
+          "caller": "do_liuyao",
+          "callee": "'、'.join",
+          "lineNumber": 67
+        },
+        {
+          "caller": "do_liuyao",
+          "callee": "bazi_result.get",
+          "lineNumber": 67
+        },
+        {
+          "caller": "do_liuyao",
+          "callee": "interpret_liuyao",
+          "lineNumber": 73
+        },
+        {
+          "caller": "do_liuyao",
+          "callee": "DivinationRecord",
+          "lineNumber": 76
+        },
+        {
+          "caller": "do_liuyao",
+          "callee": "db.add",
+          "lineNumber": 83
+        },
+        {
+          "caller": "do_liuyao",
+          "callee": "db.commit",
+          "lineNumber": 84
+        },
+        {
+          "caller": "do_liuyao",
+          "callee": "db.refresh",
+          "lineNumber": 85
+        },
+        {
+          "caller": "do_qimen",
+          "callee": "Depends",
+          "lineNumber": 101
+        },
+        {
+          "caller": "do_qimen",
+          "callee": "Depends",
+          "lineNumber": 102
+        },
+        {
+          "caller": "do_qimen",
+          "callee": "datetime.now",
+          "lineNumber": 111
+        },
+        {
+          "caller": "do_qimen",
+          "callee": "calculate_qimen",
+          "lineNumber": 115
+        },
+        {
+          "caller": "do_qimen",
+          "callee": "calculate_bazi",
+          "lineNumber": 125
+        },
+        {
+          "caller": "do_qimen",
+          "callee": "'、'.join",
+          "lineNumber": 134
+        },
+        {
+          "caller": "do_qimen",
+          "callee": "bazi_result.get",
+          "lineNumber": 134
+        },
+        {
+          "caller": "do_qimen",
+          "callee": "interpret_qimen",
+          "lineNumber": 140
+        },
+        {
+          "caller": "do_qimen",
+          "callee": "DivinationRecord",
+          "lineNumber": 143
+        },
+        {
+          "caller": "do_qimen",
+          "callee": "db.add",
+          "lineNumber": 150
+        },
+        {
+          "caller": "do_qimen",
+          "callee": "db.commit",
+          "lineNumber": 151
+        },
+        {
+          "caller": "do_qimen",
+          "callee": "db.refresh",
+          "lineNumber": 152
+        },
+        {
+          "caller": "list_divination_records",
+          "callee": "Query",
+          "lineNumber": 167
+        },
+        {
+          "caller": "list_divination_records",
+          "callee": "Query",
+          "lineNumber": 168
+        },
+        {
+          "caller": "list_divination_records",
+          "callee": "Query",
+          "lineNumber": 169
+        },
+        {
+          "caller": "list_divination_records",
+          "callee": "Depends",
+          "lineNumber": 170
+        },
+        {
+          "caller": "list_divination_records",
+          "callee": "Depends",
+          "lineNumber": 171
+        },
+        {
+          "caller": "list_divination_records",
+          "callee": "db.query(DivinationRecord).filter",
+          "lineNumber": 176
+        },
+        {
+          "caller": "list_divination_records",
+          "callee": "db.query",
+          "lineNumber": 176
+        },
+        {
+          "caller": "list_divination_records",
+          "callee": "query.filter",
+          "lineNumber": 180
+        },
+        {
+          "caller": "list_divination_records",
+          "callee": "query.count",
+          "lineNumber": 182
+        },
+        {
+          "caller": "list_divination_records",
+          "callee": "query.order_by(DivinationRecord.created_at.desc())\n        .offset(offset)\n        .limit(limit)\n        .all",
+          "lineNumber": 185
+        },
+        {
+          "caller": "list_divination_records",
+          "callee": "query.order_by(DivinationRecord.created_at.desc())\n        .offset(offset)\n        .limit",
+          "lineNumber": 185
+        },
+        {
+          "caller": "list_divination_records",
+          "callee": "query.order_by(DivinationRecord.created_at.desc())\n        .offset",
+          "lineNumber": 185
+        },
+        {
+          "caller": "list_divination_records",
+          "callee": "query.order_by",
+          "lineNumber": 185
+        },
+        {
+          "caller": "list_divination_records",
+          "callee": "DivinationRecord.created_at.desc",
+          "lineNumber": 185
+        },
+        {
+          "caller": "list_divination_records",
+          "callee": "_record_to_list_dict",
+          "lineNumber": 195
+        },
+        {
+          "caller": "get_divination_detail",
+          "callee": "Depends",
+          "lineNumber": 208
+        },
+        {
+          "caller": "get_divination_detail",
+          "callee": "Depends",
+          "lineNumber": 209
+        },
+        {
+          "caller": "get_divination_detail",
+          "callee": "db.query(DivinationRecord)\n        .filter(\n            DivinationRecord.id == record_id,\n            DivinationRecord.user_id == current_user.id,\n        )\n        .first",
+          "lineNumber": 213
+        },
+        {
+          "caller": "get_divination_detail",
+          "callee": "db.query(DivinationRecord)\n        .filter",
+          "lineNumber": 213
+        },
+        {
+          "caller": "get_divination_detail",
+          "callee": "db.query",
+          "lineNumber": 213
+        },
+        {
+          "caller": "get_divination_detail",
+          "callee": "HTTPException",
+          "lineNumber": 222
+        },
+        {
+          "caller": "submit_divination_feedback",
+          "callee": "Depends",
+          "lineNumber": 240
+        },
+        {
+          "caller": "submit_divination_feedback",
+          "callee": "Depends",
+          "lineNumber": 241
+        },
+        {
+          "caller": "submit_divination_feedback",
+          "callee": "db.query(DivinationRecord)\n        .filter(\n            DivinationRecord.id == record_id,\n            DivinationRecord.user_id == current_user.id,\n        )\n        .first",
+          "lineNumber": 245
+        },
+        {
+          "caller": "submit_divination_feedback",
+          "callee": "db.query(DivinationRecord)\n        .filter",
+          "lineNumber": 245
+        },
+        {
+          "caller": "submit_divination_feedback",
+          "callee": "db.query",
+          "lineNumber": 245
+        },
+        {
+          "caller": "submit_divination_feedback",
+          "callee": "HTTPException",
+          "lineNumber": 254
+        },
+        {
+          "caller": "submit_divination_feedback",
+          "callee": "db.commit",
+          "lineNumber": 258
+        },
+        {
+          "caller": "submit_divination_feedback",
+          "callee": "db.refresh",
+          "lineNumber": 259
+        },
+        {
+          "caller": "submit_divination_feedback",
+          "callee": "_record_to_list_dict",
+          "lineNumber": 263
+        },
+        {
+          "caller": "mark_divination_accuracy",
+          "callee": "Depends",
+          "lineNumber": 271
+        },
+        {
+          "caller": "mark_divination_accuracy",
+          "callee": "Depends",
+          "lineNumber": 272
+        },
+        {
+          "caller": "mark_divination_accuracy",
+          "callee": "db.query(DivinationRecord)\n        .filter(\n            DivinationRecord.id == record_id,\n            DivinationRecord.user_id == current_user.id,\n        )\n        .first",
+          "lineNumber": 276
+        },
+        {
+          "caller": "mark_divination_accuracy",
+          "callee": "db.query(DivinationRecord)\n        .filter",
+          "lineNumber": 276
+        },
+        {
+          "caller": "mark_divination_accuracy",
+          "callee": "db.query",
+          "lineNumber": 276
+        },
+        {
+          "caller": "mark_divination_accuracy",
+          "callee": "HTTPException",
+          "lineNumber": 285
+        },
+        {
+          "caller": "mark_divination_accuracy",
+          "callee": "db.commit",
+          "lineNumber": 288
+        },
+        {
+          "caller": "mark_divination_accuracy",
+          "callee": "db.refresh",
+          "lineNumber": 289
+        },
+        {
+          "caller": "mark_divination_accuracy",
+          "callee": "_record_to_list_dict",
+          "lineNumber": 293
+        },
+        {
+          "caller": "_record_to_list_dict",
+          "callee": "len",
+          "lineNumber": 303
+        },
+        {
+          "caller": "_record_to_list_dict",
+          "callee": "r.created_at.isoformat",
+          "lineNumber": 314
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 11,
+        "functionCount": 7,
+        "classCount": 4
+      }
+    },
+    {
+      "path": "server/app/api/v1/fortunes.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 350,
+      "nonEmptyLines": 291,
+      "functions": [
+        {
+          "name": "get_today_fortune",
+          "startLine": 37,
+          "endLine": 59,
+          "params": [
+            "current_user",
+            "db"
+          ]
+        },
+        {
+          "name": "regenerate_today_fortune",
+          "startLine": 63,
+          "endLine": 90,
+          "params": [
+            "current_user",
+            "db"
+          ]
+        },
+        {
+          "name": "list_fortunes",
+          "startLine": 94,
+          "endLine": 129,
+          "params": [
+            "page",
+            "limit",
+            "current_user",
+            "db"
+          ]
+        },
+        {
+          "name": "get_fortune_detail",
+          "startLine": 133,
+          "endLine": 154,
+          "params": [
+            "fortune_id",
+            "current_user",
+            "db"
+          ]
+        },
+        {
+          "name": "submit_feedback",
+          "startLine": 158,
+          "endLine": 186,
+          "params": [
+            "fortune_id",
+            "req",
+            "current_user",
+            "db"
+          ]
+        },
+        {
+          "name": "mark_fortune_accuracy",
+          "startLine": 190,
+          "endLine": 216,
+          "params": [
+            "fortune_id",
+            "req",
+            "current_user",
+            "db"
+          ]
+        },
+        {
+          "name": "_generate_fortune_on_demand",
+          "startLine": 221,
+          "endLine": 311,
+          "params": [
+            "user",
+            "today",
+            "db"
+          ]
+        },
+        {
+          "name": "_fortune_to_detail_dict",
+          "startLine": 316,
+          "endLine": 335,
+          "params": [
+            "f"
+          ]
+        },
+        {
+          "name": "_fortune_to_list_dict",
+          "startLine": 338,
+          "endLine": 350,
+          "params": [
+            "f"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "FeedbackRequest",
+          "startLine": 24,
+          "endLine": 27,
+          "methods": [],
+          "properties": [
+            "rating",
+            "tags",
+            "feedback_text"
+          ]
+        },
+        {
+          "name": "AccuracyMarkRequest",
+          "startLine": 30,
+          "endLine": 31,
+          "methods": [],
+          "properties": [
+            "accuracy_mark"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "FeedbackRequest",
+          "line": 24,
+          "isDefault": false
+        },
+        {
+          "name": "AccuracyMarkRequest",
+          "line": 30,
+          "isDefault": false
+        },
+        {
+          "name": "get_today_fortune",
+          "line": 36,
+          "isDefault": false
+        },
+        {
+          "name": "regenerate_today_fortune",
+          "line": 62,
+          "isDefault": false
+        },
+        {
+          "name": "list_fortunes",
+          "line": 93,
+          "isDefault": false
+        },
+        {
+          "name": "get_fortune_detail",
+          "line": 132,
+          "isDefault": false
+        },
+        {
+          "name": "submit_feedback",
+          "line": 157,
+          "isDefault": false
+        },
+        {
+          "name": "mark_fortune_accuracy",
+          "line": 189,
+          "isDefault": false
+        },
+        {
+          "name": "_generate_fortune_on_demand",
+          "line": 221,
+          "isDefault": false
+        },
+        {
+          "name": "_fortune_to_detail_dict",
+          "line": 316,
+          "isDefault": false
+        },
+        {
+          "name": "_fortune_to_list_dict",
+          "line": 338,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "get_today_fortune",
+          "callee": "Depends",
+          "lineNumber": 38
+        },
+        {
+          "caller": "get_today_fortune",
+          "callee": "Depends",
+          "lineNumber": 39
+        },
+        {
+          "caller": "get_today_fortune",
+          "callee": "date.today",
+          "lineNumber": 42
+        },
+        {
+          "caller": "get_today_fortune",
+          "callee": "db.query(DailyFortune)\n        .filter(\n            DailyFortune.user_id == current_user.id,\n            DailyFortune.date == today,\n        )\n        .first",
+          "lineNumber": 44
+        },
+        {
+          "caller": "get_today_fortune",
+          "callee": "db.query(DailyFortune)\n        .filter",
+          "lineNumber": 44
+        },
+        {
+          "caller": "get_today_fortune",
+          "callee": "db.query",
+          "lineNumber": 44
+        },
+        {
+          "caller": "get_today_fortune",
+          "callee": "_generate_fortune_on_demand",
+          "lineNumber": 54
+        },
+        {
+          "caller": "get_today_fortune",
+          "callee": "_fortune_to_detail_dict",
+          "lineNumber": 58
+        },
+        {
+          "caller": "regenerate_today_fortune",
+          "callee": "Depends",
+          "lineNumber": 64
+        },
+        {
+          "caller": "regenerate_today_fortune",
+          "callee": "Depends",
+          "lineNumber": 65
+        },
+        {
+          "caller": "regenerate_today_fortune",
+          "callee": "date.today",
+          "lineNumber": 68
+        },
+        {
+          "caller": "regenerate_today_fortune",
+          "callee": "db.query(DailyFortune)\n        .filter(\n            DailyFortune.user_id == current_user.id,\n            DailyFortune.date == today,\n        )\n        .first",
+          "lineNumber": 72
+        },
+        {
+          "caller": "regenerate_today_fortune",
+          "callee": "db.query(DailyFortune)\n        .filter",
+          "lineNumber": 72
+        },
+        {
+          "caller": "regenerate_today_fortune",
+          "callee": "db.query",
+          "lineNumber": 72
+        },
+        {
+          "caller": "regenerate_today_fortune",
+          "callee": "db.delete",
+          "lineNumber": 81
+        },
+        {
+          "caller": "regenerate_today_fortune",
+          "callee": "db.commit",
+          "lineNumber": 82
+        },
+        {
+          "caller": "regenerate_today_fortune",
+          "callee": "_generate_fortune_on_demand",
+          "lineNumber": 85
+        },
+        {
+          "caller": "regenerate_today_fortune",
+          "callee": "_fortune_to_detail_dict",
+          "lineNumber": 89
+        },
+        {
+          "caller": "list_fortunes",
+          "callee": "Query",
+          "lineNumber": 95
+        },
+        {
+          "caller": "list_fortunes",
+          "callee": "Query",
+          "lineNumber": 96
+        },
+        {
+          "caller": "list_fortunes",
+          "callee": "Depends",
+          "lineNumber": 97
+        },
+        {
+          "caller": "list_fortunes",
+          "callee": "Depends",
+          "lineNumber": 98
+        },
+        {
+          "caller": "list_fortunes",
+          "callee": "db.query(func.count(DailyFortune.id))\n        .filter(DailyFortune.user_id == current_user.id)\n        .scalar",
+          "lineNumber": 104
+        },
+        {
+          "caller": "list_fortunes",
+          "callee": "db.query(func.count(DailyFortune.id))\n        .filter",
+          "lineNumber": 104
+        },
+        {
+          "caller": "list_fortunes",
+          "callee": "db.query",
+          "lineNumber": 104
+        },
+        {
+          "caller": "list_fortunes",
+          "callee": "func.count",
+          "lineNumber": 104
+        },
+        {
+          "caller": "list_fortunes",
+          "callee": "db.query(DailyFortune)\n        .filter(DailyFortune.user_id == current_user.id)\n        .order_by(DailyFortune.date.desc())\n        .offset(offset)\n        .limit(limit)\n        .all",
+          "lineNumber": 110
+        },
+        {
+          "caller": "list_fortunes",
+          "callee": "db.query(DailyFortune)\n        .filter(DailyFortune.user_id == current_user.id)\n        .order_by(DailyFortune.date.desc())\n        .offset(offset)\n        .limit",
+          "lineNumber": 110
+        },
+        {
+          "caller": "list_fortunes",
+          "callee": "db.query(DailyFortune)\n        .filter(DailyFortune.user_id == current_user.id)\n        .order_by(DailyFortune.date.desc())\n        .offset",
+          "lineNumber": 110
+        },
+        {
+          "caller": "list_fortunes",
+          "callee": "db.query(DailyFortune)\n        .filter(DailyFortune.user_id == current_user.id)\n        .order_by",
+          "lineNumber": 110
+        },
+        {
+          "caller": "list_fortunes",
+          "callee": "db.query(DailyFortune)\n        .filter",
+          "lineNumber": 110
+        },
+        {
+          "caller": "list_fortunes",
+          "callee": "db.query",
+          "lineNumber": 110
+        },
+        {
+          "caller": "list_fortunes",
+          "callee": "DailyFortune.date.desc",
+          "lineNumber": 112
+        },
+        {
+          "caller": "list_fortunes",
+          "callee": "_fortune_to_list_dict",
+          "lineNumber": 122
+        },
+        {
+          "caller": "get_fortune_detail",
+          "callee": "Depends",
+          "lineNumber": 135
+        },
+        {
+          "caller": "get_fortune_detail",
+          "callee": "Depends",
+          "lineNumber": 136
+        },
+        {
+          "caller": "get_fortune_detail",
+          "callee": "db.query(DailyFortune)\n        .filter(\n            DailyFortune.id == fortune_id,\n            DailyFortune.user_id == current_user.id,\n        )\n        .first",
+          "lineNumber": 140
+        },
+        {
+          "caller": "get_fortune_detail",
+          "callee": "db.query(DailyFortune)\n        .filter",
+          "lineNumber": 140
+        },
+        {
+          "caller": "get_fortune_detail",
+          "callee": "db.query",
+          "lineNumber": 140
+        },
+        {
+          "caller": "get_fortune_detail",
+          "callee": "HTTPException",
+          "lineNumber": 149
+        },
+        {
+          "caller": "get_fortune_detail",
+          "callee": "_fortune_to_detail_dict",
+          "lineNumber": 153
+        },
+        {
+          "caller": "submit_feedback",
+          "callee": "Depends",
+          "lineNumber": 161
+        },
+        {
+          "caller": "submit_feedback",
+          "callee": "Depends",
+          "lineNumber": 162
+        },
+        {
+          "caller": "submit_feedback",
+          "callee": "db.query(DailyFortune)\n        .filter(\n            DailyFortune.id == fortune_id,\n            DailyFortune.user_id == current_user.id,\n        )\n        .first",
+          "lineNumber": 166
+        },
+        {
+          "caller": "submit_feedback",
+          "callee": "db.query(DailyFortune)\n        .filter",
+          "lineNumber": 166
+        },
+        {
+          "caller": "submit_feedback",
+          "callee": "db.query",
+          "lineNumber": 166
+        },
+        {
+          "caller": "submit_feedback",
+          "callee": "HTTPException",
+          "lineNumber": 175
+        },
+        {
+          "caller": "submit_feedback",
+          "callee": "db.commit",
+          "lineNumber": 180
+        },
+        {
+          "caller": "submit_feedback",
+          "callee": "db.refresh",
+          "lineNumber": 181
+        },
+        {
+          "caller": "submit_feedback",
+          "callee": "_fortune_to_detail_dict",
+          "lineNumber": 185
+        },
+        {
+          "caller": "mark_fortune_accuracy",
+          "callee": "Depends",
+          "lineNumber": 193
+        },
+        {
+          "caller": "mark_fortune_accuracy",
+          "callee": "Depends",
+          "lineNumber": 194
+        },
+        {
+          "caller": "mark_fortune_accuracy",
+          "callee": "db.query(DailyFortune)\n        .filter(\n            DailyFortune.id == fortune_id,\n            DailyFortune.user_id == current_user.id,\n        )\n        .first",
+          "lineNumber": 198
+        },
+        {
+          "caller": "mark_fortune_accuracy",
+          "callee": "db.query(DailyFortune)\n        .filter",
+          "lineNumber": 198
+        },
+        {
+          "caller": "mark_fortune_accuracy",
+          "callee": "db.query",
+          "lineNumber": 198
+        },
+        {
+          "caller": "mark_fortune_accuracy",
+          "callee": "HTTPException",
+          "lineNumber": 207
+        },
+        {
+          "caller": "mark_fortune_accuracy",
+          "callee": "db.commit",
+          "lineNumber": 210
+        },
+        {
+          "caller": "mark_fortune_accuracy",
+          "callee": "db.refresh",
+          "lineNumber": 211
+        },
+        {
+          "caller": "mark_fortune_accuracy",
+          "callee": "_fortune_to_detail_dict",
+          "lineNumber": 215
+        },
+        {
+          "caller": "_generate_fortune_on_demand",
+          "callee": "logging.getLogger",
+          "lineNumber": 224
+        },
+        {
+          "caller": "_generate_fortune_on_demand",
+          "callee": "calculate_bazi",
+          "lineNumber": 229
+        },
+        {
+          "caller": "_generate_fortune_on_demand",
+          "callee": "calculate_daily_fortune",
+          "lineNumber": 236
+        },
+        {
+          "caller": "_generate_fortune_on_demand",
+          "callee": "calculate_all_hours_fortune",
+          "lineNumber": 240
+        },
+        {
+          "caller": "_generate_fortune_on_demand",
+          "callee": "'、'.join",
+          "lineNumber": 250
+        },
+        {
+          "caller": "_generate_fortune_on_demand",
+          "callee": "bazi_result.get",
+          "lineNumber": 250
+        },
+        {
+          "caller": "_generate_fortune_on_demand",
+          "callee": "generate_feedback_summary",
+          "lineNumber": 252
+        },
+        {
+          "caller": "_generate_fortune_on_demand",
+          "callee": "interpret_daily",
+          "lineNumber": 255
+        },
+        {
+          "caller": "_generate_fortune_on_demand",
+          "callee": "logger.error",
+          "lineNumber": 262
+        },
+        {
+          "caller": "_generate_fortune_on_demand",
+          "callee": "DailyFortune",
+          "lineNumber": 266
+        },
+        {
+          "caller": "_generate_fortune_on_demand",
+          "callee": "daily.get",
+          "lineNumber": 272
+        },
+        {
+          "caller": "_generate_fortune_on_demand",
+          "callee": "daily.get",
+          "lineNumber": 273
+        },
+        {
+          "caller": "_generate_fortune_on_demand",
+          "callee": "daily.get",
+          "lineNumber": 274
+        },
+        {
+          "caller": "_generate_fortune_on_demand",
+          "callee": "daily.get",
+          "lineNumber": 275
+        },
+        {
+          "caller": "_generate_fortune_on_demand",
+          "callee": "daily.get",
+          "lineNumber": 276
+        },
+        {
+          "caller": "_generate_fortune_on_demand",
+          "callee": "daily.get",
+          "lineNumber": 277
+        },
+        {
+          "caller": "_generate_fortune_on_demand",
+          "callee": "daily.get",
+          "lineNumber": 278
+        },
+        {
+          "caller": "_generate_fortune_on_demand",
+          "callee": "db.add",
+          "lineNumber": 282
+        },
+        {
+          "caller": "_generate_fortune_on_demand",
+          "callee": "db.commit",
+          "lineNumber": 283
+        },
+        {
+          "caller": "_generate_fortune_on_demand",
+          "callee": "db.refresh",
+          "lineNumber": 284
+        },
+        {
+          "caller": "_generate_fortune_on_demand",
+          "callee": "logger.info",
+          "lineNumber": 286
+        },
+        {
+          "caller": "_generate_fortune_on_demand",
+          "callee": "logger.error",
+          "lineNumber": 290
+        },
+        {
+          "caller": "_generate_fortune_on_demand",
+          "callee": "db.rollback",
+          "lineNumber": 291
+        },
+        {
+          "caller": "_generate_fortune_on_demand",
+          "callee": "DailyFortune",
+          "lineNumber": 293
+        },
+        {
+          "caller": "_generate_fortune_on_demand",
+          "callee": "db.add",
+          "lineNumber": 308
+        },
+        {
+          "caller": "_generate_fortune_on_demand",
+          "callee": "db.commit",
+          "lineNumber": 309
+        },
+        {
+          "caller": "_generate_fortune_on_demand",
+          "callee": "db.refresh",
+          "lineNumber": 310
+        },
+        {
+          "caller": "_fortune_to_detail_dict",
+          "callee": "f.date.isoformat",
+          "lineNumber": 320
+        },
+        {
+          "caller": "_fortune_to_list_dict",
+          "callee": "len",
+          "lineNumber": 343
+        },
+        {
+          "caller": "_fortune_to_list_dict",
+          "callee": "f.date.isoformat",
+          "lineNumber": 347
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 11,
+        "functionCount": 9,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "server/app/api/v1/internal.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 153,
+      "nonEmptyLines": 128,
+      "functions": [
+        {
+          "name": "daily_push",
+          "startLine": 25,
+          "endLine": 153,
+          "params": [
+            "req",
+            "db"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "DailyPushRequest",
+          "startLine": 20,
+          "endLine": 21,
+          "methods": [],
+          "properties": [
+            "hour"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "DailyPushRequest",
+          "line": 20,
+          "isDefault": false
+        },
+        {
+          "name": "daily_push",
+          "line": 24,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "daily_push",
+          "callee": "Depends",
+          "lineNumber": 25
+        },
+        {
+          "caller": "daily_push",
+          "callee": "db.query(User)\n        .filter(User.push_enabled.is_(True))\n        .all",
+          "lineNumber": 42
+        },
+        {
+          "caller": "daily_push",
+          "callee": "db.query(User)\n        .filter",
+          "lineNumber": 42
+        },
+        {
+          "caller": "daily_push",
+          "callee": "db.query",
+          "lineNumber": 42
+        },
+        {
+          "caller": "daily_push",
+          "callee": "User.push_enabled.is_",
+          "lineNumber": 43
+        },
+        {
+          "caller": "daily_push",
+          "callee": "date.today",
+          "lineNumber": 49
+        },
+        {
+          "caller": "daily_push",
+          "callee": "calculate_bazi",
+          "lineNumber": 56
+        },
+        {
+          "caller": "daily_push",
+          "callee": "calculate_daily_fortune",
+          "lineNumber": 62
+        },
+        {
+          "caller": "daily_push",
+          "callee": "calculate_all_hours_fortune",
+          "lineNumber": 66
+        },
+        {
+          "caller": "daily_push",
+          "callee": "generate_feedback_summary",
+          "lineNumber": 70
+        },
+        {
+          "caller": "daily_push",
+          "callee": "generate_probability_events",
+          "lineNumber": 71
+        },
+        {
+          "caller": "daily_push",
+          "callee": "'、'.join",
+          "lineNumber": 80
+        },
+        {
+          "caller": "daily_push",
+          "callee": "bazi_result.get",
+          "lineNumber": 80
+        },
+        {
+          "caller": "daily_push",
+          "callee": "interpret_daily",
+          "lineNumber": 84
+        },
+        {
+          "caller": "daily_push",
+          "callee": "logger.error",
+          "lineNumber": 86
+        },
+        {
+          "caller": "daily_push",
+          "callee": "today.isoformat",
+          "lineNumber": 91
+        },
+        {
+          "caller": "daily_push",
+          "callee": "daily.get",
+          "lineNumber": 93
+        },
+        {
+          "caller": "daily_push",
+          "callee": "daily.get",
+          "lineNumber": 94
+        },
+        {
+          "caller": "daily_push",
+          "callee": "daily.get",
+          "lineNumber": 95
+        },
+        {
+          "caller": "daily_push",
+          "callee": "daily.get",
+          "lineNumber": 96
+        },
+        {
+          "caller": "daily_push",
+          "callee": "daily.get",
+          "lineNumber": 97
+        },
+        {
+          "caller": "daily_push",
+          "callee": "daily.get",
+          "lineNumber": 98
+        },
+        {
+          "caller": "daily_push",
+          "callee": "daily.get",
+          "lineNumber": 99
+        },
+        {
+          "caller": "daily_push",
+          "callee": "send_fortune_email",
+          "lineNumber": 108
+        },
+        {
+          "caller": "daily_push",
+          "callee": "send_fortune_feishu",
+          "lineNumber": 112
+        },
+        {
+          "caller": "daily_push",
+          "callee": "DailyFortune",
+          "lineNumber": 116
+        },
+        {
+          "caller": "daily_push",
+          "callee": "daily.get",
+          "lineNumber": 122
+        },
+        {
+          "caller": "daily_push",
+          "callee": "daily.get",
+          "lineNumber": 123
+        },
+        {
+          "caller": "daily_push",
+          "callee": "daily.get",
+          "lineNumber": 124
+        },
+        {
+          "caller": "daily_push",
+          "callee": "daily.get",
+          "lineNumber": 125
+        },
+        {
+          "caller": "daily_push",
+          "callee": "daily.get",
+          "lineNumber": 126
+        },
+        {
+          "caller": "daily_push",
+          "callee": "daily.get",
+          "lineNumber": 127
+        },
+        {
+          "caller": "daily_push",
+          "callee": "daily.get",
+          "lineNumber": 128
+        },
+        {
+          "caller": "daily_push",
+          "callee": "db.add",
+          "lineNumber": 132
+        },
+        {
+          "caller": "daily_push",
+          "callee": "db.commit",
+          "lineNumber": 133
+        },
+        {
+          "caller": "daily_push",
+          "callee": "logger.error",
+          "lineNumber": 141
+        },
+        {
+          "caller": "daily_push",
+          "callee": "db.rollback",
+          "lineNumber": 142
+        },
+        {
+          "caller": "daily_push",
+          "callee": "len",
+          "lineNumber": 149
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 1,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "server/app/api/v1/prediction_outcomes.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 90,
+      "nonEmptyLines": 77,
+      "functions": [
+        {
+          "name": "create_prediction_outcome",
+          "startLine": 32,
+          "endLine": 90,
+          "params": [
+            "req",
+            "current_user",
+            "db"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "PredictionOutcomeRequest",
+          "startLine": 22,
+          "endLine": 26,
+          "methods": [],
+          "properties": [
+            "source_type",
+            "source_id",
+            "outcome_text",
+            "verified"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "PredictionOutcomeRequest",
+          "line": 22,
+          "isDefault": false
+        },
+        {
+          "name": "create_prediction_outcome",
+          "line": 31,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "create_prediction_outcome",
+          "callee": "Depends",
+          "lineNumber": 34
+        },
+        {
+          "caller": "create_prediction_outcome",
+          "callee": "Depends",
+          "lineNumber": 35
+        },
+        {
+          "caller": "create_prediction_outcome",
+          "callee": "db.query(DailyFortune)\n            .filter(\n                DailyFortune.id == req.source_id,\n                DailyFortune.user_id == current_user.id,\n            )\n            .first",
+          "lineNumber": 41
+        },
+        {
+          "caller": "create_prediction_outcome",
+          "callee": "db.query(DailyFortune)\n            .filter",
+          "lineNumber": 41
+        },
+        {
+          "caller": "create_prediction_outcome",
+          "callee": "db.query",
+          "lineNumber": 41
+        },
+        {
+          "caller": "create_prediction_outcome",
+          "callee": "HTTPException",
+          "lineNumber": 49
+        },
+        {
+          "caller": "create_prediction_outcome",
+          "callee": "db.query(DivinationRecord)\n            .filter(\n                DivinationRecord.id == req.source_id,\n                DivinationRecord.user_id == current_user.id,\n            )\n            .first",
+          "lineNumber": 52
+        },
+        {
+          "caller": "create_prediction_outcome",
+          "callee": "db.query(DivinationRecord)\n            .filter",
+          "lineNumber": 52
+        },
+        {
+          "caller": "create_prediction_outcome",
+          "callee": "db.query",
+          "lineNumber": 52
+        },
+        {
+          "caller": "create_prediction_outcome",
+          "callee": "HTTPException",
+          "lineNumber": 60
+        },
+        {
+          "caller": "create_prediction_outcome",
+          "callee": "db.commit",
+          "lineNumber": 64
+        },
+        {
+          "caller": "create_prediction_outcome",
+          "callee": "PredictionOutcome",
+          "lineNumber": 67
+        },
+        {
+          "caller": "create_prediction_outcome",
+          "callee": "datetime.now",
+          "lineNumber": 73
+        },
+        {
+          "caller": "create_prediction_outcome",
+          "callee": "db.add",
+          "lineNumber": 75
+        },
+        {
+          "caller": "create_prediction_outcome",
+          "callee": "db.commit",
+          "lineNumber": 76
+        },
+        {
+          "caller": "create_prediction_outcome",
+          "callee": "db.refresh",
+          "lineNumber": 77
+        },
+        {
+          "caller": "create_prediction_outcome",
+          "callee": "outcome.verified_at.isoformat",
+          "lineNumber": 87
+        },
+        {
+          "caller": "create_prediction_outcome",
+          "callee": "outcome.created_at.isoformat",
+          "lineNumber": 88
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 1,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "server/app/api/v1/probability_events.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 254,
+      "nonEmptyLines": 215,
+      "functions": [
+        {
+          "name": "get_today_events",
+          "startLine": 28,
+          "endLine": 86,
+          "params": [
+            "current_user",
+            "db"
+          ]
+        },
+        {
+          "name": "submit_event_feedback",
+          "startLine": 90,
+          "endLine": 131,
+          "params": [
+            "req",
+            "current_user",
+            "db"
+          ]
+        },
+        {
+          "name": "get_feedback_history",
+          "startLine": 135,
+          "endLine": 184,
+          "params": [
+            "page",
+            "limit",
+            "current_user",
+            "db"
+          ]
+        },
+        {
+          "name": "_get_feedback_summary",
+          "startLine": 187,
+          "endLine": 254,
+          "params": [
+            "db",
+            "user_id"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "EventFeedbackRequest",
+          "startLine": 17,
+          "endLine": 24,
+          "methods": [],
+          "properties": [
+            "dimension",
+            "event_name",
+            "probability",
+            "occurred",
+            "rating",
+            "feedback_text"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "EventFeedbackRequest",
+          "line": 17,
+          "isDefault": false
+        },
+        {
+          "name": "get_today_events",
+          "line": 27,
+          "isDefault": false
+        },
+        {
+          "name": "submit_event_feedback",
+          "line": 89,
+          "isDefault": false
+        },
+        {
+          "name": "get_feedback_history",
+          "line": 134,
+          "isDefault": false
+        },
+        {
+          "name": "_get_feedback_summary",
+          "line": 187,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "get_today_events",
+          "callee": "Depends",
+          "lineNumber": 29
+        },
+        {
+          "caller": "get_today_events",
+          "callee": "Depends",
+          "lineNumber": 30
+        },
+        {
+          "caller": "get_today_events",
+          "callee": "date.today",
+          "lineNumber": 38
+        },
+        {
+          "caller": "get_today_events",
+          "callee": "calculate_bazi",
+          "lineNumber": 41
+        },
+        {
+          "caller": "get_today_events",
+          "callee": "calculate_daily_fortune",
+          "lineNumber": 48
+        },
+        {
+          "caller": "get_today_events",
+          "callee": "calculate_all_hours_fortune",
+          "lineNumber": 51
+        },
+        {
+          "caller": "get_today_events",
+          "callee": "_get_feedback_summary",
+          "lineNumber": 54
+        },
+        {
+          "caller": "get_today_events",
+          "callee": "generate_probability_events",
+          "lineNumber": 57
+        },
+        {
+          "caller": "get_today_events",
+          "callee": "db.query(ProbabilityEventFeedback)\n        .filter(\n            ProbabilityEventFeedback.user_id == current_user.id,\n            ProbabilityEventFeedback.event_date == today,\n        )\n        .all",
+          "lineNumber": 61
+        },
+        {
+          "caller": "get_today_events",
+          "callee": "db.query(ProbabilityEventFeedback)\n        .filter",
+          "lineNumber": 61
+        },
+        {
+          "caller": "get_today_events",
+          "callee": "db.query",
+          "lineNumber": 61
+        },
+        {
+          "caller": "get_today_events",
+          "callee": "feedback_map.get",
+          "lineNumber": 72
+        },
+        {
+          "caller": "get_today_events",
+          "callee": "today.isoformat",
+          "lineNumber": 83
+        },
+        {
+          "caller": "submit_event_feedback",
+          "callee": "Depends",
+          "lineNumber": 92
+        },
+        {
+          "caller": "submit_event_feedback",
+          "callee": "Depends",
+          "lineNumber": 93
+        },
+        {
+          "caller": "submit_event_feedback",
+          "callee": "date.today",
+          "lineNumber": 96
+        },
+        {
+          "caller": "submit_event_feedback",
+          "callee": "db.query(ProbabilityEventFeedback)\n        .filter(\n            ProbabilityEventFeedback.user_id == current_user.id,\n            ProbabilityEventFeedback.event_date == today,\n            ProbabilityEventFeedback.dimension == req.dimension,\n            ProbabilityEventFeedback.event_name == req.event_name,\n        )\n        .first",
+          "lineNumber": 100
+        },
+        {
+          "caller": "submit_event_feedback",
+          "callee": "db.query(ProbabilityEventFeedback)\n        .filter",
+          "lineNumber": 100
+        },
+        {
+          "caller": "submit_event_feedback",
+          "callee": "db.query",
+          "lineNumber": 100
+        },
+        {
+          "caller": "submit_event_feedback",
+          "callee": "ProbabilityEventFeedback",
+          "lineNumber": 117
+        },
+        {
+          "caller": "submit_event_feedback",
+          "callee": "db.add",
+          "lineNumber": 127
+        },
+        {
+          "caller": "submit_event_feedback",
+          "callee": "db.commit",
+          "lineNumber": 129
+        },
+        {
+          "caller": "get_feedback_history",
+          "callee": "Depends",
+          "lineNumber": 138
+        },
+        {
+          "caller": "get_feedback_history",
+          "callee": "Depends",
+          "lineNumber": 139
+        },
+        {
+          "caller": "get_feedback_history",
+          "callee": "db.query(func.count(ProbabilityEventFeedback.id))\n        .filter(ProbabilityEventFeedback.user_id == current_user.id)\n        .scalar",
+          "lineNumber": 147
+        },
+        {
+          "caller": "get_feedback_history",
+          "callee": "db.query(func.count(ProbabilityEventFeedback.id))\n        .filter",
+          "lineNumber": 147
+        },
+        {
+          "caller": "get_feedback_history",
+          "callee": "db.query",
+          "lineNumber": 147
+        },
+        {
+          "caller": "get_feedback_history",
+          "callee": "func.count",
+          "lineNumber": 147
+        },
+        {
+          "caller": "get_feedback_history",
+          "callee": "db.query(ProbabilityEventFeedback)\n        .filter(ProbabilityEventFeedback.user_id == current_user.id)\n        .order_by(ProbabilityEventFeedback.event_date.desc())\n        .offset(offset)\n        .limit(limit)\n        .all",
+          "lineNumber": 153
+        },
+        {
+          "caller": "get_feedback_history",
+          "callee": "db.query(ProbabilityEventFeedback)\n        .filter(ProbabilityEventFeedback.user_id == current_user.id)\n        .order_by(ProbabilityEventFeedback.event_date.desc())\n        .offset(offset)\n        .limit",
+          "lineNumber": 153
+        },
+        {
+          "caller": "get_feedback_history",
+          "callee": "db.query(ProbabilityEventFeedback)\n        .filter(ProbabilityEventFeedback.user_id == current_user.id)\n        .order_by(ProbabilityEventFeedback.event_date.desc())\n        .offset",
+          "lineNumber": 153
+        },
+        {
+          "caller": "get_feedback_history",
+          "callee": "db.query(ProbabilityEventFeedback)\n        .filter(ProbabilityEventFeedback.user_id == current_user.id)\n        .order_by",
+          "lineNumber": 153
+        },
+        {
+          "caller": "get_feedback_history",
+          "callee": "db.query(ProbabilityEventFeedback)\n        .filter",
+          "lineNumber": 153
+        },
+        {
+          "caller": "get_feedback_history",
+          "callee": "db.query",
+          "lineNumber": 153
+        },
+        {
+          "caller": "get_feedback_history",
+          "callee": "ProbabilityEventFeedback.event_date.desc",
+          "lineNumber": 155
+        },
+        {
+          "caller": "get_feedback_history",
+          "callee": "r.event_date.isoformat",
+          "lineNumber": 168
+        },
+        {
+          "caller": "_get_feedback_summary",
+          "callee": "db.query(func.count(ProbabilityEventFeedback.id))\n        .filter(\n            ProbabilityEventFeedback.user_id == user_id,\n            ProbabilityEventFeedback.occurred.isnot(None),\n        )\n        .scalar",
+          "lineNumber": 193
+        },
+        {
+          "caller": "_get_feedback_summary",
+          "callee": "db.query(func.count(ProbabilityEventFeedback.id))\n        .filter",
+          "lineNumber": 193
+        },
+        {
+          "caller": "_get_feedback_summary",
+          "callee": "db.query",
+          "lineNumber": 193
+        },
+        {
+          "caller": "_get_feedback_summary",
+          "callee": "func.count",
+          "lineNumber": 193
+        },
+        {
+          "caller": "_get_feedback_summary",
+          "callee": "ProbabilityEventFeedback.occurred.isnot",
+          "lineNumber": 196
+        },
+        {
+          "caller": "_get_feedback_summary",
+          "callee": "db.query(func.count(ProbabilityEventFeedback.id))\n        .filter(\n            ProbabilityEventFeedback.user_id == user_id,\n            ProbabilityEventFeedback.occurred == True,\n        )\n        .scalar",
+          "lineNumber": 205
+        },
+        {
+          "caller": "_get_feedback_summary",
+          "callee": "db.query(func.count(ProbabilityEventFeedback.id))\n        .filter",
+          "lineNumber": 205
+        },
+        {
+          "caller": "_get_feedback_summary",
+          "callee": "db.query",
+          "lineNumber": 205
+        },
+        {
+          "caller": "_get_feedback_summary",
+          "callee": "func.count",
+          "lineNumber": 205
+        },
+        {
+          "caller": "_get_feedback_summary",
+          "callee": "db.query(func.avg(ProbabilityEventFeedback.rating))\n        .filter(\n            ProbabilityEventFeedback.user_id == user_id,\n            ProbabilityEventFeedback.rating.isnot(None),\n        )\n        .scalar",
+          "lineNumber": 214
+        },
+        {
+          "caller": "_get_feedback_summary",
+          "callee": "db.query(func.avg(ProbabilityEventFeedback.rating))\n        .filter",
+          "lineNumber": 214
+        },
+        {
+          "caller": "_get_feedback_summary",
+          "callee": "db.query",
+          "lineNumber": 214
+        },
+        {
+          "caller": "_get_feedback_summary",
+          "callee": "func.avg",
+          "lineNumber": 214
+        },
+        {
+          "caller": "_get_feedback_summary",
+          "callee": "ProbabilityEventFeedback.rating.isnot",
+          "lineNumber": 217
+        },
+        {
+          "caller": "_get_feedback_summary",
+          "callee": "db.query(func.count(ProbabilityEventFeedback.id))\n            .filter(\n                ProbabilityEventFeedback.user_id == user_id,\n                ProbabilityEventFeedback.dimension == dim,\n                ProbabilityEventFeedback.occurred.isnot(None),\n            )\n            .scalar",
+          "lineNumber": 226
+        },
+        {
+          "caller": "_get_feedback_summary",
+          "callee": "db.query(func.count(ProbabilityEventFeedback.id))\n            .filter",
+          "lineNumber": 226
+        },
+        {
+          "caller": "_get_feedback_summary",
+          "callee": "db.query",
+          "lineNumber": 226
+        },
+        {
+          "caller": "_get_feedback_summary",
+          "callee": "func.count",
+          "lineNumber": 226
+        },
+        {
+          "caller": "_get_feedback_summary",
+          "callee": "ProbabilityEventFeedback.occurred.isnot",
+          "lineNumber": 230
+        },
+        {
+          "caller": "_get_feedback_summary",
+          "callee": "db.query(func.count(ProbabilityEventFeedback.id))\n                .filter(\n                    ProbabilityEventFeedback.user_id == user_id,\n                    ProbabilityEventFeedback.dimension == dim,\n                    ProbabilityEventFeedback.occurred == True,\n                )\n                .scalar",
+          "lineNumber": 236
+        },
+        {
+          "caller": "_get_feedback_summary",
+          "callee": "db.query(func.count(ProbabilityEventFeedback.id))\n                .filter",
+          "lineNumber": 236
+        },
+        {
+          "caller": "_get_feedback_summary",
+          "callee": "db.query",
+          "lineNumber": 236
+        },
+        {
+          "caller": "_get_feedback_summary",
+          "callee": "func.count",
+          "lineNumber": 236
+        },
+        {
+          "caller": "_get_feedback_summary",
+          "callee": "\"、\".join",
+          "lineNumber": 251
+        },
+        {
+          "caller": "_get_feedback_summary",
+          "callee": "dimension_stats.items",
+          "lineNumber": 251
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 5,
+        "functionCount": 4,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "server/app/api/v1/users.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 407,
+      "nonEmptyLines": 345,
+      "functions": [
+        {
+          "name": "get_current_user",
+          "startLine": 22,
+          "endLine": 40,
+          "params": [
+            "db",
+            "authorization"
+          ]
+        },
+        {
+          "name": "_user_to_dict",
+          "startLine": 111,
+          "endLine": 135,
+          "params": [
+            "user"
+          ]
+        },
+        {
+          "name": "get_profile",
+          "startLine": 139,
+          "endLine": 141,
+          "params": [
+            "current_user"
+          ]
+        },
+        {
+          "name": "update_profile",
+          "startLine": 145,
+          "endLine": 154,
+          "params": [
+            "req",
+            "current_user",
+            "db"
+          ]
+        },
+        {
+          "name": "update_birth",
+          "startLine": 158,
+          "endLine": 170,
+          "params": [
+            "req",
+            "current_user",
+            "db"
+          ]
+        },
+        {
+          "name": "update_push_settings",
+          "startLine": 174,
+          "endLine": 191,
+          "params": [
+            "req",
+            "current_user",
+            "db"
+          ]
+        },
+        {
+          "name": "update_llm_settings",
+          "startLine": 195,
+          "endLine": 212,
+          "params": [
+            "req",
+            "current_user",
+            "db"
+          ]
+        },
+        {
+          "name": "test_llm_connection",
+          "startLine": 223,
+          "endLine": 282,
+          "params": [
+            "req",
+            "current_user"
+          ]
+        },
+        {
+          "name": "delete_account",
+          "startLine": 286,
+          "endLine": 297,
+          "params": [
+            "req",
+            "current_user",
+            "db"
+          ]
+        },
+        {
+          "name": "get_accuracy_stats",
+          "startLine": 301,
+          "endLine": 364,
+          "params": [
+            "current_user",
+            "db"
+          ]
+        },
+        {
+          "name": "_calculate_dimension_accuracy",
+          "startLine": 367,
+          "endLine": 407,
+          "params": [
+            "db",
+            "user_id"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "UpdateProfileRequest",
+          "startLine": 45,
+          "endLine": 46,
+          "methods": [],
+          "properties": [
+            "username"
+          ]
+        },
+        {
+          "name": "UpdateBirthRequest",
+          "startLine": 49,
+          "endLine": 65,
+          "methods": [
+            "validate_birth_date"
+          ],
+          "properties": [
+            "birth_year",
+            "birth_month",
+            "birth_day",
+            "birth_hour"
+          ]
+        },
+        {
+          "name": "PushSettingsRequest",
+          "startLine": 68,
+          "endLine": 80,
+          "methods": [
+            "validate_push_time"
+          ],
+          "properties": [
+            "push_enabled",
+            "push_channel",
+            "push_time",
+            "feishu_webhook"
+          ]
+        },
+        {
+          "name": "LLMSettingsRequest",
+          "startLine": 83,
+          "endLine": 99,
+          "methods": [
+            "validate_api_key"
+          ],
+          "properties": [
+            "llm_provider",
+            "llm_notes",
+            "llm_website",
+            "llm_api_key",
+            "llm_api_key_url",
+            "llm_api_url",
+            "llm_model"
+          ]
+        },
+        {
+          "name": "DeleteAccountRequest",
+          "startLine": 102,
+          "endLine": 103,
+          "methods": [],
+          "properties": [
+            "password"
+          ]
+        },
+        {
+          "name": "LLMTestRequest",
+          "startLine": 215,
+          "endLine": 219,
+          "methods": [],
+          "properties": [
+            "llm_api_key",
+            "llm_api_url",
+            "llm_model"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "get_current_user",
+          "line": 22,
+          "isDefault": false
+        },
+        {
+          "name": "UpdateProfileRequest",
+          "line": 45,
+          "isDefault": false
+        },
+        {
+          "name": "UpdateBirthRequest",
+          "line": 49,
+          "isDefault": false
+        },
+        {
+          "name": "PushSettingsRequest",
+          "line": 68,
+          "isDefault": false
+        },
+        {
+          "name": "LLMSettingsRequest",
+          "line": 83,
+          "isDefault": false
+        },
+        {
+          "name": "DeleteAccountRequest",
+          "line": 102,
+          "isDefault": false
+        },
+        {
+          "name": "_user_to_dict",
+          "line": 111,
+          "isDefault": false
+        },
+        {
+          "name": "get_profile",
+          "line": 138,
+          "isDefault": false
+        },
+        {
+          "name": "update_profile",
+          "line": 144,
+          "isDefault": false
+        },
+        {
+          "name": "update_birth",
+          "line": 157,
+          "isDefault": false
+        },
+        {
+          "name": "update_push_settings",
+          "line": 173,
+          "isDefault": false
+        },
+        {
+          "name": "update_llm_settings",
+          "line": 194,
+          "isDefault": false
+        },
+        {
+          "name": "LLMTestRequest",
+          "line": 215,
+          "isDefault": false
+        },
+        {
+          "name": "test_llm_connection",
+          "line": 222,
+          "isDefault": false
+        },
+        {
+          "name": "delete_account",
+          "line": 285,
+          "isDefault": false
+        },
+        {
+          "name": "get_accuracy_stats",
+          "line": 300,
+          "isDefault": false
+        },
+        {
+          "name": "_calculate_dimension_accuracy",
+          "line": 367,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "get_current_user",
+          "callee": "Depends",
+          "lineNumber": 23
+        },
+        {
+          "caller": "get_current_user",
+          "callee": "Depends",
+          "lineNumber": 24
+        },
+        {
+          "caller": "get_current_user",
+          "callee": "HTTPBearer",
+          "lineNumber": 24
+        },
+        {
+          "caller": "get_current_user",
+          "callee": "verify_token",
+          "lineNumber": 29
+        },
+        {
+          "caller": "get_current_user",
+          "callee": "HTTPException",
+          "lineNumber": 31
+        },
+        {
+          "caller": "get_current_user",
+          "callee": "payload.get",
+          "lineNumber": 33
+        },
+        {
+          "caller": "get_current_user",
+          "callee": "HTTPException",
+          "lineNumber": 35
+        },
+        {
+          "caller": "get_current_user",
+          "callee": "db.query(User).filter(User.id == user_id).first",
+          "lineNumber": 37
+        },
+        {
+          "caller": "get_current_user",
+          "callee": "db.query(User).filter",
+          "lineNumber": 37
+        },
+        {
+          "caller": "get_current_user",
+          "callee": "db.query",
+          "lineNumber": 37
+        },
+        {
+          "caller": "get_current_user",
+          "callee": "HTTPException",
+          "lineNumber": 39
+        },
+        {
+          "caller": "validate_birth_date",
+          "callee": "info.data.get",
+          "lineNumber": 58
+        },
+        {
+          "caller": "validate_birth_date",
+          "callee": "info.data.get",
+          "lineNumber": 59
+        },
+        {
+          "caller": "validate_birth_date",
+          "callee": "date",
+          "lineNumber": 62
+        },
+        {
+          "caller": "validate_birth_date",
+          "callee": "ValueError",
+          "lineNumber": 64
+        },
+        {
+          "caller": "validate_push_time",
+          "callee": "v.split",
+          "lineNumber": 77
+        },
+        {
+          "caller": "validate_push_time",
+          "callee": "int",
+          "lineNumber": 78
+        },
+        {
+          "caller": "validate_push_time",
+          "callee": "int",
+          "lineNumber": 78
+        },
+        {
+          "caller": "validate_push_time",
+          "callee": "ValueError",
+          "lineNumber": 79
+        },
+        {
+          "caller": "_user_to_dict",
+          "callee": "user.created_at.isoformat",
+          "lineNumber": 134
+        },
+        {
+          "caller": "get_profile",
+          "callee": "Depends",
+          "lineNumber": 139
+        },
+        {
+          "caller": "get_profile",
+          "callee": "_user_to_dict",
+          "lineNumber": 141
+        },
+        {
+          "caller": "update_profile",
+          "callee": "Depends",
+          "lineNumber": 147
+        },
+        {
+          "caller": "update_profile",
+          "callee": "Depends",
+          "lineNumber": 148
+        },
+        {
+          "caller": "update_profile",
+          "callee": "db.commit",
+          "lineNumber": 152
+        },
+        {
+          "caller": "update_profile",
+          "callee": "db.refresh",
+          "lineNumber": 153
+        },
+        {
+          "caller": "update_profile",
+          "callee": "_user_to_dict",
+          "lineNumber": 154
+        },
+        {
+          "caller": "update_birth",
+          "callee": "Depends",
+          "lineNumber": 160
+        },
+        {
+          "caller": "update_birth",
+          "callee": "Depends",
+          "lineNumber": 161
+        },
+        {
+          "caller": "update_birth",
+          "callee": "db.commit",
+          "lineNumber": 168
+        },
+        {
+          "caller": "update_birth",
+          "callee": "db.refresh",
+          "lineNumber": 169
+        },
+        {
+          "caller": "update_birth",
+          "callee": "_user_to_dict",
+          "lineNumber": 170
+        },
+        {
+          "caller": "update_push_settings",
+          "callee": "Depends",
+          "lineNumber": 176
+        },
+        {
+          "caller": "update_push_settings",
+          "callee": "Depends",
+          "lineNumber": 177
+        },
+        {
+          "caller": "update_push_settings",
+          "callee": "req.feishu_webhook.strip",
+          "lineNumber": 182
+        },
+        {
+          "caller": "update_push_settings",
+          "callee": "HTTPException",
+          "lineNumber": 183
+        },
+        {
+          "caller": "update_push_settings",
+          "callee": "db.commit",
+          "lineNumber": 189
+        },
+        {
+          "caller": "update_push_settings",
+          "callee": "db.refresh",
+          "lineNumber": 190
+        },
+        {
+          "caller": "update_push_settings",
+          "callee": "_user_to_dict",
+          "lineNumber": 191
+        },
+        {
+          "caller": "update_llm_settings",
+          "callee": "Depends",
+          "lineNumber": 197
+        },
+        {
+          "caller": "update_llm_settings",
+          "callee": "Depends",
+          "lineNumber": 198
+        },
+        {
+          "caller": "update_llm_settings",
+          "callee": "db.commit",
+          "lineNumber": 210
+        },
+        {
+          "caller": "update_llm_settings",
+          "callee": "db.refresh",
+          "lineNumber": 211
+        },
+        {
+          "caller": "update_llm_settings",
+          "callee": "_user_to_dict",
+          "lineNumber": 212
+        },
+        {
+          "caller": "test_llm_connection",
+          "callee": "Depends",
+          "lineNumber": 225
+        },
+        {
+          "caller": "test_llm_connection",
+          "callee": "model.split(\"[\")[0].strip",
+          "lineNumber": 237
+        },
+        {
+          "caller": "test_llm_connection",
+          "callee": "model.split",
+          "lineNumber": 237
+        },
+        {
+          "caller": "test_llm_connection",
+          "callee": "httpx.post",
+          "lineNumber": 252
+        },
+        {
+          "caller": "test_llm_connection",
+          "callee": "response.json",
+          "lineNumber": 254
+        },
+        {
+          "caller": "test_llm_connection",
+          "callee": "data.get(\"choices\", [{}])[0].get(\"message\", {}).get",
+          "lineNumber": 255
+        },
+        {
+          "caller": "test_llm_connection",
+          "callee": "data.get(\"choices\", [{}])[0].get",
+          "lineNumber": 255
+        },
+        {
+          "caller": "test_llm_connection",
+          "callee": "data.get",
+          "lineNumber": 255
+        },
+        {
+          "caller": "test_llm_connection",
+          "callee": "str",
+          "lineNumber": 281
+        },
+        {
+          "caller": "delete_account",
+          "callee": "Depends",
+          "lineNumber": 288
+        },
+        {
+          "caller": "delete_account",
+          "callee": "Depends",
+          "lineNumber": 289
+        },
+        {
+          "caller": "delete_account",
+          "callee": "verify_password",
+          "lineNumber": 292
+        },
+        {
+          "caller": "delete_account",
+          "callee": "HTTPException",
+          "lineNumber": 293
+        },
+        {
+          "caller": "delete_account",
+          "callee": "db.delete",
+          "lineNumber": 295
+        },
+        {
+          "caller": "delete_account",
+          "callee": "db.commit",
+          "lineNumber": 296
+        },
+        {
+          "caller": "get_accuracy_stats",
+          "callee": "Depends",
+          "lineNumber": 302
+        },
+        {
+          "caller": "get_accuracy_stats",
+          "callee": "Depends",
+          "lineNumber": 303
+        },
+        {
+          "caller": "get_accuracy_stats",
+          "callee": "db.query(func.count(DailyFortune.id))\n        .filter(\n            DailyFortune.user_id == user_id,\n            DailyFortune.accuracy_mark.isnot(None),\n        )\n        .scalar",
+          "lineNumber": 310
+        },
+        {
+          "caller": "get_accuracy_stats",
+          "callee": "db.query(func.count(DailyFortune.id))\n        .filter",
+          "lineNumber": 310
+        },
+        {
+          "caller": "get_accuracy_stats",
+          "callee": "db.query",
+          "lineNumber": 310
+        },
+        {
+          "caller": "get_accuracy_stats",
+          "callee": "func.count",
+          "lineNumber": 310
+        },
+        {
+          "caller": "get_accuracy_stats",
+          "callee": "DailyFortune.accuracy_mark.isnot",
+          "lineNumber": 313
+        },
+        {
+          "caller": "get_accuracy_stats",
+          "callee": "db.query(func.count(DailyFortune.id))\n        .filter(\n            DailyFortune.user_id == user_id,\n            DailyFortune.accuracy_mark == 1,\n        )\n        .scalar",
+          "lineNumber": 318
+        },
+        {
+          "caller": "get_accuracy_stats",
+          "callee": "db.query(func.count(DailyFortune.id))\n        .filter",
+          "lineNumber": 318
+        },
+        {
+          "caller": "get_accuracy_stats",
+          "callee": "db.query",
+          "lineNumber": 318
+        },
+        {
+          "caller": "get_accuracy_stats",
+          "callee": "func.count",
+          "lineNumber": 318
+        },
+        {
+          "caller": "get_accuracy_stats",
+          "callee": "db.query(func.count(DivinationRecord.id))\n        .filter(\n            DivinationRecord.user_id == user_id,\n            DivinationRecord.accuracy_mark.isnot(None),\n        )\n        .scalar",
+          "lineNumber": 329
+        },
+        {
+          "caller": "get_accuracy_stats",
+          "callee": "db.query(func.count(DivinationRecord.id))\n        .filter",
+          "lineNumber": 329
+        },
+        {
+          "caller": "get_accuracy_stats",
+          "callee": "db.query",
+          "lineNumber": 329
+        },
+        {
+          "caller": "get_accuracy_stats",
+          "callee": "func.count",
+          "lineNumber": 329
+        },
+        {
+          "caller": "get_accuracy_stats",
+          "callee": "DivinationRecord.accuracy_mark.isnot",
+          "lineNumber": 332
+        },
+        {
+          "caller": "get_accuracy_stats",
+          "callee": "db.query(func.count(DivinationRecord.id))\n        .filter(\n            DivinationRecord.user_id == user_id,\n            DivinationRecord.accuracy_mark == 1,\n        )\n        .scalar",
+          "lineNumber": 337
+        },
+        {
+          "caller": "get_accuracy_stats",
+          "callee": "db.query(func.count(DivinationRecord.id))\n        .filter",
+          "lineNumber": 337
+        },
+        {
+          "caller": "get_accuracy_stats",
+          "callee": "db.query",
+          "lineNumber": 337
+        },
+        {
+          "caller": "get_accuracy_stats",
+          "callee": "func.count",
+          "lineNumber": 337
+        },
+        {
+          "caller": "get_accuracy_stats",
+          "callee": "_calculate_dimension_accuracy",
+          "lineNumber": 347
+        },
+        {
+          "caller": "get_accuracy_stats",
+          "callee": "round",
+          "lineNumber": 355
+        },
+        {
+          "caller": "get_accuracy_stats",
+          "callee": "round",
+          "lineNumber": 360
+        },
+        {
+          "caller": "_calculate_dimension_accuracy",
+          "callee": "getattr",
+          "lineNumber": 379
+        },
+        {
+          "caller": "_calculate_dimension_accuracy",
+          "callee": "db.query(func.count(DailyFortune.id))\n            .filter(\n                DailyFortune.user_id == user_id,\n                col.isnot(None),\n                DailyFortune.accuracy_mark.isnot(None),\n            )\n            .scalar",
+          "lineNumber": 382
+        },
+        {
+          "caller": "_calculate_dimension_accuracy",
+          "callee": "db.query(func.count(DailyFortune.id))\n            .filter",
+          "lineNumber": 382
+        },
+        {
+          "caller": "_calculate_dimension_accuracy",
+          "callee": "db.query",
+          "lineNumber": 382
+        },
+        {
+          "caller": "_calculate_dimension_accuracy",
+          "callee": "func.count",
+          "lineNumber": 382
+        },
+        {
+          "caller": "_calculate_dimension_accuracy",
+          "callee": "col.isnot",
+          "lineNumber": 385
+        },
+        {
+          "caller": "_calculate_dimension_accuracy",
+          "callee": "DailyFortune.accuracy_mark.isnot",
+          "lineNumber": 386
+        },
+        {
+          "caller": "_calculate_dimension_accuracy",
+          "callee": "db.query(func.count(DailyFortune.id))\n            .filter(\n                DailyFortune.user_id == user_id,\n                col.isnot(None),\n                DailyFortune.accuracy_mark == 1,\n            )\n            .scalar",
+          "lineNumber": 391
+        },
+        {
+          "caller": "_calculate_dimension_accuracy",
+          "callee": "db.query(func.count(DailyFortune.id))\n            .filter",
+          "lineNumber": 391
+        },
+        {
+          "caller": "_calculate_dimension_accuracy",
+          "callee": "db.query",
+          "lineNumber": 391
+        },
+        {
+          "caller": "_calculate_dimension_accuracy",
+          "callee": "func.count",
+          "lineNumber": 391
+        },
+        {
+          "caller": "_calculate_dimension_accuracy",
+          "callee": "col.isnot",
+          "lineNumber": 394
+        },
+        {
+          "caller": "_calculate_dimension_accuracy",
+          "callee": "round",
+          "lineNumber": 404
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 17,
+        "functionCount": 11,
+        "classCount": 6
+      }
+    },
+    {
+      "path": "server/app/config.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 33,
+      "nonEmptyLines": 23,
+      "classes": [
+        {
+          "name": "Settings",
+          "startLine": 6,
+          "endLine": 30,
+          "methods": [],
+          "properties": [
+            "DATABASE_URL",
+            "DEEPSEEK_API_KEY",
+            "DEEPSEEK_BASE_URL",
+            "SMTP_HOST",
+            "SMTP_PORT",
+            "SMTP_USER",
+            "SMTP_PASSWORD",
+            "JWT_SECRET",
+            "JWT_EXPIRE_HOURS",
+            "APP_PORT",
+            "APP_ENV"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "Settings",
+          "line": 6,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "server/app/core/__init__.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 1,
+      "nonEmptyLines": 1,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/app/core/security.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 39,
+      "nonEmptyLines": 28,
+      "functions": [
+        {
+          "name": "hash_password",
+          "startLine": 13,
+          "endLine": 15,
+          "params": [
+            "password"
+          ]
+        },
+        {
+          "name": "verify_password",
+          "startLine": 18,
+          "endLine": 20,
+          "params": [
+            "plain_password",
+            "hashed_password"
+          ]
+        },
+        {
+          "name": "create_access_token",
+          "startLine": 23,
+          "endLine": 30,
+          "params": [
+            "user_id"
+          ]
+        },
+        {
+          "name": "verify_token",
+          "startLine": 33,
+          "endLine": 39,
+          "params": [
+            "token"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "hash_password",
+          "line": 13,
+          "isDefault": false
+        },
+        {
+          "name": "verify_password",
+          "line": 18,
+          "isDefault": false
+        },
+        {
+          "name": "create_access_token",
+          "line": 23,
+          "isDefault": false
+        },
+        {
+          "name": "verify_token",
+          "line": 33,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "hash_password",
+          "callee": "pwd_context.hash",
+          "lineNumber": 15
+        },
+        {
+          "caller": "verify_password",
+          "callee": "pwd_context.verify",
+          "lineNumber": 20
+        },
+        {
+          "caller": "create_access_token",
+          "callee": "datetime.now",
+          "lineNumber": 25
+        },
+        {
+          "caller": "create_access_token",
+          "callee": "timedelta",
+          "lineNumber": 25
+        },
+        {
+          "caller": "create_access_token",
+          "callee": "jwt.encode",
+          "lineNumber": 30
+        },
+        {
+          "caller": "verify_token",
+          "callee": "jwt.decode",
+          "lineNumber": 36
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 4,
+        "functionCount": 4,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/app/main.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 43,
+      "nonEmptyLines": 36,
+      "functions": [
+        {
+          "name": "health_check",
+          "startLine": 38,
+          "endLine": 43,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "health_check",
+          "line": 37,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "health_check",
+          "callee": "datetime.now(timezone.utc).isoformat",
+          "lineNumber": 42
+        },
+        {
+          "caller": "health_check",
+          "callee": "datetime.now",
+          "lineNumber": 42
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/app/models/__init__.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 8,
+      "nonEmptyLines": 7,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/app/models/base.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 38,
+      "nonEmptyLines": 28,
+      "functions": [
+        {
+          "name": "china_now",
+          "startLine": 12,
+          "endLine": 14,
+          "params": []
+        },
+        {
+          "name": "utc_now",
+          "startLine": 17,
+          "endLine": 19,
+          "params": []
+        }
+      ],
+      "classes": [
+        {
+          "name": "Base",
+          "startLine": 22,
+          "endLine": 23,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "TimestampMixin",
+          "startLine": 26,
+          "endLine": 38,
+          "methods": [],
+          "properties": [
+            "created_at",
+            "updated_at"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "china_now",
+          "line": 12,
+          "isDefault": false
+        },
+        {
+          "name": "utc_now",
+          "line": 17,
+          "isDefault": false
+        },
+        {
+          "name": "Base",
+          "line": 22,
+          "isDefault": false
+        },
+        {
+          "name": "TimestampMixin",
+          "line": 26,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "china_now",
+          "callee": "datetime.now",
+          "lineNumber": 14
+        },
+        {
+          "caller": "utc_now",
+          "callee": "datetime.now",
+          "lineNumber": 19
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 4,
+        "functionCount": 2,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "server/app/models/bazi_profile.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 32,
+      "nonEmptyLines": 24,
+      "classes": [
+        {
+          "name": "BaziProfile",
+          "startLine": 9,
+          "endLine": 32,
+          "methods": [],
+          "properties": [
+            "id",
+            "user_id",
+            "year_pillar",
+            "month_pillar",
+            "day_pillar",
+            "hour_pillar",
+            "day_master",
+            "five_elements",
+            "ten_gods",
+            "major_luck_cycles",
+            "favorable_elements"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "BaziProfile",
+          "line": 9,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "server/app/models/daily_fortune.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 51,
+      "nonEmptyLines": 39,
+      "classes": [
+        {
+          "name": "DailyFortune",
+          "startLine": 9,
+          "endLine": 51,
+          "methods": [],
+          "properties": [
+            "id",
+            "user_id",
+            "date",
+            "heavenly_stem",
+            "earthly_branch",
+            "overall_score",
+            "career_fortune",
+            "wealth_fortune",
+            "love_fortune",
+            "health_fortune",
+            "lucky_color",
+            "lucky_number",
+            "lucky_direction",
+            "llm_interpretation",
+            "user_rating",
+            "user_feedback_tags",
+            "user_feedback_text",
+            "hourly_fortunes",
+            "accuracy_mark"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "DailyFortune",
+          "line": 9,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "server/app/models/divination_record.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 38,
+      "nonEmptyLines": 31,
+      "classes": [
+        {
+          "name": "DivinationRecord",
+          "startLine": 9,
+          "endLine": 38,
+          "methods": [],
+          "properties": [
+            "id",
+            "user_id",
+            "type",
+            "question",
+            "raw_data",
+            "llm_interpretation",
+            "user_rating",
+            "user_feedback_text",
+            "accuracy_mark",
+            "outcome_verified"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "DivinationRecord",
+          "line": 9,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "server/app/models/prediction_outcome.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 45,
+      "nonEmptyLines": 36,
+      "classes": [
+        {
+          "name": "PredictionOutcome",
+          "startLine": 10,
+          "endLine": 45,
+          "methods": [],
+          "properties": [
+            "id",
+            "user_id",
+            "source_type",
+            "source_id",
+            "outcome_text",
+            "verified",
+            "verified_at"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "PredictionOutcome",
+          "line": 10,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "server/app/models/probability_event_feedback.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 32,
+      "nonEmptyLines": 25,
+      "classes": [
+        {
+          "name": "ProbabilityEventFeedback",
+          "startLine": 9,
+          "endLine": 32,
+          "methods": [],
+          "properties": [
+            "id",
+            "user_id",
+            "event_date",
+            "dimension",
+            "event_name",
+            "probability",
+            "occurred",
+            "rating",
+            "feedback_text"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ProbabilityEventFeedback",
+          "line": 9,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "server/app/models/user.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 59,
+      "nonEmptyLines": 51,
+      "classes": [
+        {
+          "name": "User",
+          "startLine": 9,
+          "endLine": 59,
+          "methods": [],
+          "properties": [
+            "id",
+            "username",
+            "email",
+            "phone",
+            "password_hash",
+            "birth_year",
+            "birth_month",
+            "birth_day",
+            "birth_hour",
+            "gender",
+            "birth_location",
+            "push_channel",
+            "push_enabled",
+            "push_time",
+            "feishu_webhook",
+            "llm_provider",
+            "llm_notes",
+            "llm_website",
+            "llm_api_key",
+            "llm_api_key_url",
+            "llm_api_url",
+            "llm_model"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "User",
+          "line": 9,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "server/app/schemas/__init__.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 1,
+      "nonEmptyLines": 1,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/app/schemas/auth.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 61,
+      "nonEmptyLines": 50,
+      "classes": [
+        {
+          "name": "RegisterRequest",
+          "startLine": 9,
+          "endLine": 40,
+          "methods": [
+            "validate_password",
+            "validate_birth_date"
+          ],
+          "properties": [
+            "username",
+            "email",
+            "password",
+            "birth_year",
+            "birth_month",
+            "birth_day",
+            "birth_hour",
+            "gender",
+            "birth_location"
+          ]
+        },
+        {
+          "name": "LoginRequest",
+          "startLine": 43,
+          "endLine": 46,
+          "methods": [],
+          "properties": [
+            "email",
+            "password"
+          ]
+        },
+        {
+          "name": "RegisterResponse",
+          "startLine": 49,
+          "endLine": 54,
+          "methods": [],
+          "properties": [
+            "id",
+            "username",
+            "email",
+            "token"
+          ]
+        },
+        {
+          "name": "ApiResponse",
+          "startLine": 57,
+          "endLine": 61,
+          "methods": [],
+          "properties": [
+            "success",
+            "data",
+            "error"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "RegisterRequest",
+          "line": 9,
+          "isDefault": false
+        },
+        {
+          "name": "LoginRequest",
+          "line": 43,
+          "isDefault": false
+        },
+        {
+          "name": "RegisterResponse",
+          "line": 49,
+          "isDefault": false
+        },
+        {
+          "name": "ApiResponse",
+          "line": 57,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "validate_password",
+          "callee": "re.search",
+          "lineNumber": 24
+        },
+        {
+          "caller": "validate_password",
+          "callee": "re.search",
+          "lineNumber": 24
+        },
+        {
+          "caller": "validate_password",
+          "callee": "ValueError",
+          "lineNumber": 25
+        },
+        {
+          "caller": "validate_birth_date",
+          "callee": "info.data.get",
+          "lineNumber": 31
+        },
+        {
+          "caller": "validate_birth_date",
+          "callee": "info.data.get",
+          "lineNumber": 32
+        },
+        {
+          "caller": "validate_birth_date",
+          "callee": "date",
+          "lineNumber": 35
+        },
+        {
+          "caller": "validate_birth_date",
+          "callee": "ValueError",
+          "lineNumber": 37
+        },
+        {
+          "caller": "validate_birth_date",
+          "callee": "date",
+          "lineNumber": 38
+        },
+        {
+          "caller": "validate_birth_date",
+          "callee": "date.today",
+          "lineNumber": 38
+        },
+        {
+          "caller": "validate_birth_date",
+          "callee": "ValueError",
+          "lineNumber": 39
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 4,
+        "functionCount": 0,
+        "classCount": 4
+      }
+    },
+    {
+      "path": "server/app/schemas/common.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 10,
+      "nonEmptyLines": 8,
+      "classes": [
+        {
+          "name": "ApiResponse",
+          "startLine": 6,
+          "endLine": 10,
+          "methods": [],
+          "properties": [
+            "success",
+            "data",
+            "error"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ApiResponse",
+          "line": 6,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "server/app/services/feedback_summary.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 261,
+      "nonEmptyLines": 213,
+      "functions": [
+        {
+          "name": "_extract_dimension_counter",
+          "startLine": 31,
+          "endLine": 39,
+          "params": [
+            "rows"
+          ]
+        },
+        {
+          "name": "get_accuracy_info",
+          "startLine": 42,
+          "endLine": 80,
+          "params": [
+            "db",
+            "user_id"
+          ]
+        },
+        {
+          "name": "get_dimension_preference",
+          "startLine": 83,
+          "endLine": 107,
+          "params": [
+            "db",
+            "user_id"
+          ]
+        },
+        {
+          "name": "get_outcome_history",
+          "startLine": 110,
+          "endLine": 144,
+          "params": [
+            "db",
+            "user_id"
+          ]
+        },
+        {
+          "name": "generate_feedback_summary",
+          "startLine": 147,
+          "endLine": 261,
+          "params": [
+            "db",
+            "user_id"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "_extract_dimension_counter",
+          "line": 31,
+          "isDefault": false
+        },
+        {
+          "name": "get_accuracy_info",
+          "line": 42,
+          "isDefault": false
+        },
+        {
+          "name": "get_dimension_preference",
+          "line": 83,
+          "isDefault": false
+        },
+        {
+          "name": "get_outcome_history",
+          "line": 110,
+          "isDefault": false
+        },
+        {
+          "name": "generate_feedback_summary",
+          "line": 147,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_extract_dimension_counter",
+          "callee": "Counter",
+          "lineNumber": 33
+        },
+        {
+          "caller": "_extract_dimension_counter",
+          "callee": "_KEYWORDS_MAP.items",
+          "lineNumber": 36
+        },
+        {
+          "caller": "get_accuracy_info",
+          "callee": "db.query(DailyFortune.accuracy_mark)\n        .filter(\n            DailyFortune.user_id == user_id,\n            DailyFortune.accuracy_mark.isnot(None),\n        )\n        .all",
+          "lineNumber": 52
+        },
+        {
+          "caller": "get_accuracy_info",
+          "callee": "db.query(DailyFortune.accuracy_mark)\n        .filter",
+          "lineNumber": 52
+        },
+        {
+          "caller": "get_accuracy_info",
+          "callee": "db.query",
+          "lineNumber": 52
+        },
+        {
+          "caller": "get_accuracy_info",
+          "callee": "DailyFortune.accuracy_mark.isnot",
+          "lineNumber": 55
+        },
+        {
+          "caller": "get_accuracy_info",
+          "callee": "len",
+          "lineNumber": 60
+        },
+        {
+          "caller": "get_accuracy_info",
+          "callee": "sum",
+          "lineNumber": 61
+        },
+        {
+          "caller": "get_accuracy_info",
+          "callee": "int",
+          "lineNumber": 62
+        },
+        {
+          "caller": "get_accuracy_info",
+          "callee": "parts.append",
+          "lineNumber": 63
+        },
+        {
+          "caller": "get_accuracy_info",
+          "callee": "db.query(DivinationRecord.accuracy_mark)\n        .filter(\n            DivinationRecord.user_id == user_id,\n            DivinationRecord.accuracy_mark.isnot(None),\n        )\n        .all",
+          "lineNumber": 67
+        },
+        {
+          "caller": "get_accuracy_info",
+          "callee": "db.query(DivinationRecord.accuracy_mark)\n        .filter",
+          "lineNumber": 67
+        },
+        {
+          "caller": "get_accuracy_info",
+          "callee": "db.query",
+          "lineNumber": 67
+        },
+        {
+          "caller": "get_accuracy_info",
+          "callee": "DivinationRecord.accuracy_mark.isnot",
+          "lineNumber": 70
+        },
+        {
+          "caller": "get_accuracy_info",
+          "callee": "len",
+          "lineNumber": 75
+        },
+        {
+          "caller": "get_accuracy_info",
+          "callee": "sum",
+          "lineNumber": 76
+        },
+        {
+          "caller": "get_accuracy_info",
+          "callee": "int",
+          "lineNumber": 77
+        },
+        {
+          "caller": "get_accuracy_info",
+          "callee": "parts.append",
+          "lineNumber": 78
+        },
+        {
+          "caller": "get_accuracy_info",
+          "callee": "\"; \".join",
+          "lineNumber": 80
+        },
+        {
+          "caller": "get_dimension_preference",
+          "callee": "db.query(DailyFortune)\n        .filter(\n            DailyFortune.user_id == user_id,\n            DailyFortune.user_feedback_text.isnot(None),\n        )\n        .order_by(desc(DailyFortune.date))\n        .limit(30)\n        .all",
+          "lineNumber": 90
+        },
+        {
+          "caller": "get_dimension_preference",
+          "callee": "db.query(DailyFortune)\n        .filter(\n            DailyFortune.user_id == user_id,\n            DailyFortune.user_feedback_text.isnot(None),\n        )\n        .order_by(desc(DailyFortune.date))\n        .limit",
+          "lineNumber": 90
+        },
+        {
+          "caller": "get_dimension_preference",
+          "callee": "db.query(DailyFortune)\n        .filter(\n            DailyFortune.user_id == user_id,\n            DailyFortune.user_feedback_text.isnot(None),\n        )\n        .order_by",
+          "lineNumber": 90
+        },
+        {
+          "caller": "get_dimension_preference",
+          "callee": "db.query(DailyFortune)\n        .filter",
+          "lineNumber": 90
+        },
+        {
+          "caller": "get_dimension_preference",
+          "callee": "db.query",
+          "lineNumber": 90
+        },
+        {
+          "caller": "get_dimension_preference",
+          "callee": "DailyFortune.user_feedback_text.isnot",
+          "lineNumber": 93
+        },
+        {
+          "caller": "get_dimension_preference",
+          "callee": "desc",
+          "lineNumber": 95
+        },
+        {
+          "caller": "get_dimension_preference",
+          "callee": "_extract_dimension_counter",
+          "lineNumber": 102
+        },
+        {
+          "caller": "get_dimension_preference",
+          "callee": "counter.most_common",
+          "lineNumber": 106
+        },
+        {
+          "caller": "get_dimension_preference",
+          "callee": "'和'.join",
+          "lineNumber": 107
+        },
+        {
+          "caller": "get_outcome_history",
+          "callee": "db.query(PredictionOutcome)\n        .filter(\n            PredictionOutcome.user_id == user_id,\n            PredictionOutcome.verified.isnot(None),\n        )\n        .order_by(desc(PredictionOutcome.verified_at))\n        .limit(10)\n        .all",
+          "lineNumber": 117
+        },
+        {
+          "caller": "get_outcome_history",
+          "callee": "db.query(PredictionOutcome)\n        .filter(\n            PredictionOutcome.user_id == user_id,\n            PredictionOutcome.verified.isnot(None),\n        )\n        .order_by(desc(PredictionOutcome.verified_at))\n        .limit",
+          "lineNumber": 117
+        },
+        {
+          "caller": "get_outcome_history",
+          "callee": "db.query(PredictionOutcome)\n        .filter(\n            PredictionOutcome.user_id == user_id,\n            PredictionOutcome.verified.isnot(None),\n        )\n        .order_by",
+          "lineNumber": 117
+        },
+        {
+          "caller": "get_outcome_history",
+          "callee": "db.query(PredictionOutcome)\n        .filter",
+          "lineNumber": 117
+        },
+        {
+          "caller": "get_outcome_history",
+          "callee": "db.query",
+          "lineNumber": 117
+        },
+        {
+          "caller": "get_outcome_history",
+          "callee": "PredictionOutcome.verified.isnot",
+          "lineNumber": 120
+        },
+        {
+          "caller": "get_outcome_history",
+          "callee": "desc",
+          "lineNumber": 122
+        },
+        {
+          "caller": "get_outcome_history",
+          "callee": "len",
+          "lineNumber": 129
+        },
+        {
+          "caller": "get_outcome_history",
+          "callee": "sum",
+          "lineNumber": 130
+        },
+        {
+          "caller": "get_outcome_history",
+          "callee": "recent_texts.append",
+          "lineNumber": 140
+        },
+        {
+          "caller": "get_outcome_history",
+          "callee": "parts.append",
+          "lineNumber": 142
+        },
+        {
+          "caller": "get_outcome_history",
+          "callee": "\"; \".join",
+          "lineNumber": 142
+        },
+        {
+          "caller": "get_outcome_history",
+          "callee": "\"\\n\".join",
+          "lineNumber": 144
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "db.query(DailyFortune)\n        .filter(\n            DailyFortune.user_id == user_id,\n            DailyFortune.user_rating.isnot(None),\n        )\n        .order_by(desc(DailyFortune.date))\n        .limit(30)\n        .all",
+          "lineNumber": 155
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "db.query(DailyFortune)\n        .filter(\n            DailyFortune.user_id == user_id,\n            DailyFortune.user_rating.isnot(None),\n        )\n        .order_by(desc(DailyFortune.date))\n        .limit",
+          "lineNumber": 155
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "db.query(DailyFortune)\n        .filter(\n            DailyFortune.user_id == user_id,\n            DailyFortune.user_rating.isnot(None),\n        )\n        .order_by",
+          "lineNumber": 155
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "db.query(DailyFortune)\n        .filter",
+          "lineNumber": 155
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "db.query",
+          "lineNumber": 155
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "DailyFortune.user_rating.isnot",
+          "lineNumber": 158
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "desc",
+          "lineNumber": 160
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "db.query(DivinationRecord)\n        .filter(\n            DivinationRecord.user_id == user_id,\n            DivinationRecord.user_rating.isnot(None),\n        )\n        .order_by(desc(DivinationRecord.created_at))\n        .limit(30)\n        .all",
+          "lineNumber": 167
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "db.query(DivinationRecord)\n        .filter(\n            DivinationRecord.user_id == user_id,\n            DivinationRecord.user_rating.isnot(None),\n        )\n        .order_by(desc(DivinationRecord.created_at))\n        .limit",
+          "lineNumber": 167
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "db.query(DivinationRecord)\n        .filter(\n            DivinationRecord.user_id == user_id,\n            DivinationRecord.user_rating.isnot(None),\n        )\n        .order_by",
+          "lineNumber": 167
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "db.query(DivinationRecord)\n        .filter",
+          "lineNumber": 167
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "db.query",
+          "lineNumber": 167
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "DivinationRecord.user_rating.isnot",
+          "lineNumber": 170
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "desc",
+          "lineNumber": 172
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "db.query(PredictionOutcome)\n        .filter(\n            PredictionOutcome.user_id == user_id,\n            PredictionOutcome.verified.isnot(None),\n        )\n        .order_by(desc(PredictionOutcome.verified_at))\n        .limit(10)\n        .all",
+          "lineNumber": 179
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "db.query(PredictionOutcome)\n        .filter(\n            PredictionOutcome.user_id == user_id,\n            PredictionOutcome.verified.isnot(None),\n        )\n        .order_by(desc(PredictionOutcome.verified_at))\n        .limit",
+          "lineNumber": 179
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "db.query(PredictionOutcome)\n        .filter(\n            PredictionOutcome.user_id == user_id,\n            PredictionOutcome.verified.isnot(None),\n        )\n        .order_by",
+          "lineNumber": 179
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "db.query(PredictionOutcome)\n        .filter",
+          "lineNumber": 179
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "db.query",
+          "lineNumber": 179
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "PredictionOutcome.verified.isnot",
+          "lineNumber": 182
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "desc",
+          "lineNumber": 184
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "sum",
+          "lineNumber": 198
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "len",
+          "lineNumber": 198
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "Counter",
+          "lineNumber": 201
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "tag_counter.update",
+          "lineNumber": 204
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "_extract_dimension_counter",
+          "lineNumber": 207
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "sum",
+          "lineNumber": 213
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "int",
+          "lineNumber": 214
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "len",
+          "lineNumber": 214
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "len",
+          "lineNumber": 215
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "lines.append",
+          "lineNumber": 218
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "len",
+          "lineNumber": 218
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "lines.append",
+          "lineNumber": 219
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "lines.append",
+          "lineNumber": 222
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "dimension_counter.most_common",
+          "lineNumber": 225
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "lines.append",
+          "lineNumber": 226
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "'和'.join",
+          "lineNumber": 226
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "tag_counter.most_common",
+          "lineNumber": 229
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "lines.append",
+          "lineNumber": 230
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "', '.join",
+          "lineNumber": 230
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "parts.append",
+          "lineNumber": 232
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "\"\\n\".join",
+          "lineNumber": 232
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "sum",
+          "lineNumber": 237
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "len",
+          "lineNumber": 237
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "sum",
+          "lineNumber": 243
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "int",
+          "lineNumber": 244
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "len",
+          "lineNumber": 244
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "parts.append",
+          "lineNumber": 247
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "len",
+          "lineNumber": 247
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "len",
+          "lineNumber": 251
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "sum",
+          "lineNumber": 252
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "parts.append",
+          "lineNumber": 253
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "\"\\n\".join",
+          "lineNumber": 255
+        },
+        {
+          "caller": "generate_feedback_summary",
+          "callee": "len",
+          "lineNumber": 258
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 5,
+        "functionCount": 5,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/app/services/push_email.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 237,
+      "nonEmptyLines": 204,
+      "functions": [
+        {
+          "name": "_score_color",
+          "startLine": 21,
+          "endLine": 26,
+          "params": [
+            "score"
+          ]
+        },
+        {
+          "name": "_build_hourly_html",
+          "startLine": 29,
+          "endLine": 72,
+          "params": [
+            "hourly_fortunes"
+          ]
+        },
+        {
+          "name": "_build_events_html",
+          "startLine": 75,
+          "endLine": 107,
+          "params": [
+            "events"
+          ]
+        },
+        {
+          "name": "_build_html",
+          "startLine": 110,
+          "endLine": 209,
+          "params": [
+            "fortune_data"
+          ]
+        },
+        {
+          "name": "send_fortune_email",
+          "startLine": 212,
+          "endLine": 237,
+          "params": [
+            "to_email",
+            "fortune_data"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "_score_color",
+          "line": 21,
+          "isDefault": false
+        },
+        {
+          "name": "_build_hourly_html",
+          "line": 29,
+          "isDefault": false
+        },
+        {
+          "name": "_build_events_html",
+          "line": 75,
+          "isDefault": false
+        },
+        {
+          "name": "_build_html",
+          "line": 110,
+          "isDefault": false
+        },
+        {
+          "name": "send_fortune_email",
+          "line": 212,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_build_hourly_html",
+          "callee": "SHICHEN_ICONS.get",
+          "lineNumber": 36
+        },
+        {
+          "caller": "_build_hourly_html",
+          "callee": "h.get",
+          "lineNumber": 36
+        },
+        {
+          "caller": "_build_hourly_html",
+          "callee": "_score_color",
+          "lineNumber": 37
+        },
+        {
+          "caller": "_build_hourly_html",
+          "callee": "h.get",
+          "lineNumber": 37
+        },
+        {
+          "caller": "_build_hourly_html",
+          "callee": "'、'.join",
+          "lineNumber": 38
+        },
+        {
+          "caller": "_build_hourly_html",
+          "callee": "h.get",
+          "lineNumber": 38
+        },
+        {
+          "caller": "_build_hourly_html",
+          "callee": "'、'.join",
+          "lineNumber": 39
+        },
+        {
+          "caller": "_build_hourly_html",
+          "callee": "h.get",
+          "lineNumber": 39
+        },
+        {
+          "caller": "_build_hourly_html",
+          "callee": "'、'.join",
+          "lineNumber": 40
+        },
+        {
+          "caller": "_build_hourly_html",
+          "callee": "h.get",
+          "lineNumber": 40
+        },
+        {
+          "caller": "_build_hourly_html",
+          "callee": "h.get",
+          "lineNumber": 45
+        },
+        {
+          "caller": "_build_hourly_html",
+          "callee": "h.get",
+          "lineNumber": 46
+        },
+        {
+          "caller": "_build_hourly_html",
+          "callee": "h.get",
+          "lineNumber": 49
+        },
+        {
+          "caller": "_build_events_html",
+          "callee": "e.get",
+          "lineNumber": 82
+        },
+        {
+          "caller": "_build_events_html",
+          "callee": "e.get",
+          "lineNumber": 95
+        },
+        {
+          "caller": "_build_events_html",
+          "callee": "e.get",
+          "lineNumber": 96
+        },
+        {
+          "caller": "_build_html",
+          "callee": "fortune_data.get",
+          "lineNumber": 112
+        },
+        {
+          "caller": "_build_html",
+          "callee": "fortune_data.get",
+          "lineNumber": 113
+        },
+        {
+          "caller": "_build_html",
+          "callee": "fortune_data.get",
+          "lineNumber": 114
+        },
+        {
+          "caller": "_build_html",
+          "callee": "fortune_data.get",
+          "lineNumber": 115
+        },
+        {
+          "caller": "_build_html",
+          "callee": "fortune_data.get",
+          "lineNumber": 116
+        },
+        {
+          "caller": "_build_html",
+          "callee": "fortune_data.get",
+          "lineNumber": 117
+        },
+        {
+          "caller": "_build_html",
+          "callee": "fortune_data.get",
+          "lineNumber": 118
+        },
+        {
+          "caller": "_build_html",
+          "callee": "fortune_data.get",
+          "lineNumber": 119
+        },
+        {
+          "caller": "_build_html",
+          "callee": "fortune_data.get",
+          "lineNumber": 120
+        },
+        {
+          "caller": "_build_html",
+          "callee": "fortune_data.get",
+          "lineNumber": 121
+        },
+        {
+          "caller": "_build_html",
+          "callee": "fortune_data.get",
+          "lineNumber": 122
+        },
+        {
+          "caller": "_build_html",
+          "callee": "fortune_data.get",
+          "lineNumber": 123
+        },
+        {
+          "caller": "_build_html",
+          "callee": "_build_hourly_html",
+          "lineNumber": 135
+        },
+        {
+          "caller": "_build_html",
+          "callee": "_build_events_html",
+          "lineNumber": 136
+        },
+        {
+          "caller": "_build_html",
+          "callee": "career.get",
+          "lineNumber": 161
+        },
+        {
+          "caller": "_build_html",
+          "callee": "career.get",
+          "lineNumber": 162
+        },
+        {
+          "caller": "_build_html",
+          "callee": "wealth.get",
+          "lineNumber": 166
+        },
+        {
+          "caller": "_build_html",
+          "callee": "wealth.get",
+          "lineNumber": 167
+        },
+        {
+          "caller": "_build_html",
+          "callee": "love.get",
+          "lineNumber": 173
+        },
+        {
+          "caller": "_build_html",
+          "callee": "love.get",
+          "lineNumber": 174
+        },
+        {
+          "caller": "_build_html",
+          "callee": "health.get",
+          "lineNumber": 178
+        },
+        {
+          "caller": "_build_html",
+          "callee": "health.get",
+          "lineNumber": 179
+        },
+        {
+          "caller": "send_fortune_email",
+          "callee": "fortune_data.get",
+          "lineNumber": 214
+        },
+        {
+          "caller": "send_fortune_email",
+          "callee": "datetime.strptime",
+          "lineNumber": 216
+        },
+        {
+          "caller": "send_fortune_email",
+          "callee": "_build_html",
+          "lineNumber": 221
+        },
+        {
+          "caller": "send_fortune_email",
+          "callee": "MIMEMultipart",
+          "lineNumber": 223
+        },
+        {
+          "caller": "send_fortune_email",
+          "callee": "msg.attach",
+          "lineNumber": 227
+        },
+        {
+          "caller": "send_fortune_email",
+          "callee": "MIMEText",
+          "lineNumber": 227
+        },
+        {
+          "caller": "send_fortune_email",
+          "callee": "smtplib.SMTP_SSL",
+          "lineNumber": 230
+        },
+        {
+          "caller": "send_fortune_email",
+          "callee": "server.login",
+          "lineNumber": 231
+        },
+        {
+          "caller": "send_fortune_email",
+          "callee": "server.send_message",
+          "lineNumber": 232
+        },
+        {
+          "caller": "send_fortune_email",
+          "callee": "logger.info",
+          "lineNumber": 233
+        },
+        {
+          "caller": "send_fortune_email",
+          "callee": "logger.error",
+          "lineNumber": 236
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 5,
+        "functionCount": 5,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/app/services/push_feishu.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 179,
+      "nonEmptyLines": 154,
+      "functions": [
+        {
+          "name": "_build_hourly_text",
+          "startLine": 10,
+          "endLine": 37,
+          "params": [
+            "hourly_fortunes"
+          ]
+        },
+        {
+          "name": "_build_events_text",
+          "startLine": 40,
+          "endLine": 57,
+          "params": [
+            "events"
+          ]
+        },
+        {
+          "name": "_build_card",
+          "startLine": 60,
+          "endLine": 154,
+          "params": [
+            "fortune_data"
+          ]
+        },
+        {
+          "name": "send_fortune_feishu",
+          "startLine": 157,
+          "endLine": 179,
+          "params": [
+            "webhook_url",
+            "fortune_data"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "_build_hourly_text",
+          "line": 10,
+          "isDefault": false
+        },
+        {
+          "name": "_build_events_text",
+          "line": 40,
+          "isDefault": false
+        },
+        {
+          "name": "_build_card",
+          "line": 60,
+          "isDefault": false
+        },
+        {
+          "name": "send_fortune_feishu",
+          "line": 157,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_build_hourly_text",
+          "callee": "icons.get",
+          "lineNumber": 23
+        },
+        {
+          "caller": "_build_hourly_text",
+          "callee": "h.get",
+          "lineNumber": 23
+        },
+        {
+          "caller": "_build_hourly_text",
+          "callee": "h.get",
+          "lineNumber": 24
+        },
+        {
+          "caller": "_build_hourly_text",
+          "callee": "'、'.join",
+          "lineNumber": 32
+        },
+        {
+          "caller": "_build_hourly_text",
+          "callee": "h.get",
+          "lineNumber": 32
+        },
+        {
+          "caller": "_build_hourly_text",
+          "callee": "'、'.join",
+          "lineNumber": 33
+        },
+        {
+          "caller": "_build_hourly_text",
+          "callee": "h.get",
+          "lineNumber": 33
+        },
+        {
+          "caller": "_build_hourly_text",
+          "callee": "lines.append",
+          "lineNumber": 34
+        },
+        {
+          "caller": "_build_hourly_text",
+          "callee": "h.get",
+          "lineNumber": 34
+        },
+        {
+          "caller": "_build_hourly_text",
+          "callee": "h.get",
+          "lineNumber": 34
+        },
+        {
+          "caller": "_build_hourly_text",
+          "callee": "lines.append",
+          "lineNumber": 35
+        },
+        {
+          "caller": "_build_hourly_text",
+          "callee": "'\\n'.join",
+          "lineNumber": 37
+        },
+        {
+          "caller": "_build_events_text",
+          "callee": "e.get",
+          "lineNumber": 47
+        },
+        {
+          "caller": "_build_events_text",
+          "callee": "lines.append",
+          "lineNumber": 55
+        },
+        {
+          "caller": "_build_events_text",
+          "callee": "e.get",
+          "lineNumber": 55
+        },
+        {
+          "caller": "_build_events_text",
+          "callee": "'\\n'.join",
+          "lineNumber": 57
+        },
+        {
+          "caller": "_build_card",
+          "callee": "fortune_data.get",
+          "lineNumber": 62
+        },
+        {
+          "caller": "_build_card",
+          "callee": "fortune_data.get",
+          "lineNumber": 63
+        },
+        {
+          "caller": "_build_card",
+          "callee": "fortune_data.get",
+          "lineNumber": 64
+        },
+        {
+          "caller": "_build_card",
+          "callee": "fortune_data.get",
+          "lineNumber": 65
+        },
+        {
+          "caller": "_build_card",
+          "callee": "fortune_data.get",
+          "lineNumber": 66
+        },
+        {
+          "caller": "_build_card",
+          "callee": "fortune_data.get",
+          "lineNumber": 67
+        },
+        {
+          "caller": "_build_card",
+          "callee": "fortune_data.get",
+          "lineNumber": 68
+        },
+        {
+          "caller": "_build_card",
+          "callee": "fortune_data.get",
+          "lineNumber": 69
+        },
+        {
+          "caller": "_build_card",
+          "callee": "fortune_data.get",
+          "lineNumber": 70
+        },
+        {
+          "caller": "_build_card",
+          "callee": "fortune_data.get",
+          "lineNumber": 71
+        },
+        {
+          "caller": "_build_card",
+          "callee": "fortune_data.get",
+          "lineNumber": 72
+        },
+        {
+          "caller": "_build_card",
+          "callee": "career.get",
+          "lineNumber": 103
+        },
+        {
+          "caller": "_build_card",
+          "callee": "wealth.get",
+          "lineNumber": 103
+        },
+        {
+          "caller": "_build_card",
+          "callee": "love.get",
+          "lineNumber": 104
+        },
+        {
+          "caller": "_build_card",
+          "callee": "health.get",
+          "lineNumber": 104
+        },
+        {
+          "caller": "_build_card",
+          "callee": "len",
+          "lineNumber": 116
+        },
+        {
+          "caller": "_build_card",
+          "callee": "elements.append",
+          "lineNumber": 118
+        },
+        {
+          "caller": "_build_card",
+          "callee": "elements.append",
+          "lineNumber": 119
+        },
+        {
+          "caller": "_build_card",
+          "callee": "_build_hourly_text",
+          "lineNumber": 125
+        },
+        {
+          "caller": "_build_card",
+          "callee": "elements.append",
+          "lineNumber": 127
+        },
+        {
+          "caller": "_build_card",
+          "callee": "elements.append",
+          "lineNumber": 128
+        },
+        {
+          "caller": "_build_card",
+          "callee": "_build_events_text",
+          "lineNumber": 134
+        },
+        {
+          "caller": "_build_card",
+          "callee": "elements.append",
+          "lineNumber": 136
+        },
+        {
+          "caller": "_build_card",
+          "callee": "elements.append",
+          "lineNumber": 137
+        },
+        {
+          "caller": "send_fortune_feishu",
+          "callee": "_build_card",
+          "lineNumber": 159
+        },
+        {
+          "caller": "send_fortune_feishu",
+          "callee": "httpx.post",
+          "lineNumber": 162
+        },
+        {
+          "caller": "send_fortune_feishu",
+          "callee": "response.json",
+          "lineNumber": 167
+        },
+        {
+          "caller": "send_fortune_feishu",
+          "callee": "result.get",
+          "lineNumber": 168
+        },
+        {
+          "caller": "send_fortune_feishu",
+          "callee": "logger.info",
+          "lineNumber": 169
+        },
+        {
+          "caller": "send_fortune_feishu",
+          "callee": "logger.error",
+          "lineNumber": 172
+        },
+        {
+          "caller": "send_fortune_feishu",
+          "callee": "result.get",
+          "lineNumber": 172
+        },
+        {
+          "caller": "send_fortune_feishu",
+          "callee": "logger.error",
+          "lineNumber": 175
+        },
+        {
+          "caller": "send_fortune_feishu",
+          "callee": "logger.error",
+          "lineNumber": 178
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 4,
+        "functionCount": 4,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/fortune_engine/__init__.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 1,
+      "nonEmptyLines": 0,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

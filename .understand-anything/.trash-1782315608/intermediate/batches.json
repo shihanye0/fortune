@@ -1,0 +1,1684 @@
+{
+  "schemaVersion": 1,
+  "algorithm": "louvain",
+  "totalFiles": 169,
+  "totalBatches": 12,
+  "exportsByPath": {
+    ".understand-anything/.understandignore": [],
+    "client/playwright.config.ts": [],
+    "client/src/App.vue": [],
+    "client/src/components/HelloWorld.vue": [],
+    "client/src/features/auth/api/auth-api.ts": [
+      "register",
+      "login"
+    ],
+    "client/src/features/auth/stores/auth.ts": [
+      "useAuthStore"
+    ],
+    "client/src/features/auth/types/user.ts": [],
+    "client/src/features/auth/views/__tests__/LoginView.test.ts": [],
+    "client/src/features/auth/views/__tests__/RegisterView.test.ts": [],
+    "client/src/features/auth/views/LoginView.vue": [],
+    "client/src/features/auth/views/RegisterView.vue": [],
+    "client/src/features/divination/api/divination-api.ts": [
+      "doLiuyao",
+      "doQimen",
+      "getDivinationRecords",
+      "getDivinationDetail",
+      "submitDivinationFeedback",
+      "getProbabilityEvents",
+      "submitEventFeedback"
+    ],
+    "client/src/features/divination/views/__tests__/DivinationView.test.ts": [],
+    "client/src/features/divination/views/DivinationView.vue": [],
+    "client/src/features/feedback/api/feedback-api.ts": [
+      "submitFortuneAccuracy",
+      "submitDivinationAccuracy",
+      "submitPredictionOutcome",
+      "getAccuracyStats"
+    ],
+    "client/src/features/feedback/index.ts": [],
+    "client/src/features/feedback/types/feedback.types.ts": [],
+    "client/src/features/fortune/api/fortune-api.ts": [
+      "getTodayFortune",
+      "regenerateTodayFortune",
+      "getFortuneList",
+      "getFortuneDetail",
+      "submitFortuneFeedback"
+    ],
+    "client/src/features/fortune/views/__tests__/FortuneView.test.ts": [],
+    "client/src/features/fortune/views/FortuneView.vue": [],
+    "client/src/features/home/views/__tests__/HomeView.test.ts": [],
+    "client/src/features/home/views/HomeView.vue": [],
+    "client/src/features/profile/api/profile-api.ts": [
+      "getProfile",
+      "updateProfile",
+      "updateBirth",
+      "updatePushSettings",
+      "updateLLMSettings",
+      "testLLMConnection",
+      "deleteAccount"
+    ],
+    "client/src/features/profile/views/__tests__/ProfileView.test.ts": [],
+    "client/src/features/profile/views/ProfileView.vue": [],
+    "client/src/main.ts": [],
+    "client/src/router.ts": [],
+    "client/src/shared/api/client.ts": [],
+    "client/src/shared/components/__tests__/AppLayout.test.ts": [],
+    "client/src/shared/components/AppLayout.vue": [],
+    "client/src/shared/types/api.ts": [],
+    "client/src/test/setup.ts": [],
+    "client/tests/e2e/api.spec.ts": [],
+    "client/tests/e2e/homepage.spec.ts": [],
+    "client/tests/e2e/login.spec.ts": [],
+    "client/tests/e2e/navigation.spec.ts": [],
+    "client/tests/e2e/register.spec.ts": [],
+    "client/vite.config.ts": [],
+    "client/vitest.config.ts": [],
+    "server/alembic/env.py": [
+      "run_migrations_offline",
+      "run_migrations_online"
+    ],
+    "server/alembic/README": [],
+    "server/alembic/script.py.mako": [],
+    "server/alembic/versions/6f442fb65ec6_initial_schema.py": [
+      "upgrade",
+      "downgrade"
+    ],
+    "server/app/__init__.py": [],
+    "server/app/api/__init__.py": [],
+    "server/app/api/deps.py": [
+      "get_db"
+    ],
+    "server/app/api/v1/__init__.py": [],
+    "server/app/api/v1/auth.py": [
+      "register",
+      "login"
+    ],
+    "server/app/api/v1/divination.py": [
+      "LiuyaoRequest",
+      "QimenRequest",
+      "DivinationFeedbackRequest",
+      "AccuracyMarkRequest",
+      "do_liuyao",
+      "do_qimen",
+      "list_divination_records",
+      "get_divination_detail",
+      "submit_divination_feedback",
+      "mark_divination_accuracy",
+      "_record_to_list_dict"
+    ],
+    "server/app/api/v1/fortunes.py": [
+      "FeedbackRequest",
+      "AccuracyMarkRequest",
+      "get_today_fortune",
+      "regenerate_today_fortune",
+      "list_fortunes",
+      "get_fortune_detail",
+      "submit_feedback",
+      "mark_fortune_accuracy",
+      "_generate_fortune_on_demand",
+      "_fortune_to_detail_dict",
+      "_fortune_to_list_dict"
+    ],
+    "server/app/api/v1/internal.py": [
+      "DailyPushRequest",
+      "daily_push"
+    ],
+    "server/app/api/v1/prediction_outcomes.py": [
+      "PredictionOutcomeRequest",
+      "create_prediction_outcome"
+    ],
+    "server/app/api/v1/probability_events.py": [
+      "EventFeedbackRequest",
+      "get_today_events",
+      "submit_event_feedback",
+      "get_feedback_history",
+      "_get_feedback_summary"
+    ],
+    "server/app/api/v1/users.py": [
+      "get_current_user",
+      "UpdateProfileRequest",
+      "UpdateBirthRequest",
+      "PushSettingsRequest",
+      "LLMSettingsRequest",
+      "DeleteAccountRequest",
+      "_user_to_dict",
+      "get_profile",
+      "update_profile",
+      "update_birth",
+      "update_push_settings",
+      "update_llm_settings",
+      "LLMTestRequest",
+      "test_llm_connection",
+      "delete_account",
+      "get_accuracy_stats",
+      "_calculate_dimension_accuracy"
+    ],
+    "server/app/config.py": [
+      "Settings"
+    ],
+    "server/app/core/__init__.py": [],
+    "server/app/core/security.py": [
+      "hash_password",
+      "verify_password",
+      "create_access_token",
+      "verify_token"
+    ],
+    "server/app/main.py": [
+      "health_check"
+    ],
+    "server/app/models/__init__.py": [],
+    "server/app/models/base.py": [
+      "china_now",
+      "utc_now",
+      "Base",
+      "TimestampMixin"
+    ],
+    "server/app/models/bazi_profile.py": [
+      "BaziProfile"
+    ],
+    "server/app/models/daily_fortune.py": [
+      "DailyFortune"
+    ],
+    "server/app/models/divination_record.py": [
+      "DivinationRecord"
+    ],
+    "server/app/models/prediction_outcome.py": [
+      "PredictionOutcome"
+    ],
+    "server/app/models/probability_event_feedback.py": [
+      "ProbabilityEventFeedback"
+    ],
+    "server/app/models/user.py": [
+      "User"
+    ],
+    "server/app/schemas/__init__.py": [],
+    "server/app/schemas/auth.py": [
+      "RegisterRequest",
+      "LoginRequest",
+      "RegisterResponse",
+      "ApiResponse"
+    ],
+    "server/app/schemas/common.py": [
+      "ApiResponse"
+    ],
+    "server/app/services/feedback_summary.py": [
+      "_extract_dimension_counter",
+      "get_accuracy_info",
+      "get_dimension_preference",
+      "get_outcome_history",
+      "generate_feedback_summary"
+    ],
+    "server/app/services/push_email.py": [
+      "_score_color",
+      "_build_hourly_html",
+      "_build_events_html",
+      "_build_html",
+      "send_fortune_email"
+    ],
+    "server/app/services/push_feishu.py": [
+      "_build_hourly_text",
+      "_build_events_text",
+      "_build_card",
+      "send_fortune_feishu"
+    ],
+    "server/fortune_engine/__init__.py": [],
+    "server/fortune_engine/bazi/__init__.py": [],
+    "server/fortune_engine/bazi/daily_fortune.py": [
+      "_score_from_relation",
+      "_score_to_detail",
+      "calculate_daily_fortune"
+    ],
+    "server/fortune_engine/bazi/hourly_fortune.py": [
+      "_get_ten_god_name",
+      "_score_from_hourly_relation",
+      "calculate_hourly_fortune",
+      "calculate_all_hours_fortune"
+    ],
+    "server/fortune_engine/bazi/pillar.py": [
+      "_get_relation",
+      "_calc_ten_god",
+      "_count_five_elements",
+      "_get_favorable",
+      "calculate_bazi",
+      "_calc_luck_cycles"
+    ],
+    "server/fortune_engine/common/__init__.py": [],
+    "server/fortune_engine/common/dizhi.py": [
+      "Dizhi"
+    ],
+    "server/fortune_engine/common/shichen.py": [
+      "hour_to_shichen",
+      "shichen_to_hours"
+    ],
+    "server/fortune_engine/common/tiangan.py": [
+      "Tiangan"
+    ],
+    "server/fortune_engine/common/wuxing.py": [
+      "Wuxing",
+      "sheng",
+      "ke",
+      "get_wuxing_of_tiangan",
+      "get_wuxing_of_dizhi"
+    ],
+    "server/fortune_engine/liuyao/__init__.py": [],
+    "server/fortune_engine/liuyao/hexagram.py": [
+      "_lines_to_trigram",
+      "_get_hexagram_name",
+      "_coin_toss",
+      "coin_divination",
+      "time_divination"
+    ],
+    "server/fortune_engine/probability_events.py": [
+      "_calculate_probability",
+      "_get_best_hour_for_dimension",
+      "generate_probability_events"
+    ],
+    "server/fortune_engine/qimen/__init__.py": [],
+    "server/fortune_engine/qimen/chart.py": [
+      "_get_yin_yang_dun",
+      "_rotate_list",
+      "calculate_qimen"
+    ],
+    "server/fortune_engine/services/__init__.py": [],
+    "server/fortune_engine/services/deepseek.py": [
+      "_strip_markdown",
+      "_call_deepseek",
+      "interpret_fortune",
+      "interpret_daily",
+      "interpret_liuyao",
+      "interpret_qimen"
+    ],
+    "server/migrate_llm_fields.py": [
+      "migrate"
+    ],
+    "server/scripts/init_db.py": [
+      "init_db"
+    ],
+    "server/test.db": [],
+    "server/tests/__init__.py": [],
+    "server/tests/conftest.py": [
+      "db_session",
+      "client"
+    ],
+    "server/tests/test_auth_login.py": [
+      "test_login_success",
+      "test_login_wrong_password",
+      "test_login_nonexistent_email"
+    ],
+    "server/tests/test_auth_register.py": [
+      "test_register_success",
+      "test_register_duplicate_email",
+      "test_register_weak_password",
+      "test_register_invalid_email",
+      "test_register_missing_fields",
+      "test_register_password_hashed"
+    ],
+    "server/tests/test_bazi.py": [
+      "TestBaziCalculation"
+    ],
+    "server/tests/test_common_module.py": [
+      "TestTiangan",
+      "TestDizhi",
+      "TestWuxing",
+      "TestShichen"
+    ],
+    "server/tests/test_config.py": [
+      "test_config_reads_database_url",
+      "test_config_has_default_values"
+    ],
+    "server/tests/test_daily_fortune.py": [
+      "TestDailyFortune"
+    ],
+    "server/tests/test_daily_push.py": [
+      "_create_user",
+      "TestDailyPushAPI"
+    ],
+    "server/tests/test_deepseek_service.py": [
+      "TestInterpretFortune",
+      "TestInterpretDaily"
+    ],
+    "server/tests/test_divination_api.py": [
+      "auth_user",
+      "TestLiuyaoDivination",
+      "TestQimenDivination"
+    ],
+    "server/tests/test_divination_history.py": [
+      "auth_user",
+      "record_factory",
+      "TestDivinationHistory",
+      "TestDivinationFeedback"
+    ],
+    "server/tests/test_feedback_summary.py": [
+      "_create_user",
+      "_add_fortune_feedback",
+      "_add_divination_feedback",
+      "TestFeedbackSummary"
+    ],
+    "server/tests/test_fortunes_api.py": [
+      "auth_user",
+      "fortune_factory",
+      "TestTodayFortune",
+      "TestFortuneHistory",
+      "TestFortuneDetail",
+      "TestFortuneFeedback"
+    ],
+    "server/tests/test_health.py": [
+      "test_health_endpoint_returns_ok"
+    ],
+    "server/tests/test_liuyao.py": [
+      "TestCoinDivination",
+      "TestTimeDivination"
+    ],
+    "server/tests/test_models.py": [
+      "test_user_model_fields",
+      "test_user_model_table_name",
+      "test_bazi_profile_model",
+      "test_daily_fortune_model",
+      "test_divination_record_model"
+    ],
+    "server/tests/test_push_services.py": [
+      "TestSendFortuneEmail",
+      "TestSendFortuneFeishu"
+    ],
+    "server/tests/test_qimen.py": [
+      "TestQimenChart"
+    ],
+    "server/tests/test_security.py": [
+      "test_password_hash_and_verify",
+      "test_jwt_token_creation",
+      "test_jwt_token_verification",
+      "test_jwt_token_invalid"
+    ],
+    "server/tests/test_user_profile.py": [
+      "_register_and_login",
+      "TestGetProfile",
+      "TestUpdateProfile",
+      "TestUpdateBirth",
+      "TestPushSettings",
+      "TestAccountDeletion"
+    ]
+  },
+  "batches": [
+    {
+      "batchIndex": 1,
+      "files": [
+        {
+          "path": ".github/workflows/daily-push.yml",
+          "language": "yaml",
+          "sizeLines": 57,
+          "fileCategory": "infra"
+        },
+        {
+          "path": ".github/workflows/test.yml",
+          "language": "yaml",
+          "sizeLines": 56,
+          "fileCategory": "infra"
+        }
+      ],
+      "batchImportData": {
+        ".github/workflows/daily-push.yml": [],
+        ".github/workflows/test.yml": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 2,
+      "files": [
+        {
+          "path": "2026-06-20-前端骨架搭建进度.md",
+          "language": "markdown",
+          "sizeLines": 71,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "2026-06-20-后端API与推送系统进度.md",
+          "language": "markdown",
+          "sizeLines": 58,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "2026-06-21-项目完成进度.md",
+          "language": "markdown",
+          "sizeLines": 125,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "CLAUDE.md",
+          "language": "markdown",
+          "sizeLines": 62,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "STARTUP.md",
+          "language": "markdown",
+          "sizeLines": 186,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "deploy.sh",
+          "language": "shell",
+          "sizeLines": 160,
+          "fileCategory": "script"
+        },
+        {
+          "path": "update.sh",
+          "language": "shell",
+          "sizeLines": 39,
+          "fileCategory": "script"
+        }
+      ],
+      "batchImportData": {
+        "2026-06-20-前端骨架搭建进度.md": [],
+        "2026-06-20-后端API与推送系统进度.md": [],
+        "2026-06-21-项目完成进度.md": [],
+        "CLAUDE.md": [],
+        "STARTUP.md": [],
+        "deploy.sh": [],
+        "update.sh": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 3,
+      "files": [
+        {
+          "path": "client/.env.example",
+          "language": "config",
+          "sizeLines": 2,
+          "fileCategory": "config"
+        },
+        {
+          "path": "client/README.md",
+          "language": "markdown",
+          "sizeLines": 5,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "client/index.html",
+          "language": "html",
+          "sizeLines": 13,
+          "fileCategory": "markup"
+        },
+        {
+          "path": "client/package.json",
+          "language": "json",
+          "sizeLines": 37,
+          "fileCategory": "config"
+        },
+        {
+          "path": "client/tsconfig.app.json",
+          "language": "json",
+          "sizeLines": 19,
+          "fileCategory": "config"
+        },
+        {
+          "path": "client/tsconfig.json",
+          "language": "json",
+          "sizeLines": 7,
+          "fileCategory": "config"
+        },
+        {
+          "path": "client/tsconfig.node.json",
+          "language": "json",
+          "sizeLines": 24,
+          "fileCategory": "config"
+        }
+      ],
+      "batchImportData": {
+        "client/.env.example": [],
+        "client/README.md": [],
+        "client/index.html": [],
+        "client/package.json": [],
+        "client/tsconfig.app.json": [],
+        "client/tsconfig.json": [],
+        "client/tsconfig.node.json": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 4,
+      "files": [
+        {
+          "path": "docs/plans/2026-06-20-bdd-scenarios.md",
+          "language": "markdown",
+          "sizeLines": 449,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/plans/2026-06-20-fortune-agent-design.md",
+          "language": "markdown",
+          "sizeLines": 555,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/plans/2026-06-20-implementation-plan.md",
+          "language": "markdown",
+          "sizeLines": 227,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/plans/2026-06-21-feedback-enhancement.md",
+          "language": "markdown",
+          "sizeLines": 37,
+          "fileCategory": "docs"
+        }
+      ],
+      "batchImportData": {
+        "docs/plans/2026-06-20-bdd-scenarios.md": [],
+        "docs/plans/2026-06-20-fortune-agent-design.md": [],
+        "docs/plans/2026-06-20-implementation-plan.md": [],
+        "docs/plans/2026-06-21-feedback-enhancement.md": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 5,
+      "files": [
+        {
+          "path": "docs/specs/001-项目初始化.md",
+          "language": "markdown",
+          "sizeLines": 51,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/specs/002-数据库设计.md",
+          "language": "markdown",
+          "sizeLines": 43,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/specs/003-配置管理.md",
+          "language": "markdown",
+          "sizeLines": 47,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/specs/004-用户注册.md",
+          "language": "markdown",
+          "sizeLines": 85,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/specs/005-用户登录.md",
+          "language": "markdown",
+          "sizeLines": 62,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/specs/006-个人信息管理.md",
+          "language": "markdown",
+          "sizeLines": 42,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/specs/007-推送设置.md",
+          "language": "markdown",
+          "sizeLines": 53,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/specs/008-账号注销.md",
+          "language": "markdown",
+          "sizeLines": 47,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/specs/009-公共基础模块.md",
+          "language": "markdown",
+          "sizeLines": 58,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/specs/010-八字排盘.md",
+          "language": "markdown",
+          "sizeLines": 83,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/specs/011-每日运势推算.md",
+          "language": "markdown",
+          "sizeLines": 49,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/specs/012-六爻起卦.md",
+          "language": "markdown",
+          "sizeLines": 64,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/specs/013-奇门遁甲排盘.md",
+          "language": "markdown",
+          "sizeLines": 58,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/specs/014-DeepSeek解读服务.md",
+          "language": "markdown",
+          "sizeLines": 84,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/specs/015-用户反馈摘要.md",
+          "language": "markdown",
+          "sizeLines": 46,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/specs/016-QQ邮箱推送.md",
+          "language": "markdown",
+          "sizeLines": 44,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/specs/017-飞书推送.md",
+          "language": "markdown",
+          "sizeLines": 42,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/specs/018-每日推送调度.md",
+          "language": "markdown",
+          "sizeLines": 60,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/specs/019-今日运势查看.md",
+          "language": "markdown",
+          "sizeLines": 50,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/specs/020-历史运势列表.md",
+          "language": "markdown",
+          "sizeLines": 44,
+          "fileCategory": "docs"
+        }
+      ],
+      "batchImportData": {
+        "docs/specs/001-项目初始化.md": [],
+        "docs/specs/002-数据库设计.md": [],
+        "docs/specs/003-配置管理.md": [],
+        "docs/specs/004-用户注册.md": [],
+        "docs/specs/005-用户登录.md": [],
+        "docs/specs/006-个人信息管理.md": [],
+        "docs/specs/007-推送设置.md": [],
+        "docs/specs/008-账号注销.md": [],
+        "docs/specs/009-公共基础模块.md": [],
+        "docs/specs/010-八字排盘.md": [],
+        "docs/specs/011-每日运势推算.md": [],
+        "docs/specs/012-六爻起卦.md": [],
+        "docs/specs/013-奇门遁甲排盘.md": [],
+        "docs/specs/014-DeepSeek解读服务.md": [],
+        "docs/specs/015-用户反馈摘要.md": [],
+        "docs/specs/016-QQ邮箱推送.md": [],
+        "docs/specs/017-飞书推送.md": [],
+        "docs/specs/018-每日推送调度.md": [],
+        "docs/specs/019-今日运势查看.md": [],
+        "docs/specs/020-历史运势列表.md": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 6,
+      "files": [
+        {
+          "path": "docs/specs/021-运势详情与反馈.md",
+          "language": "markdown",
+          "sizeLines": 51,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/specs/022-六爻占卜交互.md",
+          "language": "markdown",
+          "sizeLines": 55,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/specs/023-奇门遁甲交互.md",
+          "language": "markdown",
+          "sizeLines": 42,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/specs/024-占卜历史与反馈.md",
+          "language": "markdown",
+          "sizeLines": 33,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/specs/025-首页与导航.md",
+          "language": "markdown",
+          "sizeLines": 40,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/specs/026-注册页面.md",
+          "language": "markdown",
+          "sizeLines": 41,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/specs/027-登录页面.md",
+          "language": "markdown",
+          "sizeLines": 25,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/specs/028-每日运势页面.md",
+          "language": "markdown",
+          "sizeLines": 48,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/specs/029-占卜中心页面.md",
+          "language": "markdown",
+          "sizeLines": 47,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/specs/030-个人中心页面.md",
+          "language": "markdown",
+          "sizeLines": 56,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/specs/README.md",
+          "language": "markdown",
+          "sizeLines": 94,
+          "fileCategory": "docs"
+        }
+      ],
+      "batchImportData": {
+        "docs/specs/021-运势详情与反馈.md": [],
+        "docs/specs/022-六爻占卜交互.md": [],
+        "docs/specs/023-奇门遁甲交互.md": [],
+        "docs/specs/024-占卜历史与反馈.md": [],
+        "docs/specs/025-首页与导航.md": [],
+        "docs/specs/026-注册页面.md": [],
+        "docs/specs/027-登录页面.md": [],
+        "docs/specs/028-每日运势页面.md": [],
+        "docs/specs/029-占卜中心页面.md": [],
+        "docs/specs/030-个人中心页面.md": [],
+        "docs/specs/README.md": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 7,
+      "files": [
+        {
+          "path": "server/.env.example",
+          "language": "config",
+          "sizeLines": 20,
+          "fileCategory": "config"
+        },
+        {
+          "path": "server/alembic.ini",
+          "language": "config",
+          "sizeLines": 150,
+          "fileCategory": "config"
+        },
+        {
+          "path": "server/requirements.txt",
+          "language": "txt",
+          "sizeLines": 15,
+          "fileCategory": "docs"
+        }
+      ],
+      "batchImportData": {
+        "server/.env.example": [],
+        "server/alembic.ini": [],
+        "server/requirements.txt": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 8,
+      "files": [
+        {
+          "path": ".understand-anything/.understandignore",
+          "language": "unknown",
+          "sizeLines": 48,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/playwright.config.ts",
+          "language": "typescript",
+          "sizeLines": 30,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/src/App.vue",
+          "language": "vue",
+          "sizeLines": 9,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/src/components/HelloWorld.vue",
+          "language": "vue",
+          "sizeLines": 95,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/src/features/auth/api/auth-api.ts",
+          "language": "typescript",
+          "sizeLines": 38,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/src/features/auth/stores/auth.ts",
+          "language": "typescript",
+          "sizeLines": 40,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/src/features/auth/types/user.ts",
+          "language": "typescript",
+          "sizeLines": 15,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/src/features/auth/views/__tests__/LoginView.test.ts",
+          "language": "typescript",
+          "sizeLines": 67,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/src/features/auth/views/__tests__/RegisterView.test.ts",
+          "language": "typescript",
+          "sizeLines": 81,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/src/features/auth/views/LoginView.vue",
+          "language": "vue",
+          "sizeLines": 74,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/src/features/auth/views/RegisterView.vue",
+          "language": "vue",
+          "sizeLines": 130,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/src/features/divination/api/divination-api.ts",
+          "language": "typescript",
+          "sizeLines": 108,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/src/features/divination/views/__tests__/DivinationView.test.ts",
+          "language": "typescript",
+          "sizeLines": 163,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/src/features/divination/views/DivinationView.vue",
+          "language": "vue",
+          "sizeLines": 1026,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/src/features/feedback/api/feedback-api.ts",
+          "language": "typescript",
+          "sizeLines": 57,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/src/features/feedback/index.ts",
+          "language": "typescript",
+          "sizeLines": 2,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/src/features/feedback/types/feedback.types.ts",
+          "language": "typescript",
+          "sizeLines": 39,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/src/features/fortune/api/fortune-api.ts",
+          "language": "typescript",
+          "sizeLines": 82,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/src/features/fortune/views/__tests__/FortuneView.test.ts",
+          "language": "typescript",
+          "sizeLines": 168,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/src/features/fortune/views/FortuneView.vue",
+          "language": "vue",
+          "sizeLines": 1094,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/src/features/home/views/__tests__/HomeView.test.ts",
+          "language": "typescript",
+          "sizeLines": 78,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/src/features/home/views/HomeView.vue",
+          "language": "vue",
+          "sizeLines": 399,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/src/features/profile/api/profile-api.ts",
+          "language": "typescript",
+          "sizeLines": 84,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/src/features/profile/views/__tests__/ProfileView.test.ts",
+          "language": "typescript",
+          "sizeLines": 151,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/src/features/profile/views/ProfileView.vue",
+          "language": "vue",
+          "sizeLines": 979,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        ".understand-anything/.understandignore": [],
+        "client/playwright.config.ts": [],
+        "client/src/App.vue": [],
+        "client/src/components/HelloWorld.vue": [],
+        "client/src/features/auth/api/auth-api.ts": [],
+        "client/src/features/auth/stores/auth.ts": [],
+        "client/src/features/auth/types/user.ts": [],
+        "client/src/features/auth/views/__tests__/LoginView.test.ts": [],
+        "client/src/features/auth/views/__tests__/RegisterView.test.ts": [],
+        "client/src/features/auth/views/LoginView.vue": [],
+        "client/src/features/auth/views/RegisterView.vue": [],
+        "client/src/features/divination/api/divination-api.ts": [],
+        "client/src/features/divination/views/__tests__/DivinationView.test.ts": [],
+        "client/src/features/divination/views/DivinationView.vue": [],
+        "client/src/features/feedback/api/feedback-api.ts": [],
+        "client/src/features/feedback/index.ts": [],
+        "client/src/features/feedback/types/feedback.types.ts": [],
+        "client/src/features/fortune/api/fortune-api.ts": [],
+        "client/src/features/fortune/views/__tests__/FortuneView.test.ts": [],
+        "client/src/features/fortune/views/FortuneView.vue": [],
+        "client/src/features/home/views/__tests__/HomeView.test.ts": [],
+        "client/src/features/home/views/HomeView.vue": [],
+        "client/src/features/profile/api/profile-api.ts": [],
+        "client/src/features/profile/views/__tests__/ProfileView.test.ts": [],
+        "client/src/features/profile/views/ProfileView.vue": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 9,
+      "files": [
+        {
+          "path": "client/src/main.ts",
+          "language": "typescript",
+          "sizeLines": 16,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/src/router.ts",
+          "language": "typescript",
+          "sizeLines": 50,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/src/shared/api/client.ts",
+          "language": "typescript",
+          "sizeLines": 32,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/src/shared/components/__tests__/AppLayout.test.ts",
+          "language": "typescript",
+          "sizeLines": 102,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/src/shared/components/AppLayout.vue",
+          "language": "vue",
+          "sizeLines": 265,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/src/shared/types/api.ts",
+          "language": "typescript",
+          "sizeLines": 26,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/src/styles/global.css",
+          "language": "css",
+          "sizeLines": 230,
+          "fileCategory": "markup"
+        },
+        {
+          "path": "client/src/test/setup.ts",
+          "language": "typescript",
+          "sizeLines": 6,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/test-results/.last-run.json",
+          "language": "json",
+          "sizeLines": 3,
+          "fileCategory": "config"
+        },
+        {
+          "path": "client/tests/e2e/api.spec.ts",
+          "language": "typescript",
+          "sizeLines": 65,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/tests/e2e/homepage.spec.ts",
+          "language": "typescript",
+          "sizeLines": 44,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/tests/e2e/login.spec.ts",
+          "language": "typescript",
+          "sizeLines": 27,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/tests/e2e/navigation.spec.ts",
+          "language": "typescript",
+          "sizeLines": 29,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/tests/e2e/register.spec.ts",
+          "language": "typescript",
+          "sizeLines": 30,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/vite.config.ts",
+          "language": "typescript",
+          "sizeLines": 21,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/vitest.config.ts",
+          "language": "typescript",
+          "sizeLines": 18,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/alembic/env.py",
+          "language": "python",
+          "sizeLines": 69,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/alembic/README",
+          "language": "unknown",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/alembic/script.py.mako",
+          "language": "mako",
+          "sizeLines": 28,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/alembic/versions/6f442fb65ec6_initial_schema.py",
+          "language": "python",
+          "sizeLines": 32,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/app/__init__.py",
+          "language": "python",
+          "sizeLines": 1,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/app/api/__init__.py",
+          "language": "python",
+          "sizeLines": 1,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/app/api/deps.py",
+          "language": "python",
+          "sizeLines": 18,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/app/api/v1/__init__.py",
+          "language": "python",
+          "sizeLines": 1,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/app/api/v1/auth.py",
+          "language": "python",
+          "sizeLines": 83,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "client/src/main.ts": [],
+        "client/src/router.ts": [],
+        "client/src/shared/api/client.ts": [],
+        "client/src/shared/components/__tests__/AppLayout.test.ts": [],
+        "client/src/shared/components/AppLayout.vue": [],
+        "client/src/shared/types/api.ts": [],
+        "client/src/styles/global.css": [],
+        "client/src/test/setup.ts": [],
+        "client/test-results/.last-run.json": [],
+        "client/tests/e2e/api.spec.ts": [],
+        "client/tests/e2e/homepage.spec.ts": [],
+        "client/tests/e2e/login.spec.ts": [],
+        "client/tests/e2e/navigation.spec.ts": [],
+        "client/tests/e2e/register.spec.ts": [],
+        "client/vite.config.ts": [],
+        "client/vitest.config.ts": [],
+        "server/alembic/env.py": [],
+        "server/alembic/README": [],
+        "server/alembic/script.py.mako": [],
+        "server/alembic/versions/6f442fb65ec6_initial_schema.py": [],
+        "server/app/__init__.py": [],
+        "server/app/api/__init__.py": [],
+        "server/app/api/deps.py": [],
+        "server/app/api/v1/__init__.py": [],
+        "server/app/api/v1/auth.py": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 10,
+      "files": [
+        {
+          "path": "server/app/api/v1/divination.py",
+          "language": "python",
+          "sizeLines": 315,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/app/api/v1/fortunes.py",
+          "language": "python",
+          "sizeLines": 350,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/app/api/v1/internal.py",
+          "language": "python",
+          "sizeLines": 153,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/app/api/v1/prediction_outcomes.py",
+          "language": "python",
+          "sizeLines": 90,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/app/api/v1/probability_events.py",
+          "language": "python",
+          "sizeLines": 254,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/app/api/v1/users.py",
+          "language": "python",
+          "sizeLines": 407,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/app/config.py",
+          "language": "python",
+          "sizeLines": 33,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/app/core/__init__.py",
+          "language": "python",
+          "sizeLines": 1,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/app/core/security.py",
+          "language": "python",
+          "sizeLines": 39,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/app/main.py",
+          "language": "python",
+          "sizeLines": 43,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/app/models/__init__.py",
+          "language": "python",
+          "sizeLines": 8,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/app/models/base.py",
+          "language": "python",
+          "sizeLines": 38,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/app/models/bazi_profile.py",
+          "language": "python",
+          "sizeLines": 32,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/app/models/daily_fortune.py",
+          "language": "python",
+          "sizeLines": 51,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/app/models/divination_record.py",
+          "language": "python",
+          "sizeLines": 38,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/app/models/prediction_outcome.py",
+          "language": "python",
+          "sizeLines": 45,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/app/models/probability_event_feedback.py",
+          "language": "python",
+          "sizeLines": 32,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/app/models/user.py",
+          "language": "python",
+          "sizeLines": 59,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/app/schemas/__init__.py",
+          "language": "python",
+          "sizeLines": 1,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/app/schemas/auth.py",
+          "language": "python",
+          "sizeLines": 61,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/app/schemas/common.py",
+          "language": "python",
+          "sizeLines": 10,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/app/services/feedback_summary.py",
+          "language": "python",
+          "sizeLines": 261,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/app/services/push_email.py",
+          "language": "python",
+          "sizeLines": 237,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/app/services/push_feishu.py",
+          "language": "python",
+          "sizeLines": 179,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/fortune_engine/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "server/app/api/v1/divination.py": [],
+        "server/app/api/v1/fortunes.py": [],
+        "server/app/api/v1/internal.py": [],
+        "server/app/api/v1/prediction_outcomes.py": [],
+        "server/app/api/v1/probability_events.py": [],
+        "server/app/api/v1/users.py": [],
+        "server/app/config.py": [],
+        "server/app/core/__init__.py": [],
+        "server/app/core/security.py": [],
+        "server/app/main.py": [],
+        "server/app/models/__init__.py": [],
+        "server/app/models/base.py": [],
+        "server/app/models/bazi_profile.py": [],
+        "server/app/models/daily_fortune.py": [],
+        "server/app/models/divination_record.py": [],
+        "server/app/models/prediction_outcome.py": [],
+        "server/app/models/probability_event_feedback.py": [],
+        "server/app/models/user.py": [],
+        "server/app/schemas/__init__.py": [],
+        "server/app/schemas/auth.py": [],
+        "server/app/schemas/common.py": [],
+        "server/app/services/feedback_summary.py": [],
+        "server/app/services/push_email.py": [],
+        "server/app/services/push_feishu.py": [],
+        "server/fortune_engine/__init__.py": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 11,
+      "files": [
+        {
+          "path": "server/fortune_engine/bazi/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/fortune_engine/bazi/daily_fortune.py",
+          "language": "python",
+          "sizeLines": 137,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/fortune_engine/bazi/hourly_fortune.py",
+          "language": "python",
+          "sizeLines": 201,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/fortune_engine/bazi/pillar.py",
+          "language": "python",
+          "sizeLines": 205,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/fortune_engine/common/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/fortune_engine/common/dizhi.py",
+          "language": "python",
+          "sizeLines": 43,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/fortune_engine/common/shichen.py",
+          "language": "python",
+          "sizeLines": 39,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/fortune_engine/common/tiangan.py",
+          "language": "python",
+          "sizeLines": 40,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/fortune_engine/common/wuxing.py",
+          "language": "python",
+          "sizeLines": 55,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/fortune_engine/liuyao/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/fortune_engine/liuyao/hexagram.py",
+          "language": "python",
+          "sizeLines": 192,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/fortune_engine/probability_events.py",
+          "language": "python",
+          "sizeLines": 364,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/fortune_engine/qimen/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/fortune_engine/qimen/chart.py",
+          "language": "python",
+          "sizeLines": 117,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/fortune_engine/services/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/fortune_engine/services/deepseek.py",
+          "language": "python",
+          "sizeLines": 340,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/migrate_llm_fields.py",
+          "language": "python",
+          "sizeLines": 36,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/scripts/init_db.py",
+          "language": "python",
+          "sizeLines": 32,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/test.db",
+          "language": "db",
+          "sizeLines": 399,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/tests/__init__.py",
+          "language": "python",
+          "sizeLines": 1,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/tests/conftest.py",
+          "language": "python",
+          "sizeLines": 65,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/tests/test_auth_login.py",
+          "language": "python",
+          "sizeLines": 62,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/tests/test_auth_register.py",
+          "language": "python",
+          "sizeLines": 84,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/tests/test_bazi.py",
+          "language": "python",
+          "sizeLines": 89,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/tests/test_common_module.py",
+          "language": "python",
+          "sizeLines": 160,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "server/fortune_engine/bazi/__init__.py": [],
+        "server/fortune_engine/bazi/daily_fortune.py": [],
+        "server/fortune_engine/bazi/hourly_fortune.py": [],
+        "server/fortune_engine/bazi/pillar.py": [],
+        "server/fortune_engine/common/__init__.py": [],
+        "server/fortune_engine/common/dizhi.py": [],
+        "server/fortune_engine/common/shichen.py": [],
+        "server/fortune_engine/common/tiangan.py": [],
+        "server/fortune_engine/common/wuxing.py": [],
+        "server/fortune_engine/liuyao/__init__.py": [],
+        "server/fortune_engine/liuyao/hexagram.py": [],
+        "server/fortune_engine/probability_events.py": [],
+        "server/fortune_engine/qimen/__init__.py": [],
+        "server/fortune_engine/qimen/chart.py": [],
+        "server/fortune_engine/services/__init__.py": [],
+        "server/fortune_engine/services/deepseek.py": [],
+        "server/migrate_llm_fields.py": [],
+        "server/scripts/init_db.py": [],
+        "server/test.db": [],
+        "server/tests/__init__.py": [],
+        "server/tests/conftest.py": [],
+        "server/tests/test_auth_login.py": [],
+        "server/tests/test_auth_register.py": [],
+        "server/tests/test_bazi.py": [],
+        "server/tests/test_common_module.py": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 12,
+      "files": [
+        {
+          "path": "server/tests/test_config.py",
+          "language": "python",
+          "sizeLines": 20,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/tests/test_daily_fortune.py",
+          "language": "python",
+          "sizeLines": 69,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/tests/test_daily_push.py",
+          "language": "python",
+          "sizeLines": 140,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/tests/test_deepseek_service.py",
+          "language": "python",
+          "sizeLines": 76,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/tests/test_divination_api.py",
+          "language": "python",
+          "sizeLines": 168,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/tests/test_divination_history.py",
+          "language": "python",
+          "sizeLines": 192,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/tests/test_feedback_summary.py",
+          "language": "python",
+          "sizeLines": 149,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/tests/test_fortunes_api.py",
+          "language": "python",
+          "sizeLines": 321,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/tests/test_health.py",
+          "language": "python",
+          "sizeLines": 16,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/tests/test_liuyao.py",
+          "language": "python",
+          "sizeLines": 80,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/tests/test_models.py",
+          "language": "python",
+          "sizeLines": 93,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/tests/test_push_services.py",
+          "language": "python",
+          "sizeLines": 175,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/tests/test_qimen.py",
+          "language": "python",
+          "sizeLines": 70,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/tests/test_security.py",
+          "language": "python",
+          "sizeLines": 49,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/tests/test_user_profile.py",
+          "language": "python",
+          "sizeLines": 281,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "server/tests/test_config.py": [],
+        "server/tests/test_daily_fortune.py": [],
+        "server/tests/test_daily_push.py": [],
+        "server/tests/test_deepseek_service.py": [],
+        "server/tests/test_divination_api.py": [],
+        "server/tests/test_divination_history.py": [],
+        "server/tests/test_feedback_summary.py": [],
+        "server/tests/test_fortunes_api.py": [],
+        "server/tests/test_health.py": [],
+        "server/tests/test_liuyao.py": [],
+        "server/tests/test_models.py": [],
+        "server/tests/test_push_services.py": [],
+        "server/tests/test_qimen.py": [],
+        "server/tests/test_security.py": [],
+        "server/tests/test_user_profile.py": []
+      },
+      "neighborMap": {}
+    }
+  ]
+}

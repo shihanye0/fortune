@@ -1,0 +1,651 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 4,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "docs/plans/2026-06-20-bdd-scenarios.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 449,
+      "nonEmptyLines": 344,
+      "sections": [
+        {
+          "heading": "命理运势系统 BDD 场景",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "Feature 1: 用户注册",
+          "level": 2,
+          "line": 8
+        },
+        {
+          "heading": "正常流程",
+          "level": 3,
+          "line": 14
+        },
+        {
+          "heading": "边界条件",
+          "level": 3,
+          "line": 25
+        },
+        {
+          "heading": "异常场景",
+          "level": 3,
+          "line": 45
+        },
+        {
+          "heading": "Feature 2: 用户登录",
+          "level": 2,
+          "line": 69
+        },
+        {
+          "heading": "正常流程",
+          "level": 3,
+          "line": 75
+        },
+        {
+          "heading": "异常场景",
+          "level": 3,
+          "line": 83
+        },
+        {
+          "heading": "Feature 3: 每日运势推送",
+          "level": 2,
+          "line": 97
+        },
+        {
+          "heading": "正常流程",
+          "level": 3,
+          "line": 103
+        },
+        {
+          "heading": "降级场景",
+          "level": 3,
+          "line": 138
+        },
+        {
+          "heading": "失败重试场景",
+          "level": 3,
+          "line": 147
+        },
+        {
+          "heading": "边界场景",
+          "level": 3,
+          "line": 162
+        },
+        {
+          "heading": "Feature 4: 查看运势",
+          "level": 2,
+          "line": 177
+        },
+        {
+          "heading": "正常流程",
+          "level": 3,
+          "line": 183
+        },
+        {
+          "heading": "边界场景",
+          "level": 3,
+          "line": 206
+        },
+        {
+          "heading": "Feature 5: 用户反馈",
+          "level": 2,
+          "line": 223
+        },
+        {
+          "heading": "正常流程",
+          "level": 3,
+          "line": 229
+        },
+        {
+          "heading": "Feature 6: 六爻占卜",
+          "level": 2,
+          "line": 255
+        },
+        {
+          "heading": "正常流程",
+          "level": 3,
+          "line": 261
+        },
+        {
+          "heading": "Feature 7: 奇门遁甲",
+          "level": 2,
+          "line": 285
+        },
+        {
+          "heading": "模式一：输入问题起盘",
+          "level": 3,
+          "line": 291
+        },
+        {
+          "heading": "模式二：实时看盘",
+          "level": 3,
+          "line": 302
+        },
+        {
+          "heading": "Feature 8: 个人中心",
+          "level": 2,
+          "line": 313
+        },
+        {
+          "heading": "正常流程",
+          "level": 3,
+          "line": 319
+        },
+        {
+          "heading": "Feature 9: 账号注销",
+          "level": 2,
+          "line": 350
+        },
+        {
+          "heading": "正常流程",
+          "level": 3,
+          "line": 356
+        },
+        {
+          "heading": "安全场景",
+          "level": 3,
+          "line": 366
+        },
+        {
+          "heading": "Feature 10: API 安全",
+          "level": 2,
+          "line": 377
+        },
+        {
+          "heading": "限流场景",
+          "level": 3,
+          "line": 379
+        },
+        {
+          "heading": "鉴权场景",
+          "level": 3,
+          "line": 387
+        },
+        {
+          "heading": "场景统计",
+          "level": 2,
+          "line": 403
+        },
+        {
+          "heading": "需求决策记录",
+          "level": 2,
+          "line": 421
+        },
+        {
+          "heading": "设计变更提醒",
+          "level": 2,
+          "line": 439
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 34
+      }
+    },
+    {
+      "path": "docs/plans/2026-06-20-fortune-agent-design.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 555,
+      "nonEmptyLines": 457,
+      "sections": [
+        {
+          "heading": "命理运势系统设计文档",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "一、项目概述",
+          "level": 2,
+          "line": 6
+        },
+        {
+          "heading": "1.1 项目目标",
+          "level": 3,
+          "line": 8
+        },
+        {
+          "heading": "1.2 核心特性",
+          "level": 3,
+          "line": 12
+        },
+        {
+          "heading": "1.3 目标用户",
+          "level": 3,
+          "line": 22
+        },
+        {
+          "heading": "二、系统架构",
+          "level": 2,
+          "line": 28
+        },
+        {
+          "heading": "2.1 整体架构图",
+          "level": 3,
+          "line": 30
+        },
+        {
+          "heading": "2.2 技术栈",
+          "level": 3,
+          "line": 64
+        },
+        {
+          "heading": "三、数据库设计",
+          "level": 2,
+          "line": 80
+        },
+        {
+          "heading": "3.1 users 用户表",
+          "level": 3,
+          "line": 82
+        },
+        {
+          "heading": "3.2 bazi_profiles 八字档案表",
+          "level": 3,
+          "line": 104
+        },
+        {
+          "heading": "3.3 daily_fortunes 每日运势表",
+          "level": 3,
+          "line": 121
+        },
+        {
+          "heading": "3.4 divination_records 占卜记录表",
+          "level": 3,
+          "line": 144
+        },
+        {
+          "heading": "3.5 索引设计",
+          "level": 3,
+          "line": 158
+        },
+        {
+          "heading": "四、核心模块设计",
+          "level": 2,
+          "line": 178
+        },
+        {
+          "heading": "4.1 命理计算引擎",
+          "level": 3,
+          "line": 180
+        },
+        {
+          "heading": "4.2 DeepSeek 解读服务",
+          "level": 3,
+          "line": 209
+        },
+        {
+          "heading": "4.3 推送服务",
+          "level": 3,
+          "line": 240
+        },
+        {
+          "heading": "4.4 用户反馈机制",
+          "level": 3,
+          "line": 252
+        },
+        {
+          "heading": "五、每日运势推送流程",
+          "level": 2,
+          "line": 273
+        },
+        {
+          "heading": "六、Web 前端功能规划",
+          "level": 2,
+          "line": 304
+        },
+        {
+          "heading": "6.1 页面结构",
+          "level": 3,
+          "line": 306
+        },
+        {
+          "heading": "6.2 核心交互",
+          "level": 3,
+          "line": 318
+        },
+        {
+          "heading": "七、API 接口设计",
+          "level": 2,
+          "line": 327
+        },
+        {
+          "heading": "7.1 认证模块",
+          "level": 3,
+          "line": 329
+        },
+        {
+          "heading": "7.2 用户模块",
+          "level": 3,
+          "line": 337
+        },
+        {
+          "heading": "7.3 运势模块",
+          "level": 3,
+          "line": 347
+        },
+        {
+          "heading": "7.4 占卜模块",
+          "level": 3,
+          "line": 356
+        },
+        {
+          "heading": "7.5 内部接口（GitHub Actions 调用）",
+          "level": 3,
+          "line": 365
+        },
+        {
+          "heading": "八、GitHub Actions 定时任务",
+          "level": 2,
+          "line": 373
+        },
+        {
+          "heading": "九、环境变量配置",
+          "level": 2,
+          "line": 403
+        },
+        {
+          "heading": "十、目录结构总览",
+          "level": 2,
+          "line": 433
+        },
+        {
+          "heading": "十一、开发阶段规划",
+          "level": 2,
+          "line": 505
+        },
+        {
+          "heading": "Phase 1：基础骨架（预计 2-3 天）",
+          "level": 3,
+          "line": 507
+        },
+        {
+          "heading": "Phase 2：命理计算引擎（预计 3-4 天）",
+          "level": 3,
+          "line": 513
+        },
+        {
+          "heading": "Phase 3：运势推送系统（预计 2 天）",
+          "level": 3,
+          "line": 519
+        },
+        {
+          "heading": "Phase 4：Web 功能完善（预计 2-3 天）",
+          "level": 3,
+          "line": 525
+        },
+        {
+          "heading": "Phase 5：占卜功能（预计 2-3 天）",
+          "level": 3,
+          "line": 530
+        },
+        {
+          "heading": "Phase 6：优化上线（预计 1-2 天）",
+          "level": 3,
+          "line": 535
+        },
+        {
+          "heading": "十二、关键技术难点",
+          "level": 2,
+          "line": 543
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 40
+      }
+    },
+    {
+      "path": "docs/plans/2026-06-20-implementation-plan.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 227,
+      "nonEmptyLines": 182,
+      "sections": [
+        {
+          "heading": "命理运势系统实施计划",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "Phase 1：项目骨架搭建",
+          "level": 2,
+          "line": 8
+        },
+        {
+          "heading": "1.1 后端初始化",
+          "level": 3,
+          "line": 10
+        },
+        {
+          "heading": "1.2 数据库建表",
+          "level": 3,
+          "line": 18
+        },
+        {
+          "heading": "1.3 用户认证模块",
+          "level": 3,
+          "line": 23
+        },
+        {
+          "heading": "1.4 前端初始化",
+          "level": 3,
+          "line": 31
+        },
+        {
+          "heading": "1.5 验收",
+          "level": 3,
+          "line": 39
+        },
+        {
+          "heading": "Phase 2：命理计算引擎",
+          "level": 2,
+          "line": 48
+        },
+        {
+          "heading": "2.1 公共基础模块",
+          "level": 3,
+          "line": 50
+        },
+        {
+          "heading": "2.2 八字排盘",
+          "level": 3,
+          "line": 57
+        },
+        {
+          "heading": "2.3 每日运势推算",
+          "level": 3,
+          "line": 69
+        },
+        {
+          "heading": "2.4 六爻占卜",
+          "level": 3,
+          "line": 76
+        },
+        {
+          "heading": "2.5 奇门遁甲",
+          "level": 3,
+          "line": 82
+        },
+        {
+          "heading": "2.6 验收",
+          "level": 3,
+          "line": 90
+        },
+        {
+          "heading": "Phase 3：DeepSeek 解读服务",
+          "level": 2,
+          "line": 100
+        },
+        {
+          "heading": "3.1 LLM 服务封装",
+          "level": 3,
+          "line": 102
+        },
+        {
+          "heading": "3.2 解读质量保障",
+          "level": 3,
+          "line": 111
+        },
+        {
+          "heading": "3.3 验收",
+          "level": 3,
+          "line": 117
+        },
+        {
+          "heading": "Phase 4：运势推送系统",
+          "level": 2,
+          "line": 125
+        },
+        {
+          "heading": "4.1 QQ 邮箱推送",
+          "level": 3,
+          "line": 127
+        },
+        {
+          "heading": "4.2 飞书机器人推送",
+          "level": 3,
+          "line": 133
+        },
+        {
+          "heading": "4.3 每日推送流程",
+          "level": 3,
+          "line": 139
+        },
+        {
+          "heading": "4.4 验收",
+          "level": 3,
+          "line": 146
+        },
+        {
+          "heading": "Phase 5：Web 功能完善",
+          "level": 2,
+          "line": 154
+        },
+        {
+          "heading": "5.1 用户 API",
+          "level": 3,
+          "line": 156
+        },
+        {
+          "heading": "5.2 运势 API",
+          "level": 3,
+          "line": 162
+        },
+        {
+          "heading": "5.3 占卜 API",
+          "level": 3,
+          "line": 168
+        },
+        {
+          "heading": "5.4 前端页面",
+          "level": 3,
+          "line": 174
+        },
+        {
+          "heading": "5.5 验收",
+          "level": 3,
+          "line": 181
+        },
+        {
+          "heading": "Phase 6：优化与上线",
+          "level": 2,
+          "line": 189
+        },
+        {
+          "heading": "6.1 优化",
+          "level": 3,
+          "line": 191
+        },
+        {
+          "heading": "6.2 部署",
+          "level": 3,
+          "line": 197
+        },
+        {
+          "heading": "6.3 验收",
+          "level": 3,
+          "line": 203
+        },
+        {
+          "heading": "开发顺序建议",
+          "level": 2,
+          "line": 211
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 34
+      }
+    },
+    {
+      "path": "docs/plans/2026-06-21-feedback-enhancement.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 37,
+      "nonEmptyLines": 30,
+      "sections": [
+        {
+          "heading": "反馈系统增强计划",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "目标",
+          "level": 2,
+          "line": 3
+        },
+        {
+          "heading": "任务清单",
+          "level": 2,
+          "line": 10
+        },
+        {
+          "heading": "Task 1: 数据库模型增强",
+          "level": 3,
+          "line": 12
+        },
+        {
+          "heading": "Task 2: 后端 API - 事件验证与准确率",
+          "level": 3,
+          "line": 17
+        },
+        {
+          "heading": "Task 3: 后端服务 - 增强反馈摘要",
+          "level": 3,
+          "line": 23
+        },
+        {
+          "heading": "Task 4: 前端 API 层",
+          "level": 3,
+          "line": 28
+        },
+        {
+          "heading": "Task 5: 前端 UI - 反馈组件与仪表盘",
+          "level": 3,
+          "line": 33
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 8
+      }
+    }
+  ]
+}

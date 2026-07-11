@@ -52,6 +52,27 @@ npm run dev
 - 推送内容：综合运势 + 四维评分 + 运势解读 + 12 时辰运势 + 概率事件
 - 触发方式：GitHub Actions 每小时调用 `/api/v1/internal/daily-push`
 
+## 服务器更新
+
+```bash
+# 标准流程
+ssh ubuntu@82.157.186.52
+cd /opt/fortune && bash update.sh
+
+# 确认服务正常
+sudo systemctl status fortune
+curl -s http://localhost:8080/health
+```
+
+### 常见问题
+
+| 问题 | 原因 | 解决 |
+|------|------|------|
+| `dubious ownership in repository` | .git 目录属主是 root | `git config --global --add safe.directory /opt/fortune` |
+| `Failed to connect to 127.0.0.1:7890` | git 配置了本地代理 | `git config --global --unset http.proxy && git config --global --unset https.proxy` |
+| `Permission denied` on .git/FETCH_HEAD | 目录权限不对 | `sudo chown -R ubuntu:ubuntu /opt/fortune` |
+| GitHub Actions 推送失败 | 服务短暂不可用 | 确认服务状态，下次整点自动重试 |
+
 ## 注意事项
 
 - 后端端口用 8080（避免 Windows 端口权限问题）

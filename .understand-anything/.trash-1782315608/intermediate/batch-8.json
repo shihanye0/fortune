@@ -1,0 +1,600 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 25,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "client/src/main.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 16,
+      "nonEmptyLines": 13,
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "client/src/router.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 50,
+      "nonEmptyLines": 47,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "client/src/shared/api/client.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 32,
+      "nonEmptyLines": 28,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "client/src/shared/components/__tests__/AppLayout.test.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 102,
+      "nonEmptyLines": 87,
+      "functions": [
+        {
+          "name": "createTestRouter",
+          "startLine": 7,
+          "endLine": 19,
+          "params": []
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "createTestRouter",
+          "callee": "createRouter",
+          "lineNumber": 8
+        },
+        {
+          "caller": "createTestRouter",
+          "callee": "createMemoryHistory",
+          "lineNumber": 9
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 0,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "client/src/shared/components/AppLayout.vue",
+      "language": "vue",
+      "fileCategory": "code",
+      "totalLines": 265,
+      "nonEmptyLines": 232,
+      "metrics": {}
+    },
+    {
+      "path": "client/src/shared/types/api.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 26,
+      "nonEmptyLines": 23,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "client/src/styles/global.css",
+      "language": "css",
+      "fileCategory": "markup",
+      "totalLines": 230,
+      "nonEmptyLines": 193,
+      "metrics": {}
+    },
+    {
+      "path": "client/src/test/setup.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 6,
+      "nonEmptyLines": 5,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "client/test-results/.last-run.json",
+      "language": "json",
+      "fileCategory": "config",
+      "totalLines": 4,
+      "nonEmptyLines": 4,
+      "sections": [
+        {
+          "heading": "status",
+          "level": 1,
+          "line": 2
+        },
+        {
+          "heading": "failedTests",
+          "level": 1,
+          "line": 3
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 2
+      }
+    },
+    {
+      "path": "client/tests/e2e/api.spec.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 65,
+      "nonEmptyLines": 59,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "client/tests/e2e/homepage.spec.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 44,
+      "nonEmptyLines": 36,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "client/tests/e2e/login.spec.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 27,
+      "nonEmptyLines": 22,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "client/tests/e2e/navigation.spec.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 29,
+      "nonEmptyLines": 25,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "client/tests/e2e/register.spec.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 30,
+      "nonEmptyLines": 25,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "client/vite.config.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 21,
+      "nonEmptyLines": 20,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "client/vitest.config.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 18,
+      "nonEmptyLines": 17,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/alembic/env.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 69,
+      "nonEmptyLines": 55,
+      "functions": [
+        {
+          "name": "run_migrations_offline",
+          "startLine": 37,
+          "endLine": 47,
+          "params": []
+        },
+        {
+          "name": "run_migrations_online",
+          "startLine": 50,
+          "endLine": 63,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "run_migrations_offline",
+          "line": 37,
+          "isDefault": false
+        },
+        {
+          "name": "run_migrations_online",
+          "line": 50,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "run_migrations_offline",
+          "callee": "config.get_main_option",
+          "lineNumber": 39
+        },
+        {
+          "caller": "run_migrations_offline",
+          "callee": "context.configure",
+          "lineNumber": 40
+        },
+        {
+          "caller": "run_migrations_offline",
+          "callee": "context.begin_transaction",
+          "lineNumber": 46
+        },
+        {
+          "caller": "run_migrations_offline",
+          "callee": "context.run_migrations",
+          "lineNumber": 47
+        },
+        {
+          "caller": "run_migrations_online",
+          "callee": "engine_from_config",
+          "lineNumber": 52
+        },
+        {
+          "caller": "run_migrations_online",
+          "callee": "config.get_section",
+          "lineNumber": 53
+        },
+        {
+          "caller": "run_migrations_online",
+          "callee": "connectable.connect",
+          "lineNumber": 57
+        },
+        {
+          "caller": "run_migrations_online",
+          "callee": "context.configure",
+          "lineNumber": 58
+        },
+        {
+          "caller": "run_migrations_online",
+          "callee": "context.begin_transaction",
+          "lineNumber": 62
+        },
+        {
+          "caller": "run_migrations_online",
+          "callee": "context.run_migrations",
+          "lineNumber": 63
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/alembic/README",
+      "language": "unknown",
+      "fileCategory": "code",
+      "totalLines": 1,
+      "nonEmptyLines": 1,
+      "metrics": {}
+    },
+    {
+      "path": "server/alembic/script.py.mako",
+      "language": "mako",
+      "fileCategory": "code",
+      "totalLines": 28,
+      "nonEmptyLines": 20,
+      "metrics": {}
+    },
+    {
+      "path": "server/alembic/versions/6f442fb65ec6_initial_schema.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 32,
+      "nonEmptyLines": 23,
+      "functions": [
+        {
+          "name": "upgrade",
+          "startLine": 21,
+          "endLine": 25,
+          "params": []
+        },
+        {
+          "name": "downgrade",
+          "startLine": 28,
+          "endLine": 32,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "upgrade",
+          "line": 21,
+          "isDefault": false
+        },
+        {
+          "name": "downgrade",
+          "line": 28,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/app/__init__.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 1,
+      "nonEmptyLines": 1,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/app/api/__init__.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 1,
+      "nonEmptyLines": 1,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/app/api/deps.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 18,
+      "nonEmptyLines": 14,
+      "functions": [
+        {
+          "name": "get_db",
+          "startLine": 12,
+          "endLine": 18,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "get_db",
+          "line": 12,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "get_db",
+          "callee": "SessionLocal",
+          "lineNumber": 14
+        },
+        {
+          "caller": "get_db",
+          "callee": "db.close",
+          "lineNumber": 18
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/app/api/v1/__init__.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 1,
+      "nonEmptyLines": 1,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/app/api/v1/auth.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 83,
+      "nonEmptyLines": 71,
+      "functions": [
+        {
+          "name": "register",
+          "startLine": 16,
+          "endLine": 56,
+          "params": [
+            "req",
+            "db"
+          ]
+        },
+        {
+          "name": "login",
+          "startLine": 60,
+          "endLine": 83,
+          "params": [
+            "req",
+            "db"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "register",
+          "line": 15,
+          "isDefault": false
+        },
+        {
+          "name": "login",
+          "line": 59,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "register",
+          "callee": "Depends",
+          "lineNumber": 16
+        },
+        {
+          "caller": "register",
+          "callee": "db.query(User).filter(User.email == req.email).first",
+          "lineNumber": 19
+        },
+        {
+          "caller": "register",
+          "callee": "db.query(User).filter",
+          "lineNumber": 19
+        },
+        {
+          "caller": "register",
+          "callee": "db.query",
+          "lineNumber": 19
+        },
+        {
+          "caller": "register",
+          "callee": "JSONResponse",
+          "lineNumber": 21
+        },
+        {
+          "caller": "register",
+          "callee": "User",
+          "lineNumber": 30
+        },
+        {
+          "caller": "register",
+          "callee": "hash_password",
+          "lineNumber": 33
+        },
+        {
+          "caller": "register",
+          "callee": "db.add",
+          "lineNumber": 41
+        },
+        {
+          "caller": "register",
+          "callee": "db.commit",
+          "lineNumber": 42
+        },
+        {
+          "caller": "register",
+          "callee": "db.refresh",
+          "lineNumber": 43
+        },
+        {
+          "caller": "register",
+          "callee": "create_access_token",
+          "lineNumber": 46
+        },
+        {
+          "caller": "login",
+          "callee": "Depends",
+          "lineNumber": 60
+        },
+        {
+          "caller": "login",
+          "callee": "db.query(User).filter(User.email == req.email).first",
+          "lineNumber": 63
+        },
+        {
+          "caller": "login",
+          "callee": "db.query(User).filter",
+          "lineNumber": 63
+        },
+        {
+          "caller": "login",
+          "callee": "db.query",
+          "lineNumber": 63
+        },
+        {
+          "caller": "login",
+          "callee": "verify_password",
+          "lineNumber": 66
+        },
+        {
+          "caller": "login",
+          "callee": "JSONResponse",
+          "lineNumber": 67
+        },
+        {
+          "caller": "login",
+          "callee": "create_access_token",
+          "lineNumber": 76
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    }
+  ]
+}
