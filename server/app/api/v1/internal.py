@@ -109,7 +109,18 @@ def daily_push(req: DailyPushRequest, db: Session = Depends(get_db)):
             )
 
             try:
-                interpretation = interpret_daily(bazi_summary, daily, feedback_summary_text)
+                logger.info(
+                    "推送 LLM 调用 user=%d model=%s url=%s",
+                    user.id,
+                    user.llm_model or "mimo-v2.5(default)",
+                    user.llm_api_url or "default",
+                )
+                interpretation = interpret_daily(
+                    bazi_summary, daily, feedback_summary_text,
+                    llm_api_key=user.llm_api_key,
+                    llm_api_url=user.llm_api_url,
+                    llm_model=user.llm_model,
+                )
             except Exception as e:
                 logger.error("LLM 解读失败 user=%d: %s", user.id, e)
                 interpretation = FALLBACK_DAILY
