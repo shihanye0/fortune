@@ -1,6 +1,8 @@
 import client from '@/shared/api/client'
 import type { ApiResponse } from '@/shared/types/api'
 
+const LLM_INTERPRETATION_TIMEOUT = 120000
+
 export interface LiuyaoRequest {
   question?: string
   method?: 'coin' | 'time'
@@ -64,12 +66,16 @@ export interface EventFeedbackRequest {
 }
 
 export async function doLiuyao(data: LiuyaoRequest): Promise<ApiResponse<DivinationResult>> {
-  const res = await client.post('/api/v1/divination/liuyao', data)
+  const res = await client.post('/api/v1/divination/liuyao', data, {
+    timeout: LLM_INTERPRETATION_TIMEOUT,
+  })
   return res.data
 }
 
 export async function doQimen(data: QimenRequest): Promise<ApiResponse<DivinationResult>> {
-  const res = await client.post('/api/v1/divination/qimen', data)
+  const res = await client.post('/api/v1/divination/qimen', data, {
+    timeout: LLM_INTERPRETATION_TIMEOUT,
+  })
   return res.data
 }
 

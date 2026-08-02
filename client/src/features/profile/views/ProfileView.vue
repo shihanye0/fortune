@@ -242,6 +242,13 @@ async function handleTestLLM() {
   }
 }
 
+function openLlmWebsite() {
+  const website = llmForm.llm_website.trim()
+  if (website) {
+    window.open(website, '_blank', 'noopener,noreferrer')
+  }
+}
+
 function getAccuracyColor(rate: number): string {
   if (rate >= 80) return '#22c55e'
   if (rate >= 60) return '#eab308'
@@ -454,7 +461,7 @@ async function handleDeleteAccount() {
                 <span>🔗</span>
               </template>
               <template #append>
-                <el-button @click="llmForm.llm_website && window.open(llmForm.llm_website, '_blank')">
+                <el-button @click="openLlmWebsite">
                   访问
                 </el-button>
               </template>

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import { createRouter, createMemoryHistory } from 'vue-router'
@@ -21,6 +21,7 @@ vi.mock('@/features/feedback/api/feedback-api', () => ({
 }))
 
 import { getProfile } from '@/features/profile/api/profile-api'
+import type { UserProfile } from '@/features/profile/api/profile-api'
 import { getAccuracyStats } from '@/features/feedback/api/feedback-api'
 
 function createTestRouter() {
@@ -33,7 +34,7 @@ function createTestRouter() {
   })
 }
 
-const mockProfile = {
+const mockProfile: UserProfile = {
   id: 1,
   username: '测试用户',
   email: 'test@example.com',
@@ -41,12 +42,20 @@ const mockProfile = {
   birth_month: 5,
   birth_day: 15,
   birth_hour: 8,
+  birth_minute: 0,
   gender: 'male',
   birth_location: '北京',
   push_channel: 'email',
   push_enabled: true,
   push_time: '07:00',
   feishu_webhook: null,
+  llm_provider: null,
+  llm_notes: null,
+  llm_website: null,
+  llm_api_key: null,
+  llm_api_key_url: null,
+  llm_api_url: null,
+  llm_model: null,
   created_at: '2026-06-20T00:00:00',
 }
 

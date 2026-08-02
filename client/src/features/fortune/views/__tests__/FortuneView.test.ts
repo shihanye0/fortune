@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import { createRouter, createMemoryHistory } from 'vue-router'
@@ -80,18 +80,20 @@ describe('FortuneView', () => {
       data: {
         id: 1,
         date: '2026-06-20',
-        overall_score: 85,
-        career: 80,
-        wealth: 75,
-        love: 90,
-        health: 85,
+        overall_score: 4,
+        career: { score: 4, description: 'Good' },
+        wealth: { score: 3, description: 'Good' },
+        love: { score: 5, description: 'Good' },
+        health: { score: 4, description: 'Good' },
         lucky_color: '红色',
         lucky_number: '3, 8',
         lucky_direction: '东方',
+        hourly_fortunes: null,
         interpretation: '今日运势不错，事业上有贵人相助。',
         user_rating: null,
         user_feedback_tags: [],
         user_feedback_text: null,
+        accuracy_mark: null,
       },
       error: null,
       meta: null,
@@ -109,7 +111,7 @@ describe('FortuneView', () => {
     await router.isReady()
     await flushPromises()
 
-    expect(wrapper.text()).toContain('85')
+    expect(wrapper.text()).toContain('4/5')
     expect(wrapper.text()).toContain('红色')
     expect(wrapper.text()).toContain('东方')
   })

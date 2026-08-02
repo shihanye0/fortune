@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import { createRouter, createMemoryHistory } from 'vue-router'
@@ -19,7 +19,7 @@ vi.mock('@/features/feedback/api/feedback-api', () => ({
   getAccuracyStats: vi.fn(),
 }))
 
-import { doLiuyao, doQimen, getDivinationRecords } from '@/features/divination/api/divination-api'
+import { doLiuyao, getDivinationRecords } from '@/features/divination/api/divination-api'
 
 function createTestRouter() {
   return createRouter({
