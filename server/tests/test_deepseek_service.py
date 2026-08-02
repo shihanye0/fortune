@@ -2,7 +2,7 @@
 """Spec 014: DeepSeek 解读服务测试"""
 import pytest
 from unittest.mock import patch, MagicMock
-from fortune_engine.services.deepseek import interpret_fortune, interpret_daily
+from fortune_engine.services.deepseek import FALLBACK_QIMEN, interpret_daily, interpret_fortune, interpret_qimen
 
 
 class TestInterpretFortune:
@@ -74,3 +74,28 @@ class TestInterpretDaily:
             )
             assert isinstance(result, str)
             assert len(result) > 0
+
+
+class TestInterpretQimen:
+    """奇门遁甲解读服务"""
+
+    def test_empty_model_content_is_logged_and_falls_back(self, caplog):
+        """模型返回 200 但没有解读文本时，应记录原因而不是静默降级。"""
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            "choices": [{"message": {"content": ""}, "finish_reason": "content_filter"}]
+        }
+        chart_data = {
+            "yin_yang": "阳遁",
+            "ju_shu": 1,
+            "time": "2026-08-02 12:00",
+            "palace": {"1": {"star": "天蓬", "gate": "休门", "god": "值符"}},
+        }
+
+        with patch("fortune_engine.services.deepseek.httpx.post", return_value=mock_response):
+            result = interpret_qimen(chart_data)
+
+        assert result == FALLBACK_QIMEN
+        assert "LLM 响应没有可用解读" in caplog.text
+        assert "finish_reason=content_filter" in caplog.text

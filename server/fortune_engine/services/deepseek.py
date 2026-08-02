@@ -105,7 +105,24 @@ def _call_deepseek(
             response = httpx.post(url, json=payload, headers=headers, timeout=30)
             if response.status_code == 200:
                 data = response.json()
-                return data["choices"][0]["message"]["content"]
+                choices = data.get("choices") if isinstance(data, dict) else None
+                first_choice = choices[0] if isinstance(choices, list) and choices else None
+                message = first_choice.get("message") if isinstance(first_choice, dict) else None
+                content = message.get("content") if isinstance(message, dict) else None
+                if isinstance(content, str) and content.strip():
+                    return content
+
+                finish_reason = first_choice.get("finish_reason") if isinstance(first_choice, dict) else None
+                logger.warning(
+                    "LLM 响应没有可用解读 model=%s url=%s choices=%d finish_reason=%s content_type=%s content_length=%d",
+                    _model,
+                    url,
+                    len(choices) if isinstance(choices, list) else 0,
+                    finish_reason,
+                    type(content).__name__,
+                    len(content) if isinstance(content, str) else 0,
+                )
+                continue
             logger.warning(
                 "LLM 调用返回非成功状态 model=%s url=%s status=%d",
                 _model,
