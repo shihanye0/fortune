@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 """DeepSeek API 解读服务"""
 import re
+import logging
 import httpx
 from app.config import settings
 
+logger = logging.getLogger(__name__)
 
 def _strip_markdown(text: str) -> str:
     """清除markdown格式标记"""
@@ -104,10 +106,22 @@ def _call_deepseek(
             if response.status_code == 200:
                 data = response.json()
                 return data["choices"][0]["message"]["content"]
-        except (httpx.TimeoutException, httpx.HTTPError, Exception):
-            if attempt == max_retries:
-                return None
-            continue
+            logger.warning(
+                "LLM 调用返回非成功状态 model=%s url=%s status=%d",
+                _model,
+                url,
+                response.status_code,
+            )
+        except Exception as exc:
+            logger.warning(
+                "LLM 调用异常 model=%s url=%s error=%s",
+                _model,
+                url,
+                type(exc).__name__,
+            )
+
+        if attempt == max_retries:
+            return None
     return None
 
 
@@ -232,7 +246,14 @@ LIUYAO_PROMPT = """你是一位精通周易六爻的资深卦师。请用专业�
 - 总字数控制在250-400字"""
 
 
-def interpret_liuyao(hexagram_data: dict, bazi_info: str = "", outcome_history: str = "") -> str:
+def interpret_liuyao(
+    hexagram_data: dict,
+    bazi_info: str = "",
+    outcome_history: str = "",
+    llm_api_key: str | None = None,
+    llm_api_url: str | None = None,
+    llm_model: str | None = None,
+) -> str:
     """
     解读六爻卦象
 
@@ -240,6 +261,9 @@ def interpret_liuyao(hexagram_data: dict, bazi_info: str = "", outcome_history: 
         hexagram_data: hexagram.py 生成的卦象数据
         bazi_info: 用户八字信息
         outcome_history: 历史验证结果文本
+        llm_api_key: 用户 LLM API Key
+        llm_api_url: 用户 LLM API URL
+        llm_model: 用户 LLM 模型名称
 
     Returns:
         解读文字
@@ -265,8 +289,13 @@ def interpret_liuyao(hexagram_data: dict, bazi_info: str = "", outcome_history: 
         outcome_history=outcome_history or "暂无历史验证数据",
     )
 
-    result = _call_deepseek(prompt)
-    return _strip_markdown(result) if result else "卦象解读暂不可用，请稍后再试。"
+    result = _call_deepseek(
+        prompt,
+        api_key=llm_api_key,
+        base_url=llm_api_url,
+        model=llm_model,
+    )
+    return _strip_markdown(result) if result else FALLBACK_LIUYAO
 
 
 # --- 奇门遁甲解读 ---
@@ -304,7 +333,15 @@ FALLBACK_LIUYAO = "卦象解读暂不可用，请稍后再试。您可查看卦�
 FALLBACK_QIMEN = "奇门盘面解读暂不可用，请稍后再试。您可查看盘面数据了解基本信息。"
 
 
-def interpret_qimen(chart_data: dict, question: str = "", bazi_info: str = "", outcome_history: str = "") -> str:
+def interpret_qimen(
+    chart_data: dict,
+    question: str = "",
+    bazi_info: str = "",
+    outcome_history: str = "",
+    llm_api_key: str | None = None,
+    llm_api_url: str | None = None,
+    llm_model: str | None = None,
+) -> str:
     """
     解读奇门遁甲盘面
 
@@ -313,6 +350,9 @@ def interpret_qimen(chart_data: dict, question: str = "", bazi_info: str = "", o
         question: 占卜问题
         bazi_info: 用户八字信息
         outcome_history: 历史验证结果文本
+        llm_api_key: 用户 LLM API Key
+        llm_api_url: 用户 LLM API URL
+        llm_model: 用户 LLM 模型名称
 
     Returns:
         解读文字
@@ -336,5 +376,10 @@ def interpret_qimen(chart_data: dict, question: str = "", bazi_info: str = "", o
         outcome_history=outcome_history or "暂无历史验证数据",
     )
 
-    result = _call_deepseek(prompt)
+    result = _call_deepseek(
+        prompt,
+        api_key=llm_api_key,
+        base_url=llm_api_url,
+        model=llm_model,
+    )
     return _strip_markdown(result) if result else FALLBACK_QIMEN

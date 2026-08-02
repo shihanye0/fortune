@@ -37,6 +37,28 @@ class TestLiuyaoDivination:
     """POST /api/v1/divination/liuyao"""
 
     @patch("fortune_engine.services.deepseek._call_deepseek", return_value="卦象显示事业顺利")
+    def test_liuyao_uses_saved_llm_settings(self, mock_llm, client: TestClient, auth_user, db_session):
+        """六爻解读应使用当前用户已保存的 LLM 配置。"""
+        user, token = auth_user
+        user.llm_api_key = "deepseek-user-key"
+        user.llm_api_url = "https://api.deepseek.com/v1"
+        user.llm_model = "deepseek-chat"
+        db_session.commit()
+
+        resp = client.post(
+            "/api/v1/divination/liuyao",
+            json={"question": "最近工作是否顺利", "method": "coin"},
+            headers={"Authorization": f"Bearer {token}"},
+        )
+
+        assert resp.status_code == 200
+        assert mock_llm.call_args.kwargs == {
+            "api_key": "deepseek-user-key",
+            "base_url": "https://api.deepseek.com/v1",
+            "model": "deepseek-chat",
+        }
+
+    @patch("fortune_engine.services.deepseek._call_deepseek", return_value="卦象显示事业顺利")
     def test_liuyao_with_question(self, mock_llm, client: TestClient, auth_user):
         """输入问题占卜"""
         _, token = auth_user
@@ -103,6 +125,28 @@ class TestLiuyaoDivination:
 
 class TestQimenDivination:
     """POST /api/v1/divination/qimen"""
+
+    @patch("fortune_engine.services.deepseek._call_deepseek", return_value="奇门盘面分析")
+    def test_qimen_uses_saved_llm_settings(self, mock_llm, client: TestClient, auth_user, db_session):
+        """奇门解读应使用当前用户已保存的 LLM 配置。"""
+        user, token = auth_user
+        user.llm_api_key = "deepseek-user-key"
+        user.llm_api_url = "https://api.deepseek.com/v1"
+        user.llm_model = "deepseek-chat"
+        db_session.commit()
+
+        resp = client.post(
+            "/api/v1/divination/qimen",
+            json={"question": "明天面试是否顺利", "mode": "question"},
+            headers={"Authorization": f"Bearer {token}"},
+        )
+
+        assert resp.status_code == 200
+        assert mock_llm.call_args.kwargs == {
+            "api_key": "deepseek-user-key",
+            "base_url": "https://api.deepseek.com/v1",
+            "model": "deepseek-chat",
+        }
 
     @patch("fortune_engine.services.deepseek._call_deepseek", return_value="奇门盘面分析")
     def test_qimen_question_mode(self, mock_llm, client: TestClient, auth_user):

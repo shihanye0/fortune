@@ -70,7 +70,13 @@ def do_liuyao(
         pass
 
     # LLM 解读（结合八字）
-    interpretation = interpret_liuyao(hexagram_data, bazi_info)
+    interpretation = interpret_liuyao(
+        hexagram_data,
+        bazi_info,
+        llm_api_key=current_user.llm_api_key,
+        llm_api_url=current_user.llm_api_url,
+        llm_model=current_user.llm_model,
+    )
 
     # 存储记录
     record = DivinationRecord(
@@ -137,7 +143,14 @@ def do_qimen(
         pass
 
     # LLM 解读（结合八字）
-    interpretation = interpret_qimen(chart_data, question, bazi_info)
+    interpretation = interpret_qimen(
+        chart_data,
+        question,
+        bazi_info,
+        llm_api_key=current_user.llm_api_key,
+        llm_api_url=current_user.llm_api_url,
+        llm_model=current_user.llm_model,
+    )
 
     # 存储记录
     record = DivinationRecord(
