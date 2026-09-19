@@ -27,7 +27,8 @@ jobs:
             echo "hour=${{ github.event.inputs.hour }}" >> $GITHUB_OUTPUT
           else
             # UTC 时间 + 8 小时 = 北京时间
-            HOUR_UTC=$(date -u +%H)
+            # 强制按十进制解析 08/09，避免 Bash 将前导零小时当作八进制。
+            HOUR_UTC=$((10#$(date -u +%H)))
             HOUR_BEIJING=$(( (HOUR_UTC + 8) % 24 ))
             echo "hour=$HOUR_BEIJING" >> $GITHUB_OUTPUT
           fi

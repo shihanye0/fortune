@@ -62,25 +62,44 @@ npm run build
 # 7. 配置
 echo "[7/7] 配置服务..."
 
-# 后端 .env（如不存在则创建模板）
+# 后端 .env（如不存在则从部署环境创建）
 if [ ! -f "$APP_DIR/server/.env" ]; then
-    cat > $APP_DIR/server/.env << 'ENVEOF'
+    : "${DEEPSEEK_API_KEY:?请在部署前设置 DEEPSEEK_API_KEY}"
+    : "${SMTP_USER:?请在部署前设置 SMTP_USER}"
+    : "${SMTP_PASSWORD:?请在部署前设置 SMTP_PASSWORD}"
+    : "${INTERNAL_API_KEY:?请在部署前设置与 GitHub Actions Secret 一致的 INTERNAL_API_KEY}"
+
+    DEEPSEEK_BASE_URL="${DEEPSEEK_BASE_URL:-https://api.deepseek.com}"
+    LLM_CREDENTIAL_ENCRYPTION_KEY="${LLM_CREDENTIAL_ENCRYPTION_KEY:-$(python3 -c 'import base64, secrets; print(base64.urlsafe_b64encode(secrets.token_bytes(32)).decode())')}"
+    JWT_SECRET="${JWT_SECRET:-$(openssl rand -hex 32)}"
+
+    cat > "$APP_DIR/server/.env" << ENVEOF
 # 数据库
 DATABASE_URL=sqlite:///./fortune.db
 
-# LLM API（Xiaomi MiMo）
-DEEPSEEK_API_KEY=tp-chb3j2m4xphhv96orqb4ysgq375b1stbu6mo506gki8l9b15
-DEEPSEEK_BASE_URL=https://token-plan-cn.xiaomimimo.com/v1
+# LLM API（默认 DeepSeek）
+DEEPSEEK_API_KEY=$DEEPSEEK_API_KEY
+DEEPSEEK_BASE_URL=$DEEPSEEK_BASE_URL
+LLM_ALLOWED_HOSTS=api.deepseek.com,api.xiaomimimo.com
+LLM_CREDENTIAL_ENCRYPTION_KEY=$LLM_CREDENTIAL_ENCRYPTION_KEY
+
+# QQ 邮箱 SMTP
+SMTP_HOST=smtp.qq.com
+SMTP_PORT=465
+SMTP_USER=$SMTP_USER
+SMTP_PASSWORD=$SMTP_PASSWORD
 
 # JWT
-JWT_SECRET=$(openssl rand -hex 32)
+JWT_SECRET=$JWT_SECRET
 JWT_EXPIRE_HOURS=24
+INTERNAL_API_KEY=$INTERNAL_API_KEY
 
 # 应用
 APP_PORT=8080
 APP_ENV=production
 ENVEOF
-    echo "  已创建 .env 模板，请检查并修改配置"
+    chmod 600 "$APP_DIR/server/.env"
+    echo "  已根据部署环境创建 server/.env"
 fi
 
 # Nginx 配置
