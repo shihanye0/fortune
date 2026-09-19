@@ -12,7 +12,7 @@ echo "=========================================="
 # 配置
 APP_DIR="/opt/fortune"
 PYTHON_CMD="python3"
-NODE_VERSION="18"
+NODE_VERSION="22"
 
 # 1. 系统依赖
 echo "[1/7] 安装系统依赖..."
