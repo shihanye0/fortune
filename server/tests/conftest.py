@@ -5,6 +5,8 @@ import os
 os.environ["DATABASE_URL"] = "sqlite:///test.db"
 os.environ["JWT_SECRET"] = "test-secret-key-for-testing"
 os.environ["DEEPSEEK_API_KEY"] = "sk-test"
+os.environ["INTERNAL_API_KEY"] = "test-internal-api-key"
+os.environ["LLM_CREDENTIAL_ENCRYPTION_KEY"] = "MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA="
 
 import pytest
 from fastapi.testclient import TestClient
@@ -20,6 +22,8 @@ from app.models.user import User  # noqa
 from app.models.bazi_profile import BaziProfile  # noqa
 from app.models.daily_fortune import DailyFortune  # noqa
 from app.models.divination_record import DivinationRecord  # noqa
+from app.models.probability_event_feedback import ProbabilityEventFeedback  # noqa
+from app.models.push_delivery import PushDelivery  # noqa
 
 
 @pytest.fixture(scope="function")

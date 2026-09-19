@@ -26,6 +26,13 @@ async function handleRegister() {
     ElMessage.warning('请填写必填项')
     return
   }
+  if (
+    form.birthYear === null || form.birthMonth === null || form.birthDay === null
+    || form.birthHour === null || form.gender === null
+  ) {
+    ElMessage.warning('请完整填写生辰信息后再注册')
+    return
+  }
   if (form.password !== form.confirmPassword) {
     ElMessage.error('两次密码不一致')
     return
@@ -40,11 +47,11 @@ async function handleRegister() {
       username: form.username,
       email: form.email,
       password: form.password,
-      birth_year: form.birthYear ?? 1990,
-      birth_month: form.birthMonth ?? 1,
-      birth_day: form.birthDay ?? 1,
-      birth_hour: form.birthHour ?? 0,
-      gender: form.gender ?? 1,
+      birth_year: form.birthYear,
+      birth_month: form.birthMonth,
+      birth_day: form.birthDay,
+      birth_hour: form.birthHour,
+      gender: form.gender,
       birth_location: form.birthLocation || undefined,
     })
     if (res.success) {
@@ -67,45 +74,46 @@ async function handleRegister() {
       <template #header>
         <h2>注册</h2>
       </template>
-      <el-form :model="form" label-width="80px">
+      <p class="register-intro">生辰信息用于生成命盘基础；请按阳历和出生时刻如实填写。</p>
+      <el-form :model="form" label-width="80px" @submit.prevent="handleRegister">
         <el-form-item label="用户名" required>
-          <el-input v-model="form.username" placeholder="请输入用户名" />
+          <el-input v-model="form.username" name="username" autocomplete="username" placeholder="请输入用户名" />
         </el-form-item>
         <el-form-item label="邮箱" required>
-          <el-input v-model="form.email" placeholder="请输入邮箱" />
+          <el-input v-model="form.email" name="email" type="email" autocomplete="email" placeholder="请输入邮箱" />
         </el-form-item>
         <el-form-item label="密码" required>
-          <el-input v-model="form.password" type="password" placeholder="至少8位，含字母和数字" show-password />
+          <el-input v-model="form.password" name="new-password" type="password" autocomplete="new-password" placeholder="至少8位，含字母和数字" show-password />
         </el-form-item>
         <el-form-item label="确认密码" required>
-          <el-input v-model="form.confirmPassword" type="password" placeholder="再次输入密码" show-password />
+          <el-input v-model="form.confirmPassword" name="confirm-password" type="password" autocomplete="new-password" placeholder="再次输入密码" show-password />
         </el-form-item>
-        <el-divider>生辰信息（选填）</el-divider>
-        <el-form-item label="出生年">
+        <el-divider>生辰信息（用于排盘）</el-divider>
+        <el-form-item label="出生年" required>
           <el-input-number v-model="form.birthYear" :min="1900" :max="2100" placeholder="年" style="width: 100%" />
         </el-form-item>
-        <el-form-item label="出生月">
+        <el-form-item label="出生月" required>
           <el-input-number v-model="form.birthMonth" :min="1" :max="12" placeholder="月" style="width: 100%" />
         </el-form-item>
-        <el-form-item label="出生日">
+        <el-form-item label="出生日" required>
           <el-input-number v-model="form.birthDay" :min="1" :max="31" placeholder="日" style="width: 100%" />
         </el-form-item>
-        <el-form-item label="出生时辰">
+        <el-form-item label="出生时辰" required>
           <el-select v-model="form.birthHour" placeholder="选择时辰" style="width: 100%">
             <el-option v-for="h in 24" :key="h-1" :label="`${h-1}:00`" :value="h-1" />
           </el-select>
         </el-form-item>
-        <el-form-item label="性别">
+        <el-form-item label="性别" required>
           <el-radio-group v-model="form.gender">
             <el-radio :value="1">男</el-radio>
             <el-radio :value="0">女</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="出生地">
-          <el-input v-model="form.birthLocation" placeholder="选填，用于真太阳时校正" />
+          <el-input v-model="form.birthLocation" name="birth-location" autocomplete="address-level2" placeholder="选填；当前不会用于真太阳时校正" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :loading="loading" @click="handleRegister" style="width: 100%">
+          <el-button native-type="submit" type="primary" :loading="loading" style="width: 100%">
             注册
           </el-button>
         </el-form-item>
@@ -126,5 +134,16 @@ async function handleRegister() {
 
 .register-card {
   width: 520px;
+}
+
+.register-intro {
+  margin: 0 0 20px;
+  padding: 10px 12px;
+  border-left: 3px solid var(--color-accent);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  background: rgba(245, 158, 11, 0.08);
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  line-height: 1.7;
 }
 </style>

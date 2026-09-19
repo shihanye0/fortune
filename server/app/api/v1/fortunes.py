@@ -14,9 +14,11 @@ from app.api.deps import get_db
 from app.api.v1.users import get_current_user
 from app.models.daily_fortune import DailyFortune
 from app.models.user import User
+from fortune_engine.bazi.score import get_fortune_level, normalize_score
 
 
 router = APIRouter(prefix="/fortunes", tags=["运势查看"])
+WEEKDAY_LABELS = ("周一", "周二", "周三", "周四", "周五", "周六", "周日")
 
 
 # --- Schema ---
@@ -39,7 +41,7 @@ def get_today_fortune(
     db: Session = Depends(get_db),
 ):
     """查看今日运势（不存在时自动生成）"""
-    today = date.today()
+    today = datetime.now(CHINA_TZ).date()
     fortune = (
         db.query(DailyFortune)
         .filter(
@@ -65,7 +67,7 @@ def regenerate_today_fortune(
     db: Session = Depends(get_db),
 ):
     """重新生成今日运势"""
-    today = date.today()
+    today = datetime.now(CHINA_TZ).date()
 
     # 删除旧的运势记录
     old_fortune = (
@@ -126,6 +128,18 @@ def list_fortunes(
             "limit": limit,
             "total_pages": total_pages,
         },
+    }
+
+
+@router.get("/week")
+def get_week_forecast(
+    current_user: User = Depends(get_current_user),
+):
+    """返回未来七天的确定性趋势，不调用 LLM，也不写入历史记录。"""
+    today = datetime.now(CHINA_TZ).date()
+    return {
+        "success": True,
+        "data": _build_week_forecast(current_user, today),
     }
 
 
@@ -218,6 +232,62 @@ def mark_fortune_accuracy(
 
 # --- 按需生成运势 ---
 
+def _build_week_forecast(user: User, start_date: date, days: int = 7) -> list[dict]:
+    """以和日运相同的排盘/评分规则预览未来日期，不持久化预测。"""
+    birth_values = (
+        user.birth_year,
+        user.birth_month,
+        user.birth_day,
+        user.birth_hour,
+        user.gender,
+    )
+    if any(value is None for value in birth_values):
+        raise HTTPException(status_code=422, detail="生辰信息不完整，无法生成七日趋势")
+
+    from fortune_engine.bazi.daily_fortune import calculate_daily_fortune
+    from fortune_engine.bazi.pillar import calculate_bazi
+
+    bazi = calculate_bazi(*birth_values)
+    dimension_keys = (
+        ("career", "事业", "career_fortune"),
+        ("wealth", "财务", "wealth_fortune"),
+        ("love", "关系", "love_fortune"),
+        ("health", "身心", "health_fortune"),
+    )
+    forecast: list[dict] = []
+    for offset in range(days):
+        forecast_date = start_date + timedelta(days=offset)
+        daily = calculate_daily_fortune(
+            bazi,
+            forecast_date.year,
+            forecast_date.month,
+            forecast_date.day,
+        )
+        dimensions = [
+            {
+                "key": key,
+                "label": label,
+                "score": normalize_score((daily.get(daily_key) or {}).get("score")),
+                "detail": (daily.get(daily_key) or {}).get("detail", ""),
+            }
+            for key, label, daily_key in dimension_keys
+        ]
+        ranked = sorted(dimensions, key=lambda item: item["score"], reverse=True)
+        focus = ranked[0]
+        caution = ranked[-1] if ranked[-1]["score"] != focus["score"] else None
+        overall_score = normalize_score(daily.get("overall_score"))
+        forecast.append({
+            "date": forecast_date.isoformat(),
+            "weekday": WEEKDAY_LABELS[forecast_date.weekday()],
+            "heavenly_stem": daily.get("heavenly_stem"),
+            "earthly_branch": daily.get("earthly_branch"),
+            "overall_score": overall_score,
+            "overall_level": get_fortune_level(overall_score).label,
+            "focus": focus,
+            "caution": caution,
+        })
+    return forecast
+
 def _generate_fortune_on_demand(user: User, today: date, db: Session) -> DailyFortune:
     """用户查看今日运势时，如果不存在则自动生成"""
     import logging
@@ -240,7 +310,11 @@ def _generate_fortune_on_demand(user: User, today: date, db: Session) -> DailyFo
         hourly_fortunes = calculate_all_hours_fortune(bazi_result, today.year, today.month, today.day)
 
         # 3. LLM 解读（降级处理）
-        from fortune_engine.services.deepseek import interpret_daily, FALLBACK_DAILY
+        from fortune_engine.services.deepseek import (
+            FALLBACK_DAILY,
+            get_user_llm_overrides,
+            interpret_daily,
+        )
         from app.services.feedback_summary import generate_feedback_summary
 
         bazi_summary = (
@@ -254,9 +328,7 @@ def _generate_fortune_on_demand(user: User, today: date, db: Session) -> DailyFo
         try:
             interpretation = interpret_daily(
                 bazi_summary, daily, feedback_summary,
-                llm_api_key=user.llm_api_key,
-                llm_api_url=user.llm_api_url,
-                llm_model=user.llm_model,
+                **get_user_llm_overrides(user),
             )
         except Exception as e:
             logger.error("LLM 解读失败 user=%d: %s", user.id, e)
@@ -289,40 +361,40 @@ def _generate_fortune_on_demand(user: User, today: date, db: Session) -> DailyFo
     except Exception as e:
         logger.error("按需生成运势失败 user=%d: %s", user.id, e)
         db.rollback()
-        # 返回一个默认运势，避免接口报错
-        fortune = DailyFortune(
-            user_id=user.id,
-            date=today,
-            heavenly_stem="甲",
-            earthly_branch="子",
-            overall_score=60,
-            career_fortune={"score": 60, "description": "事业运势平稳"},
-            wealth_fortune={"score": 60, "description": "财运一般"},
-            love_fortune={"score": 60, "description": "感情运势平稳"},
-            health_fortune={"score": 60, "description": "健康状况良好"},
-            lucky_color="蓝色",
-            lucky_number="3, 8",
-            lucky_direction="东方",
-            llm_interpretation="今日运势平稳，适合日常事务处理。",
-        )
-        db.add(fortune)
-        db.commit()
-        db.refresh(fortune)
-        return fortune
+        # 计算失败不能伪造“全 3 分”的记录，否则故障会永久污染历史数据。
+        raise HTTPException(
+            status_code=503,
+            detail="今日运势暂时无法计算，请稍后重试。",
+        ) from e
 
 
 # --- 辅助函数 ---
 
+def _normalize_dimension(raw: dict | None) -> dict:
+    """统一新旧维度字段，供页面与推送使用。"""
+    raw = raw or {}
+    detail = raw.get("detail") or raw.get("description") or ""
+    return {
+        **raw,
+        "score": normalize_score(raw.get("score")),
+        # 兼容旧客户端的 description，同时固定返回计算层使用的 detail。
+        "detail": detail,
+        "description": detail,
+    }
+
+
 def _fortune_to_detail_dict(f: DailyFortune) -> dict:
     """运势模型转详情字典"""
+    level = get_fortune_level(f.overall_score)
     return {
         "id": f.id,
         "date": f.date.isoformat() if f.date else None,
-        "overall_score": f.overall_score,
-        "career": f.career_fortune,
-        "wealth": f.wealth_fortune,
-        "love": f.love_fortune,
-        "health": f.health_fortune,
+        "overall_score": normalize_score(f.overall_score),
+        "overall_level": level.label,
+        "career": _normalize_dimension(f.career_fortune),
+        "wealth": _normalize_dimension(f.wealth_fortune),
+        "love": _normalize_dimension(f.love_fortune),
+        "health": _normalize_dimension(f.health_fortune),
         "lucky_color": f.lucky_color,
         "lucky_number": f.lucky_number,
         "lucky_direction": f.lucky_direction,
@@ -345,6 +417,7 @@ def _fortune_to_list_dict(f: DailyFortune) -> dict:
     return {
         "id": f.id,
         "date": f.date.isoformat() if f.date else None,
-        "overall_score": f.overall_score,
+        "overall_score": normalize_score(f.overall_score),
+        "overall_level": get_fortune_level(f.overall_score).label,
         "summary": summary,
     }

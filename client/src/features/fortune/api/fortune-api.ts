@@ -3,7 +3,8 @@ import type { ApiResponse } from '@/shared/types/api'
 
 export interface FortuneDimension {
   score: number
-  description: string
+  description?: string
+  detail?: string
 }
 
 export interface HourlyFortune {
@@ -25,6 +26,7 @@ export interface FortuneDetail {
   id: number
   date: string
   overall_score: number
+  overall_level?: string
   career: FortuneDimension
   wealth: FortuneDimension
   love: FortuneDimension
@@ -44,6 +46,7 @@ export interface FortuneListItem {
   id: number
   date: string
   overall_score: number
+  overall_level?: string
   summary: string
 }
 
@@ -51,6 +54,24 @@ export interface FortuneFeedback {
   rating: number
   tags?: string[]
   feedback_text?: string
+}
+
+export interface WeeklyFortuneFocus {
+  key: 'career' | 'wealth' | 'love' | 'health'
+  label: string
+  score: number
+  detail: string
+}
+
+export interface WeeklyFortuneItem {
+  date: string
+  weekday: string
+  heavenly_stem: string
+  earthly_branch: string
+  overall_score: number
+  overall_level: string
+  focus: WeeklyFortuneFocus
+  caution: WeeklyFortuneFocus | null
 }
 
 export async function getTodayFortune(): Promise<ApiResponse<FortuneDetail | null>> {
@@ -65,6 +86,11 @@ export async function regenerateTodayFortune(): Promise<ApiResponse<FortuneDetai
 
 export async function getFortuneList(page = 1, limit = 20): Promise<ApiResponse<FortuneListItem[]>> {
   const res = await client.get('/api/v1/fortunes', { params: { page, limit } })
+  return res.data
+}
+
+export async function getWeeklyForecast(): Promise<ApiResponse<WeeklyFortuneItem[]>> {
+  const res = await client.get('/api/v1/fortunes/week')
   return res.data
 }
 

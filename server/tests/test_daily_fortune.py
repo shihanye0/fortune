@@ -2,6 +2,7 @@
 """Spec 011: 每日运势推算测试"""
 import pytest
 from fortune_engine.bazi.daily_fortune import calculate_daily_fortune
+from fortune_engine.bazi.daily_fortune import FAVORABLE_ELEMENT_PRIORITY
 
 
 class TestDailyFortune:
@@ -47,6 +48,17 @@ class TestDailyFortune:
         assert "lucky_direction" in result
         assert isinstance(result["lucky_color"], str)
         assert len(result["lucky_color"]) > 0
+
+    def test_multiple_favorable_elements_use_stable_priority(self):
+        """幸运信息不能依赖 set 的随机迭代顺序。"""
+        bazi = self._sample_bazi()
+        bazi["favorable_elements"] = ["水", "木"]
+
+        result = calculate_daily_fortune(bazi, 2026, 6, 20)
+
+        # 固定顺序中木优先于水，结果不随进程哈希种子变化。
+        assert FAVORABLE_ELEMENT_PRIORITY[1].value == "木"
+        assert result["lucky_number"] == "3, 8"
 
     def test_stem_and_branch(self):
         """应返回当日干支"""

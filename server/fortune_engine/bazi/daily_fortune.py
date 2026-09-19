@@ -2,7 +2,6 @@
 """每日运势推算：基于八字与流日干支的五行生克"""
 from lunar_python import Solar
 from fortune_engine.common.tiangan import Tiangan
-from fortune_engine.common.dizhi import Dizhi
 from fortune_engine.common.wuxing import Wuxing, sheng, ke
 
 
@@ -41,6 +40,16 @@ SHEN_SCORE_MAP = {
     "正官": 3, "偏官": 2,
     "正财": 4, "偏财": 3,
 }
+
+# 排盘结果的喜用神可能有多个。展示幸运信息时使用固定顺序，不能把 set 的
+# 任意迭代顺序暴露给用户，否则同一输入会随 Python 进程变化。
+FAVORABLE_ELEMENT_PRIORITY = (
+    Wuxing.JIN,
+    Wuxing.MU,
+    Wuxing.SHUI,
+    Wuxing.HUO,
+    Wuxing.TU,
+)
 
 
 def _score_from_relation(dm_wx: Wuxing, other_wx: Wuxing) -> int:
@@ -120,8 +129,10 @@ def calculate_daily_fortune(
     overall = round((career_score + wealth_score + love_score + health_score) / 4)
 
     # 6. 幸运信息（基于喜用神）
-    primary_fav = Wuxing(fav.pop()) if fav else dm_wx
-    # 取第一个喜用神，如果没有则用日主五行
+    primary_fav = next(
+        (element for element in FAVORABLE_ELEMENT_PRIORITY if element.value in fav),
+        dm_wx,
+    )
 
     return {
         "heavenly_stem": day_tg,

@@ -42,7 +42,7 @@ describe('HomeView', () => {
     })
     await router.isReady()
 
-    expect(wrapper.text()).toContain('每日精准运势，尽在掌握')
+    expect(wrapper.text()).toContain('每日参考，随时查看')
   })
 
   it('shows register button when not logged in', async () => {

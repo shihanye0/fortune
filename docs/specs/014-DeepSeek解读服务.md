@@ -10,9 +10,9 @@
 
 | 项目 | 值 |
 |------|------|
-| 供应商 | Xiaomi MiMo |
-| API URL | `https://token-plan-cn.xiaomimimo.com/v1` |
-| 模型 | `mimo-v2.5` |
+| 默认供应商 | DeepSeek |
+| API URL | `https://api.deepseek.com` |
+| 默认模型 | `deepseek-flash` |
 | 格式 | OpenAI 兼容（`/chat/completions`） |
 
 ## 配置层级
@@ -64,7 +64,7 @@ Scenario: 用户级配置覆盖
   Then  应使用用户配置而非服务器默认
 
 Scenario: 模型名称自动清理
-  Given 模型名称包含上下文标注（如 mimo-v2.5[1M]）
+  Given 模型名称包含上下文标注（如 deepseek-flash[ctx]）
   When  调用 API
   Then  应自动去掉 [1M] 等标注
 ```
@@ -72,13 +72,15 @@ Scenario: 模型名称自动清理
 ## 技术要点
 
 - 使用 httpx 同步调用 LLM API
-- 超时设置：后端单次调用 30 秒；每日运势重新生成接口 60 秒，占卜接口 120 秒
+- DeepSeek 是唯一默认供应商；如部署方确有其他兼容服务需求，需显式加入 `LLM_ALLOWED_HOSTS`
+- 超时设置：30 秒（前端 regenerate 接口超时 60 秒）
 - 重试策略：最多 2 次
 - 降级策略：API 故障时返回降级文本
 - 输出后处理：清除 markdown 格式标记
 - 模型名称清理：去掉 `[1M]` 等上下文窗口标注
+- 用户 API Key 采用 Fernet 加密存储；所有实际出站 LLM 请求再次校验主机白名单
 
 ## 依赖项
 
 - 前置：010-八字排盘、011-每日运势推算
-- 外部：Xiaomi MiMo API（OpenAI 兼容格式）
+- 外部：DeepSeek API（OpenAI 兼容格式；用户也可配置其他兼容供应商）

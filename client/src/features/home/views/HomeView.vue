@@ -9,20 +9,23 @@ const features = [
   {
     icon: '📊',
     title: '每日运势',
-    desc: '基于八字排盘，精准推算每日事业、财运、感情、健康四维运势。',
+    desc: '基于八字排盘，提供事业、财运、感情、健康四维的每日参考。',
     gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    to: { name: 'fortune' },
   },
   {
     icon: '🎯',
     title: '六爻占卜',
     desc: '传统铜钱法起卦，AI 智能解读卦象，为你指点迷津。',
     gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+    to: { name: 'divination' },
   },
   {
     icon: '🌌',
     title: '奇门遁甲',
-    desc: '时家奇门排盘，九星八门八神一目了然，洞察天时地利。',
+    desc: '简化教学盘展示九星、八门、八神；查看盘面规则与传统文化说明。',
     gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+    to: { name: 'divination', query: { method: 'qimen' } },
   },
 ]
 </script>
@@ -32,14 +35,14 @@ const features = [
     <!-- Hero 区域 -->
     <section class="hero animate-fade-in">
       <div class="hero-content">
-        <div class="hero-badge">🔮 传统命理 × AI 解读</div>
+        <div class="hero-badge">🔮 传统命理排盘 × AI 解读</div>
         <h1 class="hero-title">
           <span class="title-main">命理运势系统</span>
-          <span class="title-sub">每日精准运势，尽在掌握</span>
+          <span class="title-sub">每日参考，随时查看</span>
         </h1>
         <p class="hero-desc">
-          融合传统八字命理与现代 AI 技术，为您提供精准的每日运势分析、
-          六爻占卜、奇门遁甲排盘等专业命理服务。
+          融合传统八字命理与现代 AI 技术，提供每日运势、六爻占卜、
+          奇门遁甲排盘等传统文化参考，并把盘面依据和行动提示呈现给您。
         </p>
         <div class="hero-actions">
           <el-button
@@ -70,16 +73,16 @@ const features = [
         </div>
         <div class="hero-stats">
           <div class="stat-item">
-            <span class="stat-number">143+</span>
-            <span class="stat-label">单元测试</span>
+            <span class="stat-number">可核对</span>
+            <span class="stat-label">盘面基础与计算口径</span>
           </div>
           <div class="stat-item">
-            <span class="stat-number">33+</span>
-            <span class="stat-label">前端测试</span>
+            <span class="stat-number">分渠道</span>
+            <span class="stat-label">邮件与飞书投递状态</span>
           </div>
           <div class="stat-item">
-            <span class="stat-number">24+</span>
-            <span class="stat-label">E2E测试</span>
+            <span class="stat-number">有边界</span>
+            <span class="stat-label">传统文化参考提示</span>
           </div>
         </div>
       </div>
@@ -97,21 +100,25 @@ const features = [
     <section class="features-section">
       <h2 class="section-title">核心功能</h2>
       <div class="features-grid">
-        <el-card
+        <router-link
           v-for="(feature, index) in features"
           :key="index"
-          class="feature-card"
-          shadow="hover"
-          @click="router.push(index === 0 ? '/fortune' : '/divination')"
+          :to="feature.to"
+          class="feature-card-link"
         >
-          <div class="feature-icon" :style="{ background: feature.gradient }">
-            {{ feature.icon }}
-          </div>
-          <h3 class="feature-title">{{ feature.title }}</h3>
-          <p class="feature-desc">{{ feature.desc }}</p>
-          <div class="feature-arrow">→</div>
-        </el-card>
+          <el-card class="feature-card" shadow="hover">
+            <div class="feature-icon" :style="{ background: feature.gradient }">
+              {{ feature.icon }}
+            </div>
+            <h3 class="feature-title">{{ feature.title }}</h3>
+            <p class="feature-desc">{{ feature.desc }}</p>
+            <div class="feature-arrow">→</div>
+          </el-card>
+        </router-link>
       </div>
+      <p class="usage-notice">
+        本服务仅供传统文化参考，不构成医疗、法律、投资等重要决策建议。
+      </p>
     </section>
 
   </div>
@@ -198,7 +205,7 @@ const features = [
   border: 2px solid var(--color-border) !important;
   color: var(--color-text) !important;
   background: transparent !important;
-  transition: all 0.3s ease;
+  transition: border-color 0.3s ease, color 0.3s ease;
 }
 
 .secondary-button:hover {
@@ -311,14 +318,27 @@ const features = [
   gap: 24px;
 }
 
+.feature-card-link {
+  display: block;
+  border-radius: var(--radius-lg);
+  color: inherit;
+  text-decoration: none;
+}
+
+.feature-card-link:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 4px;
+}
+
 .feature-card {
+  height: 100%;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease;
   padding: 32px;
   text-align: center;
 }
 
-.feature-card:hover {
+.feature-card-link:hover .feature-card {
   transform: translateY(-8px);
 }
 
@@ -358,6 +378,14 @@ const features = [
   transform: translateX(8px);
 }
 
+.usage-notice {
+  max-width: 640px;
+  margin: 32px auto 0;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  line-height: 1.7;
+  text-align: center;
+}
 
 /* 响应式 */
 @media (max-width: 768px) {

@@ -2,10 +2,95 @@
 """DeepSeek API 解读服务"""
 import re
 import logging
+from urllib.parse import urlparse
+
 import httpx
 from app.config import settings
+from app.core.credentials import CredentialError, decrypt_user_api_key
+from app.core.outbound_urls import OutboundUrlError, normalize_https_url
 
 logger = logging.getLogger(__name__)
+
+DEFAULT_DEEPSEEK_BASE_URL = "https://api.deepseek.com"
+DEFAULT_DEEPSEEK_MODEL = "deepseek-flash"
+DEFAULT_MIMO_BASE_URL = "https://api.xiaomimimo.com/v1"
+_LEGACY_MIMO_HOSTS = {"token-plan-cn.xiaomimimo.com", "token-plan.xiaomimimo.com"}
+
+
+def _normalize_model(model: str | None) -> str:
+    """去除供应商后台复制时附带的上下文窗口标注。"""
+    normalized = (model or DEFAULT_DEEPSEEK_MODEL).strip()
+    return normalized.split("[", 1)[0].strip() or DEFAULT_DEEPSEEK_MODEL
+
+
+def _normalize_base_url(base_url: str | None) -> str:
+    """将已下线的 MiMo Token Plan 地址迁移到当前官方 API 地址。"""
+    normalized = (base_url or settings.DEEPSEEK_BASE_URL or DEFAULT_DEEPSEEK_BASE_URL).strip().rstrip("/")
+    host = urlparse(normalized).netloc.lower()
+    if host in _LEGACY_MIMO_HOSTS:
+        logger.info("检测到旧 MiMo API 地址，已在本次请求中迁移到官方地址")
+        return DEFAULT_MIMO_BASE_URL
+    return normalized
+
+
+def _trusted_base_url(base_url: str | None) -> str:
+    """将所有实际出站 LLM 地址限制在环境变量声明的可信主机内。"""
+    allowed_hosts = {
+        host.strip().lower()
+        for host in settings.LLM_ALLOWED_HOSTS.split(",")
+        if host.strip()
+    }
+    return normalize_https_url(
+        _normalize_base_url(base_url),
+        allowed_hosts=allowed_hosts,
+        field_name="LLM API 地址",
+    )
+
+
+def _is_mimo_endpoint(base_url: str) -> bool:
+    return "xiaomimimo.com" in urlparse(base_url).netloc.lower()
+
+
+def _is_deepseek_endpoint(base_url: str) -> bool:
+    return urlparse(base_url).netloc.lower() == "api.deepseek.com"
+
+
+def get_user_llm_overrides(user: object) -> dict[str, str | None]:
+    """返回用户显式保存的覆盖项；未保存时由调用层回退服务器 DeepSeek。"""
+    try:
+        api_key = decrypt_user_api_key(getattr(user, "llm_api_key", None))
+    except CredentialError:
+        logger.warning("个人 LLM API Key 不可用，将回退服务器默认配置")
+        api_key = None
+    return {
+        "llm_api_key": api_key,
+        "llm_api_url": getattr(user, "llm_api_url", None),
+        "llm_model": getattr(user, "llm_model", None),
+    }
+
+
+def _build_payload(prompt: str, model: str, base_url: str, max_completion_tokens: int) -> dict:
+    """按实际供应商协议构建 OpenAI 兼容请求。"""
+    payload = {
+        "model": model,
+        "messages": [{"role": "user", "content": prompt}],
+    }
+    if _is_mimo_endpoint(base_url):
+        # MiMo v2.5 默认深度思考，日常解读需稳定的直出文本与可控时延。
+        payload["max_completion_tokens"] = max_completion_tokens
+        payload["thinking"] = {"type": "disabled"}
+    elif _is_deepseek_endpoint(base_url):
+        # DeepSeek Flash 默认开启高强度思考；日运播报只消费最终正文，
+        # 关闭思考可避免推理占满输出预算而没有 content。
+        payload["thinking"] = {"type": "disabled"}
+        payload["temperature"] = 0.7
+        payload["max_tokens"] = max_completion_tokens
+    else:
+        # 保留用户自定义 OpenAI 兼容供应商的原有参数。
+        payload["temperature"] = 0.7
+        payload["max_tokens"] = max_completion_tokens
+    return payload
+
 
 def _strip_markdown(text: str) -> str:
     """清除markdown格式标记"""
@@ -79,56 +164,49 @@ def _call_deepseek(
     api_key: str | None = None,
     base_url: str | None = None,
     model: str | None = None,
+    max_completion_tokens: int = 1400,
 ) -> str | None:
     """调用 LLM API（优先使用用户配置，回退到 .env）"""
-    _base_url = base_url or settings.DEEPSEEK_BASE_URL
+    try:
+        _base_url = _trusted_base_url(base_url)
+    except OutboundUrlError:
+        logger.warning("拒绝向不受信任的 LLM 地址发起请求")
+        return None
     _api_key = api_key or settings.DEEPSEEK_API_KEY
-    _model = model or "mimo-v2.5"
-    # 清理模型名称（去掉 [1M] 等上下文窗口标注）
-    if "[" in _model:
-        _model = _model.split("[")[0].strip()
+    _model = _normalize_model(model)
 
     url = f"{_base_url}/chat/completions"
     headers = {
         "Authorization": f"Bearer {_api_key}",
         "Content-Type": "application/json",
     }
-    payload = {
-        "model": _model,
-        "messages": [{"role": "user", "content": prompt}],
-        "temperature": 0.7,
-        "max_tokens": 2000,
-    }
+    payload = _build_payload(prompt, _model, _base_url, max_completion_tokens)
 
     for attempt in range(max_retries + 1):
         try:
             response = httpx.post(url, json=payload, headers=headers, timeout=30)
             if response.status_code == 200:
                 data = response.json()
-                choices = data.get("choices") if isinstance(data, dict) else None
-                first_choice = choices[0] if isinstance(choices, list) and choices else None
-                message = first_choice.get("message") if isinstance(first_choice, dict) else None
-                content = message.get("content") if isinstance(message, dict) else None
+                choices = data.get("choices") or []
+                content = (
+                    choices[0].get("message", {}).get("content")
+                    if choices and isinstance(choices[0], dict)
+                    else None
+                )
                 if isinstance(content, str) and content.strip():
-                    return content
-
-                finish_reason = first_choice.get("finish_reason") if isinstance(first_choice, dict) else None
+                    return content.strip()
                 logger.warning(
-                    "LLM 响应没有可用解读 model=%s url=%s choices=%d finish_reason=%s content_type=%s content_length=%d",
+                    "LLM 响应缺少可用内容 model=%s url=%s",
                     _model,
                     url,
-                    len(choices) if isinstance(choices, list) else 0,
-                    finish_reason,
-                    type(content).__name__,
-                    len(content) if isinstance(content, str) else 0,
                 )
-                continue
-            logger.warning(
-                "LLM 调用返回非成功状态 model=%s url=%s status=%d",
-                _model,
-                url,
-                response.status_code,
-            )
+            else:
+                logger.warning(
+                    "LLM 调用返回非成功状态 model=%s url=%s status=%d",
+                    _model,
+                    url,
+                    response.status_code,
+                )
         except Exception as exc:
             logger.warning(
                 "LLM 调用异常 model=%s url=%s error=%s",
@@ -140,6 +218,29 @@ def _call_deepseek(
         if attempt == max_retries:
             return None
     return None
+
+
+def probe_llm_connection(
+    api_key: str | None = None,
+    base_url: str | None = None,
+    model: str | None = None,
+) -> tuple[str | None, str, str]:
+    """用与正式解读完全相同的协议进行一次低成本连通性检查。"""
+    try:
+        normalized_url = _trusted_base_url(base_url)
+    except OutboundUrlError:
+        logger.warning("LLM 连通性检查使用了不受信任的地址")
+        return None, _normalize_base_url(settings.DEEPSEEK_BASE_URL), _normalize_model(model)
+    normalized_model = _normalize_model(model)
+    reply = _call_deepseek(
+        "请只回复 OK。",
+        max_retries=0,
+        api_key=api_key,
+        base_url=normalized_url,
+        model=normalized_model,
+        max_completion_tokens=64,
+    )
+    return reply, normalized_url, normalized_model
 
 
 def interpret_fortune(

@@ -5,6 +5,7 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/features/auth/stores/auth'
 import {
   getProfile,
+  getBaziProfile,
   updateProfile,
   updateBirth,
   updatePushSettings,
@@ -12,7 +13,7 @@ import {
   testLLMConnection,
   deleteAccount,
 } from '../api/profile-api'
-import type { UserProfile } from '../api/profile-api'
+import type { BaziProfile, UserProfile } from '../api/profile-api'
 import { getAccuracyStats } from '@/features/feedback/api/feedback-api'
 import type { AccuracyStats } from '@/features/feedback/types/feedback.types'
 
@@ -22,6 +23,9 @@ const loading = ref(true)
 const profile = ref<UserProfile | null>(null)
 const accuracyStats = ref<AccuracyStats | null>(null)
 const loadingStats = ref(false)
+const baziProfile = ref<BaziProfile | null>(null)
+const loadingBaziProfile = ref(false)
+const fiveElementOrder = ['木', '火', '土', '金', '水']
 
 const editingUsername = ref(false)
 const usernameForm = reactive({ username: '' })
@@ -32,7 +36,8 @@ const birthForm = reactive({
   birth_month: 1,
   birth_day: 1,
   birth_hour: 0,
-  birth_minute: 0,
+  gender: 1,
+  birth_location: '',
 })
 
 const pushForm = reactive({
@@ -51,6 +56,16 @@ const llmForm = reactive({
   llm_api_url: '',
   llm_model: '',
 })
+
+const defaultLLMConfig = {
+  provider: 'DeepSeek',
+  website: 'https://platform.deepseek.com',
+  apiKeyUrl: 'https://platform.deepseek.com/api_keys',
+  apiUrl: 'https://api.deepseek.com',
+  model: 'deepseek-flash',
+}
+const llmConfigSource = ref<'personal' | 'server_default'>('server_default')
+const usesServerDefaultLLM = computed(() => llmConfigSource.value === 'server_default')
 
 const testingLLM = ref(false)
 const llmTestResult = ref<{ status: string; message: string } | null>(null)
@@ -104,12 +119,31 @@ function getConstellation(month: number, day: number): string {
   }
 }
 
-// 时辰（精确到分钟）
-function getBirthTimeText(hour: number, minute: number = 0): string {
-  const timeStr = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
+// 当前后端只保存整点，按小时映射时辰。
+function getBirthTimeText(hour: number): string {
+  const timeStr = `${String(hour).padStart(2, '0')}:00`
   const hours = ['子时', '丑时', '寅时', '卯时', '辰时', '巳时', '午时', '未时', '申时', '酉时', '戌时', '亥时']
   const shichen = hours[Math.floor(hour / 2)] || '未知'
   return `${timeStr} (${shichen})`
+}
+
+function normalizeLLMApiUrl(url: string | null | undefined): string {
+  const cleaned = url?.trim()
+  return cleaned || defaultLLMConfig.apiUrl
+}
+
+function hydrateLLMForm(nextProfile: UserProfile) {
+  llmConfigSource.value = nextProfile.llm_config_source || 'server_default'
+  llmForm.llm_provider = nextProfile.llm_provider || defaultLLMConfig.provider
+  llmForm.llm_notes = nextProfile.llm_notes || ''
+  llmForm.llm_website = nextProfile.llm_website || defaultLLMConfig.website
+  // 脱敏的 API Key 不填回表单，避免覆盖真实 key
+  llmForm.llm_api_key = (
+    nextProfile.llm_api_key && !nextProfile.llm_api_key.includes('***')
+  ) ? nextProfile.llm_api_key : ''
+  llmForm.llm_api_key_url = nextProfile.llm_api_key_url || defaultLLMConfig.apiKeyUrl
+  llmForm.llm_api_url = normalizeLLMApiUrl(nextProfile.llm_api_url)
+  llmForm.llm_model = nextProfile.llm_model || defaultLLMConfig.model
 }
 
 const lunarInfo = computed(() => {
@@ -120,9 +154,22 @@ const lunarInfo = computed(() => {
     lunar: getLunarInfo(profile.value.birth_year, profile.value.birth_month, profile.value.birth_day),
     zodiac: getZodiac(profile.value.birth_year, profile.value.birth_month, profile.value.birth_day),
     constellation: getConstellation(profile.value.birth_month, profile.value.birth_day),
-    timeText: getBirthTimeText(profile.value.birth_hour ?? 0, profile.value.birth_minute ?? 0),
+    timeText: getBirthTimeText(profile.value.birth_hour ?? 0),
   }
 })
+
+async function loadBaziProfile() {
+  loadingBaziProfile.value = true
+  try {
+    const baziRes = await getBaziProfile()
+    baziProfile.value = baziRes.success ? baziRes.data : null
+  } catch {
+    // 生辰资料不完整或临时网络问题时，不阻塞个人中心。
+    baziProfile.value = null
+  } finally {
+    loadingBaziProfile.value = false
+  }
+}
 
 onMounted(async () => {
   try {
@@ -134,25 +181,22 @@ onMounted(async () => {
       birthForm.birth_month = res.data.birth_month || 1
       birthForm.birth_day = res.data.birth_day || 1
       birthForm.birth_hour = res.data.birth_hour ?? 0
-      birthForm.birth_minute = res.data.birth_minute ?? 0
+      birthForm.gender = res.data.gender ?? 1
+      birthForm.birth_location = res.data.birth_location || ''
       pushForm.push_enabled = res.data.push_enabled
       pushForm.push_channel = res.data.push_channel || 'email'
       pushForm.push_time = res.data.push_time || '07:00'
       pushForm.feishu_webhook = res.data.feishu_webhook || ''
-      llmForm.llm_provider = res.data.llm_provider || 'Xiaomi MiMo'
-      llmForm.llm_notes = res.data.llm_notes || ''
-      llmForm.llm_website = res.data.llm_website || 'https://platform.xiaomimimo.com'
-      // 脱敏的 API Key 不填回表单，避免覆盖真实 key
-      llmForm.llm_api_key = (res.data.llm_api_key && !res.data.llm_api_key.includes('***')) ? res.data.llm_api_key : ''
-      llmForm.llm_api_key_url = res.data.llm_api_key_url || 'https://platform.xiaomimimo.com'
-      llmForm.llm_api_url = res.data.llm_api_url || 'https://token-plan-cn.xiaomimimo.com/v1'
-      llmForm.llm_model = res.data.llm_model || 'mimo-v2.5'
+      hydrateLLMForm(res.data)
     }
   } catch {
     ElMessage.error('加载个人信息失败')
   } finally {
     loading.value = false
   }
+
+  // 命盘数据独立加载，失败不影响个人资料与设置。
+  await loadBaziProfile()
 
   // 加载准确率统计（不阻塞主页面加载）
   loadingStats.value = true
@@ -187,6 +231,7 @@ async function handleUpdateBirth() {
     if (res.success) {
       profile.value = res.data
       editingBirth.value = false
+      await loadBaziProfile()
       ElMessage.success('生辰信息更新成功')
     }
   } catch {
@@ -211,10 +256,30 @@ async function handleUpdateLLMSettings() {
     const res = await updateLLMSettings(llmForm)
     if (res.success) {
       profile.value = res.data
+      hydrateLLMForm(res.data)
       ElMessage.success('LLM配置更新成功')
     }
   } catch {
     ElMessage.error('更新失败')
+  }
+}
+
+async function handleUseServerDefaultLLM() {
+  try {
+    await ElMessageBox.confirm(
+      '将清除当前账户保存的 LLM 地址、模型与 API Key，之后改用服务器已保存的 DeepSeek 配置。此操作不会测试或显示服务器 Key。',
+      '切换到服务器 DeepSeek',
+      { confirmButtonText: '切换', cancelButtonText: '取消', type: 'warning' },
+    )
+    const res = await updateLLMSettings({ use_server_default: true })
+    if (res.success) {
+      profile.value = res.data
+      hydrateLLMForm(res.data)
+      llmTestResult.value = null
+      ElMessage.success('已切换到服务器默认 DeepSeek')
+    }
+  } catch {
+    // 用户取消时不提示错误。
   }
 }
 
@@ -242,10 +307,9 @@ async function handleTestLLM() {
   }
 }
 
-function openLlmWebsite() {
-  const website = llmForm.llm_website.trim()
-  if (website) {
-    window.open(website, '_blank', 'noopener,noreferrer')
+function openLLMWebsite() {
+  if (llmForm.llm_website) {
+    window.open(llmForm.llm_website, '_blank')
   }
 }
 
@@ -273,6 +337,18 @@ function getDimensionIcon(key: string): string {
     health: '🏥',
   }
   return icons[key] || '📊'
+}
+
+function fiveElementPercentage(value: number): number {
+  const total = baziProfile.value
+    ? Object.values(baziProfile.value.five_elements).reduce((sum, count) => sum + count, 0)
+    : 0
+  return total ? Math.round((value / total) * 100) : 0
+}
+
+function isCurrentLuckCycle(startYear: number, endYear: number): boolean {
+  const currentYear = new Date().getFullYear()
+  return currentYear >= startYear && currentYear <= endYear
 }
 
 async function handleDeleteAccount() {
@@ -358,7 +434,7 @@ async function handleDeleteAccount() {
               <div class="birth-value">
                 {{ profile.birth_year }}年{{ profile.birth_month }}月{{ profile.birth_day }}日
               </div>
-              <div class="birth-detail">{{ getBirthTimeText(profile.birth_hour ?? 0, profile.birth_minute ?? 0) }}</div>
+              <div class="birth-detail">{{ getBirthTimeText(profile.birth_hour ?? 0) }}</div>
             </div>
             <div class="birth-card lunar">
               <div class="birth-label">农历生日</div>
@@ -368,6 +444,11 @@ async function handleDeleteAccount() {
               <div class="birth-detail" v-if="lunarInfo">
                 {{ lunarInfo.zodiac }}年 · {{ lunarInfo.constellation }}
               </div>
+            </div>
+            <div class="birth-card">
+              <div class="birth-label">排盘资料</div>
+              <div class="birth-value">{{ profile.gender === 0 ? '女' : '男' }}</div>
+              <div class="birth-detail">出生地：{{ profile.birth_location || '未填写（当前不参与真太阳时校正）' }}</div>
             </div>
           </div>
         </div>
@@ -382,21 +463,116 @@ async function handleDeleteAccount() {
             <el-form-item label="日">
               <el-input-number v-model="birthForm.birth_day" :min="1" :max="31" style="width: 100%" />
             </el-form-item>
-            <el-form-item label="出生时间">
-              <div style="display: flex; gap: 12px; width: 100%">
-                <el-select v-model="birthForm.birth_hour" placeholder="时" style="flex: 1">
-                  <el-option v-for="h in 24" :key="h-1" :label="`${h-1}时`" :value="h-1" />
-                </el-select>
-                <el-select v-model="birthForm.birth_minute" placeholder="分" style="flex: 1">
-                  <el-option v-for="m in 12" :key="(m-1)*5" :label="`${String((m-1)*5).padStart(2, '0')}分`" :value="(m-1)*5" />
-                </el-select>
-              </div>
+            <el-form-item label="出生时辰">
+              <el-select v-model="birthForm.birth_hour" placeholder="时" style="width: 100%">
+                <el-option v-for="h in 24" :key="h-1" :label="`${h-1}:00`" :value="h-1" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="性别">
+              <el-radio-group v-model="birthForm.gender">
+                <el-radio :value="1">男</el-radio>
+                <el-radio :value="0">女</el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="出生地">
+              <el-input
+                v-model="birthForm.birth_location"
+                name="birth-location"
+                autocomplete="address-level2"
+                placeholder="选填；当前不参与真太阳时校正"
+              />
             </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="handleUpdateBirth">保存</el-button>
             </el-form-item>
           </el-form>
         </div>
+      </el-card>
+
+      <!-- 命盘基础：让排盘依据对用户可见 -->
+      <el-card class="section-card bazi-card animate-fade-in" v-loading="loadingBaziProfile">
+        <template #header>
+          <div class="card-header">
+            <div class="card-title">
+              <span class="card-icon">☷</span>
+              <span>命盘基础</span>
+            </div>
+            <el-tag v-if="baziProfile" effect="plain" class="day-master-tag">
+              日主 · {{ baziProfile.day_master }}
+            </el-tag>
+          </div>
+        </template>
+
+        <template v-if="baziProfile">
+          <div class="bazi-intro">
+            <div>
+              <span class="bazi-kicker">PERSONAL CHART</span>
+              <p>四柱与大运是每日参考的计算基础，展开后可核对每一项，而不只看到结论。</p>
+            </div>
+            <div class="favorable-elements">
+              <span>基础偏向</span>
+              <el-tag v-for="element in baziProfile.favorable_elements" :key="element" effect="dark" type="warning">
+                {{ element }}
+              </el-tag>
+            </div>
+          </div>
+
+          <div class="pillar-grid" aria-label="四柱命盘">
+            <div v-for="pillar in baziProfile.pillars" :key="pillar.key" class="pillar-item">
+              <span class="pillar-label">{{ pillar.label }}</span>
+              <strong class="pillar-value">{{ pillar.pillar }}</strong>
+              <span class="pillar-ten-god">{{ pillar.ten_god }}</span>
+            </div>
+          </div>
+
+          <div class="bazi-detail-grid">
+            <section class="bazi-subsection">
+              <div class="subsection-heading">
+                <span>五行分布</span>
+                <small>四柱可见字</small>
+              </div>
+              <div class="element-list">
+                <div v-for="element in fiveElementOrder" :key="element" class="element-row">
+                  <span class="element-name">{{ element }}</span>
+                  <div class="element-track" aria-hidden="true">
+                    <span
+                      class="element-fill"
+                      :class="`element-${element}`"
+                      :style="{ width: `${fiveElementPercentage(baziProfile.five_elements[element] || 0)}%` }"
+                    />
+                  </div>
+                  <span class="element-count">{{ baziProfile.five_elements[element] || 0 }}</span>
+                </div>
+              </div>
+            </section>
+
+            <section class="bazi-subsection luck-subsection">
+              <div class="subsection-heading">
+                <span>大运区间</span>
+                <small>按节气差起运</small>
+              </div>
+              <div class="luck-cycle-list">
+                <div
+                  v-for="cycle in baziProfile.major_luck_cycles"
+                  :key="`${cycle.start_year}-${cycle.pillar}`"
+                  class="luck-cycle"
+                  :class="{ 'is-current': isCurrentLuckCycle(cycle.start_year, cycle.end_year) }"
+                >
+                  <span class="luck-cycle-age">{{ cycle.start_age }}–{{ cycle.end_age }} 岁</span>
+                  <strong>{{ cycle.pillar }}</strong>
+                  <span class="luck-cycle-year">{{ cycle.start_year }}–{{ cycle.end_year }}</span>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <div class="bazi-notes">
+            <p><span>计算口径</span>{{ baziProfile.calculation_note }}</p>
+            <p><span>使用提示</span>{{ baziProfile.usage_notice }}</p>
+          </div>
+        </template>
+
+        <el-empty v-else-if="!loadingBaziProfile" description="暂无法生成命盘，请检查生辰信息" :image-size="72" />
       </el-card>
 
       <!-- 推送设置 -->
@@ -438,30 +614,47 @@ async function handleDeleteAccount() {
               <span class="card-icon">🤖</span>
               <span>LLM 配置</span>
             </div>
-            <el-tag v-if="llmForm.llm_provider" type="success" effect="plain" size="small">
-              {{ llmForm.llm_provider }}
+            <el-tag :type="usesServerDefaultLLM ? 'primary' : 'success'" effect="plain" size="small">
+              {{ usesServerDefaultLLM ? '服务器默认 · DeepSeek' : llmForm.llm_provider }}
             </el-tag>
           </div>
         </template>
         <el-form label-width="100px" class="llm-form">
+          <div class="llm-source-banner" :class="{ 'is-server-default': usesServerDefaultLLM }">
+            <div class="llm-source-copy">
+              <span class="llm-source-kicker">CURRENT SOURCE</span>
+              <strong>{{ usesServerDefaultLLM ? '服务器默认 DeepSeek' : '个人 LLM 覆盖配置' }}</strong>
+              <p v-if="usesServerDefaultLLM">请求将使用服务器已保存的 DeepSeek Key、地址与模型；Key 不会显示在页面上。</p>
+              <p v-else>当前账户保存了独立配置，它会优先于服务器默认值。切换前会先清除这组个人覆盖项。</p>
+            </div>
+            <el-button
+              v-if="!usesServerDefaultLLM"
+              plain
+              type="primary"
+              @click="handleUseServerDefaultLLM"
+            >
+              使用服务器 DeepSeek
+            </el-button>
+          </div>
+
           <!-- 供应商名称 + 备注 -->
           <div class="llm-row">
             <el-form-item label="供应商名称" class="llm-row-main">
-              <el-input v-model="llmForm.llm_provider" placeholder="例如：Xiaomi MiMo、DeepSeek" />
+              <el-input v-model="llmForm.llm_provider" name="llm-provider" autocomplete="off" placeholder="例如：DeepSeek" />
             </el-form-item>
             <el-form-item label="备注" class="llm-row-sub">
-              <el-input v-model="llmForm.llm_notes" placeholder="例如：公司专用账号" />
+              <el-input v-model="llmForm.llm_notes" name="llm-notes" autocomplete="off" placeholder="例如：公司专用账号" />
             </el-form-item>
           </div>
 
           <!-- 官网链接 -->
           <el-form-item label="官网链接">
-            <el-input v-model="llmForm.llm_website" placeholder="https://platform.xiaomimimo.com">
+            <el-input v-model="llmForm.llm_website" name="llm-website" type="url" autocomplete="off" spellcheck="false" placeholder="https://platform.deepseek.com">
               <template #prefix>
                 <span>🔗</span>
               </template>
               <template #append>
-                <el-button @click="openLlmWebsite">
+                <el-button @click="openLLMWebsite">
                   访问
                 </el-button>
               </template>
@@ -470,12 +663,15 @@ async function handleDeleteAccount() {
 
           <!-- API Key + 获取链接 -->
           <el-form-item label="API Key">
-            <el-input v-model="llmForm.llm_api_key" type="password" placeholder="留空则使用服务器默认配置" show-password>
+            <el-input v-model="llmForm.llm_api_key" name="llm-api-key" type="password" autocomplete="off" spellcheck="false" placeholder="留空则使用服务器默认配置" show-password>
               <template #prefix>
                 <span>🔑</span>
               </template>
             </el-input>
-            <div class="llm-hint" v-if="llmForm.llm_api_key_url">
+            <div class="llm-hint" v-if="usesServerDefaultLLM">
+              当前不使用个人 Key；如要改为个人配置，填写 Key 后保存即可。
+            </div>
+            <div class="llm-hint" v-else-if="llmForm.llm_api_key_url">
               <el-link type="primary" :href="llmForm.llm_api_key_url" target="_blank" :underline="false">
                 获取 API Key →
               </el-link>
@@ -484,17 +680,17 @@ async function handleDeleteAccount() {
 
           <!-- 请求地址 -->
           <el-form-item label="请求地址">
-            <el-input v-model="llmForm.llm_api_url" placeholder="https://token-plan-cn.xiaomimimo.com/v1">
+            <el-input v-model="llmForm.llm_api_url" name="llm-api-url" type="url" autocomplete="off" spellcheck="false" placeholder="https://api.deepseek.com">
               <template #prefix>
                 <span>🌐</span>
               </template>
             </el-input>
-            <div class="llm-hint">完整 URL：{{ llmForm.llm_api_url || '...' }}/chat/completions</div>
+            <div class="llm-hint">完整 URL：{{ llmForm.llm_api_url || '…' }}/chat/completions</div>
           </el-form-item>
 
           <!-- 模型名称 -->
           <el-form-item label="模型名称">
-            <el-input v-model="llmForm.llm_model" placeholder="mimo-v2.5">
+            <el-input v-model="llmForm.llm_model" name="llm-model" autocomplete="off" spellcheck="false" placeholder="deepseek-flash">
               <template #prefix>
                 <span>🧠</span>
               </template>
@@ -682,6 +878,8 @@ async function handleDeleteAccount() {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  min-width: 0;
+  gap: 12px;
   padding: 16px;
   background: var(--color-bg-light);
   border-radius: 12px;
@@ -693,9 +891,12 @@ async function handleDeleteAccount() {
 }
 
 .info-value {
+  min-width: 0;
   font-size: 15px;
   font-weight: 500;
   color: var(--color-text);
+  overflow-wrap: anywhere;
+  text-align: right;
 }
 
 /* 生辰信息 */
@@ -711,7 +912,7 @@ async function handleDeleteAccount() {
   border-radius: 16px;
   border: 1px solid var(--color-border);
   text-align: center;
-  transition: all 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .birth-card:hover {
@@ -743,6 +944,241 @@ async function handleDeleteAccount() {
   color: var(--color-accent);
 }
 
+/* 命盘基础：以“档案册”式层级呈现可核对的计算依据。 */
+.bazi-card {
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(245, 158, 11, 0.12), transparent 34%),
+    var(--color-surface);
+}
+
+.day-master-tag {
+  border-color: rgba(245, 158, 11, 0.45) !important;
+  color: #fbbf24 !important;
+}
+
+.bazi-intro {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: flex-end;
+  margin-bottom: 20px;
+}
+
+.bazi-kicker {
+  display: block;
+  color: #fbbf24;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  margin-bottom: 6px;
+}
+
+.bazi-intro p {
+  margin: 0;
+  max-width: 600px;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.favorable-elements {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-width: max-content;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+}
+
+.pillar-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  margin-bottom: 24px;
+  background: rgba(245, 158, 11, 0.28);
+  border: 1px solid rgba(245, 158, 11, 0.28);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.pillar-item {
+  display: flex;
+  min-height: 136px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 18px 12px;
+  background: linear-gradient(160deg, rgba(32, 27, 52, 0.96), rgba(20, 18, 34, 0.96));
+}
+
+.pillar-label {
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+
+.pillar-value {
+  color: #fde68a;
+  font-family: var(--font-family-display);
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-indent: 0.16em;
+}
+
+.pillar-ten-god {
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+.bazi-detail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: 20px;
+}
+
+.bazi-subsection {
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.subsection-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+  color: var(--color-text);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.subsection-heading small {
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.element-list {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.element-row {
+  display: grid;
+  grid-template-columns: 20px 1fr 18px;
+  align-items: center;
+  gap: 10px;
+}
+
+.element-name,
+.element-count {
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  text-align: center;
+}
+
+.element-track {
+  height: 6px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.element-fill {
+  display: block;
+  height: 100%;
+  min-width: 3px;
+  border-radius: inherit;
+  transition: width 0.45s ease-out;
+}
+
+.element-木 { background: #34d399; }
+.element-火 { background: #fb7185; }
+.element-土 { background: #fbbf24; }
+.element-金 { background: #cbd5e1; }
+.element-水 { background: #38bdf8; }
+
+.luck-cycle-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  max-height: 178px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.luck-cycle {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 3px 8px;
+  padding: 9px 10px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.luck-cycle strong {
+  grid-row: span 2;
+  color: var(--color-text);
+  font-family: var(--font-family-display);
+  font-size: 18px;
+}
+
+.luck-cycle-age,
+.luck-cycle-year {
+  overflow: hidden;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.luck-cycle-year {
+  color: var(--color-text-muted);
+  font-size: 11px;
+}
+
+.luck-cycle.is-current {
+  border-color: rgba(251, 191, 36, 0.55);
+  background: rgba(245, 158, 11, 0.1);
+}
+
+.luck-cycle.is-current strong {
+  color: #fde68a;
+}
+
+.bazi-notes {
+  margin-top: 18px;
+  padding: 12px 14px;
+  border-left: 2px solid rgba(245, 158, 11, 0.65);
+  background: rgba(245, 158, 11, 0.06);
+}
+
+.bazi-notes p {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.bazi-notes p + p {
+  margin-top: 4px;
+}
+
+.bazi-notes span {
+  margin-right: 8px;
+  color: var(--color-text-secondary);
+  font-weight: 600;
+}
+
 /* 编辑表单 */
 .edit-form {
   padding: 16px 0;
@@ -760,6 +1196,48 @@ async function handleDeleteAccount() {
 /* LLM 配置 */
 .llm-form {
   max-width: 600px;
+}
+
+.llm-source-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin: 0 0 20px 100px;
+  padding: 15px 16px;
+  border: 1px solid rgba(245, 158, 11, 0.28);
+  border-radius: 12px;
+  background: rgba(245, 158, 11, 0.06);
+}
+
+.llm-source-banner.is-server-default {
+  border-color: rgba(99, 102, 241, 0.32);
+  background: rgba(99, 102, 241, 0.08);
+}
+
+.llm-source-copy {
+  min-width: 0;
+}
+
+.llm-source-kicker {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--color-primary-light);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.llm-source-copy strong {
+  color: var(--color-text);
+  font-size: 14px;
+}
+
+.llm-source-copy p {
+  margin: 5px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  line-height: 1.55;
 }
 
 .llm-row {
@@ -805,6 +1283,19 @@ async function handleDeleteAccount() {
   gap: 12px;
 }
 
+@media (max-width: 768px) {
+  .llm-source-banner {
+    align-items: flex-start;
+    flex-direction: column;
+    margin-left: 0;
+  }
+
+  .llm-row {
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
 /* 危险操作 */
 .danger-card {
   border-color: rgba(239, 68, 68, 0.3) !important;
@@ -823,7 +1314,7 @@ async function handleDeleteAccount() {
   background: linear-gradient(135deg, var(--color-bg-light) 0%, var(--color-surface) 100%);
   border-radius: 16px;
   border: 1px solid var(--color-border);
-  transition: all 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .accuracy-card:hover {
@@ -968,6 +1459,27 @@ async function handleDeleteAccount() {
     grid-template-columns: 1fr;
   }
 
+  .bazi-intro {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .favorable-elements {
+    justify-content: flex-start;
+  }
+
+  .pillar-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pillar-item {
+    min-height: 118px;
+  }
+
+  .bazi-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
   .danger-content {
     flex-direction: column;
     gap: 16px;
@@ -981,6 +1493,17 @@ async function handleDeleteAccount() {
   .llm-row {
     flex-direction: column;
     gap: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .profile-page *,
+  .profile-page *::before,
+  .profile-page *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
   }
 }
 </style>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { HomeFilled, MagicStick, Sunny, User } from '@element-plus/icons-vue'
 import { useAuthStore } from '@/features/auth/stores/auth'
 import { ElMessageBox } from 'element-plus'
 
@@ -26,11 +27,12 @@ async function handleLogout() {
 
 <template>
   <el-container class="app-layout">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
     <el-header class="app-header">
-      <div class="logo" @click="router.push('/')">
+      <button type="button" class="logo" aria-label="前往首页" @click="router.push('/')">
         <span class="logo-icon">🔮</span>
         <span class="logo-text">命理运势</span>
-      </div>
+      </button>
       <el-menu
         :default-active="activeMenu"
         mode="horizontal"
@@ -71,7 +73,7 @@ async function handleLogout() {
         </template>
       </div>
     </el-header>
-    <el-main class="app-main">
+    <el-main id="main-content" class="app-main" tabindex="-1">
       <slot />
     </el-main>
     <el-footer class="app-footer">
@@ -86,6 +88,22 @@ async function handleLogout() {
 <style scoped>
 .app-layout {
   min-height: 100vh;
+}
+
+.skip-link {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 200;
+  padding: 8px 12px;
+  color: #0f0f23;
+  background: var(--color-accent);
+  border-radius: var(--radius-sm);
+  transform: translateY(-160%);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
 }
 
 .app-header {
@@ -106,12 +124,20 @@ async function handleLogout() {
   display: flex;
   align-items: center;
   gap: 10px;
+  padding: 0;
+  border: 0;
+  background: transparent;
   cursor: pointer;
   transition: transform 0.3s ease;
 }
 
 .logo:hover {
   transform: scale(1.05);
+}
+
+.logo:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 4px;
 }
 
 .logo-icon {
@@ -237,7 +263,8 @@ async function handleLogout() {
 /* 响应式 */
 @media (max-width: 768px) {
   .app-header {
-    padding: 0 16px;
+    gap: 8px;
+    padding: 0 12px;
   }
 
   .logo-text {
@@ -248,7 +275,26 @@ async function handleLogout() {
     display: none;
   }
 
+  .nav-menu {
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+
+  .nav-menu .el-menu-item {
+    min-width: 0;
+    padding: 0 10px;
+  }
+
+  .header-actions {
+    flex: 0 0 auto;
+    gap: 0;
+  }
+
   .username {
+    display: none;
+  }
+
+  .logout-btn {
     display: none;
   }
 

@@ -89,13 +89,14 @@ npx playwright test
 DATABASE_URL=mysql+pymysql://fortune:Fortune2026!@localhost:3306/fortune
 ```
 
-初始化数据库：
+初始化或升级数据库：
 
 ```bash
 cd E:\fortune\server
-E:\conda_envs\fortune\python.exe scripts/init_db.py
 E:\conda_envs\fortune\python.exe -m alembic upgrade head
 ```
+
+`alembic upgrade head` 已会为新库创建完整表结构；`scripts/init_db.py` 只保留给需要手动检查 ORM 表清单的场景。
 
 ## 常见问题
 
@@ -178,7 +179,7 @@ E:\fortune\
 - SQLAlchemy + SQLite（开发）/ MySQL（生产）
 - Alembic (数据库迁移)
 - JWT 认证 + bcrypt
-- Xiaomi MiMo API（LLM 解读）
+- DeepSeek API（LLM 解读默认供应商）
 - pytest (单元测试)
 
 ## 联系方式

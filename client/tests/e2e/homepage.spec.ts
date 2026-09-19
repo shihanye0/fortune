@@ -26,9 +26,9 @@ test.describe('首页', () => {
   })
 
   test('显示功能卡片', async ({ page }) => {
-    await expect(page.getByText('每日运势')).toBeVisible()
-    await expect(page.getByText('六爻占卜')).toBeVisible()
-    await expect(page.getByText('奇门遁甲')).toBeVisible()
+    await expect(page.getByRole('link', { name: /每日运势/ })).toBeVisible()
+    await expect(page.getByRole('link', { name: /六爻占卜/ })).toBeVisible()
+    await expect(page.getByRole('link', { name: /奇门遁甲/ })).toBeVisible()
   })
 
   test('点击注册按钮跳转到注册页', async ({ page }) => {

@@ -344,6 +344,7 @@ def generate_probability_events(
     hourly: list,
     today: date,
     feedback_summary: str = "",
+    current_hour: int | None = None,
 ) -> list:
     """
     生成个性化概率事件（扩展版：8-12个事件）
@@ -354,6 +355,7 @@ def generate_probability_events(
         hourly: 时辰运势列表
         today: 今日日期
         feedback_summary: 用户历史反馈摘要
+        current_hour: 调用方提供的中国当前小时；未提供时不对实时钟做隐式依赖
 
     Returns:
         概率事件列表
@@ -416,9 +418,7 @@ def generate_probability_events(
 
     # 今日流日五行
     daily_element = None
-    if hourly:
-        import datetime
-        current_hour = datetime.datetime.now().hour
+    if hourly and current_hour is not None:
         for h in hourly:
             if h.get("shichen_range", "").startswith(f"{current_hour:02d}") or \
                f"{current_hour:02d}" in h.get("shichen_range", ""):

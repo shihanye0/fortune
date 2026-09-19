@@ -28,11 +28,11 @@ class TestBaziCalculation:
         assert result["day_master"] == day_pillar[0]
 
     def test_five_elements_count(self):
-        """五行分布统计"""
+        """五行分布应覆盖四柱天干与地支的八个可见字。"""
         result = calculate_bazi(1990, 5, 15, 8, gender=1)
         fe = result["five_elements"]
         assert set(fe.keys()) == {"金", "木", "水", "火", "土"}
-        assert sum(fe.values()) == 4  # 四柱天干 = 4 个五行
+        assert sum(fe.values()) == 8  # 四柱天干 + 地支 = 8 个可见字
 
     def test_ten_gods(self):
         """十神关系"""
@@ -57,16 +57,37 @@ class TestBaziCalculation:
         assert len(result_night["day_pillar"]) == 2
 
     def test_major_luck_cycles(self):
-        """大运排列"""
+        """大运排列应包含按节气差计算的实际起运区间。"""
         result = calculate_bazi(1990, 5, 15, 8, gender=1)
         cycles = result["major_luck_cycles"]
         assert isinstance(cycles, list)
-        assert len(cycles) > 0
-        # 每个大运应有起始年龄和天干地支
+        assert len(cycles) == 8
+        # 每个大运应有实际起止年龄、年份和天干地支。
         for c in cycles:
             assert "start_age" in c
+            assert "end_age" in c
+            assert "start_year" in c
+            assert "end_year" in c
             assert "pillar" in c
             assert len(c["pillar"]) == 2
+        # 1990-05-15 男命按节气差起运为 8 岁，不能固定写为 10 岁。
+        assert cycles[0]["start_age"] == 8
+        assert cycles[0]["start_year"] == 1997
+
+    def test_uses_exact_solar_term_boundary(self):
+        """立春后应采用节气年柱，而不能沿用农历年柱。"""
+        result = calculate_bazi(2026, 2, 4, 12, gender=1)
+
+        assert result["year_pillar"] == "丙午"
+        assert result["month_pillar"] == "庚寅"
+
+    def test_weak_day_master_prefers_generating_element(self):
+        """日主偏弱时，基础偏向的首项应为生我五行。"""
+        result = calculate_bazi(2026, 2, 4, 12, gender=1)
+
+        assert result["day_master"] == "己"
+        assert result["five_elements"]["土"] == 1
+        assert result["favorable_elements"] == ["火", "土"]
 
     def test_favorable_elements(self):
         """喜用神"""

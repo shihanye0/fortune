@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted, reactive } from 'vue'
+import { ref, onMounted, reactive, watch } from 'vue'
 import { ElMessage } from 'element-plus'
+import { useRoute } from 'vue-router'
 import {
   doLiuyao,
   doQimen,
@@ -14,7 +15,9 @@ import type { DivinationResult, DivinationRecord, ProbabilityEvent, EventFeedbac
 import { submitDivinationAccuracy, submitPredictionOutcome } from '@/features/feedback/api/feedback-api'
 
 const loading = ref(false)
+const route = useRoute()
 const method = ref<'liuyao' | 'qimen'>('liuyao')
+const liuyaoMethod = ref<'coin' | 'time'>('coin')
 const qimenMode = ref<'question' | 'realtime'>('realtime')
 const question = ref('')
 const result = ref<DivinationResult | null>(null)
@@ -26,6 +29,8 @@ const feedbackText = ref('')
 // 概率事件数据（从 API 获取）
 const probabilityEvents = ref<ProbabilityEvent[]>([])
 const loadingEvents = ref(false)
+const probabilityEventsError = ref('')
+const probabilityEventDate = ref('')
 
 // 事件反馈弹窗
 const showEventFeedbackDialog = ref(false)
@@ -67,13 +72,15 @@ async function viewDetail(record: DivinationRecord) {
 // 获取概率事件
 async function fetchProbabilityEvents() {
   loadingEvents.value = true
+  probabilityEventsError.value = ''
   try {
     const res = await getProbabilityEvents()
     if (res.success && res.data) {
       probabilityEvents.value = res.data.events
+      probabilityEventDate.value = res.data.date
     }
   } catch {
-    // silent
+    probabilityEventsError.value = '行动倾向暂时无法加载，请稍后重试。'
   } finally {
     loadingEvents.value = false
   }
@@ -123,12 +130,27 @@ function getProbabilityColor(prob: number): string {
 }
 
 function getProbabilityText(prob: number): string {
-  if (prob >= 60) return '较高'
-  if (prob >= 40) return '中等'
-  return '较低'
+  if (prob >= 60) return '可重点关注'
+  if (prob >= 40) return '保持常规节奏'
+  return '宜谨慎安排'
+}
+
+function formatChinaDateTime(value: string): string {
+  return new Intl.DateTimeFormat('zh-CN', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+    timeZone: 'Asia/Shanghai',
+  }).format(new Date(value))
+}
+
+function applyRouteMethod() {
+  if (route.query.method === 'qimen') {
+    method.value = 'qimen'
+  }
 }
 
 onMounted(async () => {
+  applyRouteMethod()
   fetchProbabilityEvents()
   try {
     const res = await getDivinationRecords()
@@ -140,13 +162,15 @@ onMounted(async () => {
   }
 })
 
+watch(() => route.query.method, applyRouteMethod)
+
 async function handleSubmit() {
   loading.value = true
   result.value = null
   try {
     let res
     if (method.value === 'liuyao') {
-      res = await doLiuyao({ question: question.value || undefined, method: 'coin' })
+      res = await doLiuyao({ question: question.value || undefined, method: liuyaoMethod.value })
     } else {
       res = await doQimen({ question: question.value || undefined, mode: qimenMode.value })
     }
@@ -262,13 +286,13 @@ async function handleSubmitVerify() {
       <p class="page-subtitle">传统命理，智慧指引</p>
     </div>
 
-    <!-- 每日概率事件 -->
+    <!-- 每日行动倾向：避免把规则分段分数误述为统计概率 -->
     <el-card class="daily-events-card animate-fade-in" v-loading="loadingEvents">
       <template #header>
         <div class="card-header">
           <span class="card-icon">📊</span>
-          <span class="card-title">今日概率事件</span>
-          <el-tag type="info" effect="plain" size="small">{{ new Date().toLocaleDateString('zh-CN') }}</el-tag>
+          <span class="card-title">今日行动倾向</span>
+          <el-tag type="info" effect="plain" size="small">{{ probabilityEventDate || '今日' }}</el-tag>
           <el-tag v-if="probabilityEvents.length > 0" type="success" effect="plain" size="small">
             基于您的八字推算
           </el-tag>
@@ -291,15 +315,10 @@ async function handleSubmitVerify() {
               <el-tag v-if="item.is_favorable" size="small" type="success">喜用神</el-tag>
             </div>
             <div class="event-probability">
-              <el-progress
-                :percentage="item.probability"
-                :color="getProbabilityColor(item.probability)"
-                :stroke-width="8"
-                :show-text="false"
-              />
               <span class="probability-text" :style="{ color: getProbabilityColor(item.probability) }">
-                {{ item.probability }}% {{ getProbabilityText(item.probability) }}
+                {{ getProbabilityText(item.probability) }}
               </span>
+              <small>基于当前规则推演，不是统计概率</small>
             </div>
             <div class="event-feedback">
               <el-button
@@ -340,6 +359,10 @@ async function handleSubmitVerify() {
           </div>
         </div>
       </div>
+      <div v-else-if="probabilityEventsError" class="empty-events">
+        <p>{{ probabilityEventsError }}</p>
+        <el-button size="small" plain @click="fetchProbabilityEvents">重试</el-button>
+      </div>
       <div v-else-if="!loadingEvents" class="empty-events">
         暂无概率事件数据
       </div>
@@ -367,15 +390,24 @@ async function handleSubmitVerify() {
       <div v-if="method === 'qimen'" class="qimen-mode">
         <el-radio-group v-model="qimenMode">
           <el-radio value="realtime">实时看盘</el-radio>
-          <el-radio value="question">一事一测</el-radio>
+          <el-radio value="question">问事起盘</el-radio>
+        </el-radio-group>
+        <p class="calculation-disclosure">当前为简化教学盘，以提交时刻为准，不替代节气精排盘。</p>
+      </div>
+      <div v-else class="qimen-mode">
+        <el-radio-group v-model="liuyaoMethod">
+          <el-radio value="coin">铜钱法</el-radio>
+          <el-radio value="time">时间起卦</el-radio>
         </el-radio-group>
       </div>
 
       <div class="question-input">
         <el-input
           v-model="question"
+          name="divination-question"
+          aria-label="占卜问题"
           type="textarea"
-          placeholder="输入你的问题（选填）"
+          :placeholder="method === 'qimen' && qimenMode === 'question' ? '请填写需要咨询的具体问题' : '输入你的问题（选填）'"
           :rows="3"
         />
       </div>
@@ -437,20 +469,21 @@ async function handleSubmitVerify() {
     <div class="history-section animate-fade-in" v-if="historyList.length > 0">
       <h2 class="section-title">占卜历史</h2>
       <div class="history-list">
-        <div
+        <button
           v-for="record in historyList"
           :key="record.id"
+          type="button"
           class="history-item"
           @click="viewDetail(record)"
         >
           <div class="history-header">
             <div class="history-type">
-              <el-tag :type="record.type === 'liuyao' ? '' : 'success'" size="small">
+              <el-tag :type="record.type === 'liuyao' ? 'primary' : 'success'" size="small">
                 {{ record.type === 'liuyao' ? '六爻' : '奇门' }}
               </el-tag>
             </div>
             <div class="history-time">
-              {{ new Date(record.created_at).toLocaleString('zh-CN') }}
+              {{ formatChinaDateTime(record.created_at) }}
             </div>
           </div>
           <div class="history-question" v-if="record.question">
@@ -460,7 +493,7 @@ async function handleSubmitVerify() {
             <span class="rating-stars">{{ '★'.repeat(record.user_rating) }}{{ '☆'.repeat(5 - record.user_rating) }}</span>
           </div>
           <div class="history-arrow">→</div>
-        </div>
+        </button>
       </div>
     </div>
 
@@ -475,11 +508,11 @@ async function handleSubmitVerify() {
         <div class="detail-meta">
           <div class="detail-time">
             <span class="meta-label">占卜时间：</span>
-            {{ new Date(selectedRecord.created_at).toLocaleString('zh-CN') }}
+            {{ formatChinaDateTime(selectedRecord.created_at) }}
           </div>
           <div class="detail-type">
             <span class="meta-label">占卜类型：</span>
-            <el-tag :type="selectedRecord.type === 'liuyao' ? '' : 'success'" size="small">
+            <el-tag :type="selectedRecord.type === 'liuyao' ? 'primary' : 'success'" size="small">
               {{ selectedRecord.type === 'liuyao' ? '六爻' : '奇门' }}
             </el-tag>
           </div>
@@ -552,7 +585,7 @@ async function handleSubmitVerify() {
           <div class="feedback-event-icon">{{ feedbackEvent.icon }}</div>
           <div class="feedback-event-name">{{ feedbackEvent.event }}</div>
           <div class="feedback-event-desc">{{ feedbackEvent.description }}</div>
-          <div class="feedback-event-prob">预测概率：{{ feedbackEvent.probability }}%</div>
+          <div class="feedback-event-prob">规则倾向：{{ getProbabilityText(feedbackEvent.probability) }}</div>
         </div>
         <el-divider />
         <el-form label-position="top">
@@ -679,7 +712,7 @@ async function handleSubmitVerify() {
   background: linear-gradient(135deg, var(--color-bg-light) 0%, var(--color-surface) 100%);
   border-radius: 16px;
   border: 1px solid var(--color-border);
-  transition: all 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .event-item:hover {
@@ -728,6 +761,11 @@ async function handleSubmitVerify() {
   font-size: 14px;
   font-weight: 700;
   white-space: nowrap;
+}
+
+.event-probability small {
+  color: var(--color-text-muted);
+  font-size: 11px;
 }
 
 .event-meta {
@@ -803,6 +841,13 @@ async function handleSubmitVerify() {
 
 .qimen-mode {
   margin-bottom: 20px;
+}
+
+.calculation-disclosure {
+  margin-top: 8px;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  line-height: 1.6;
 }
 
 .question-input {
@@ -888,14 +933,23 @@ async function handleSubmitVerify() {
 
 .history-item {
   display: flex;
+  width: 100%;
   align-items: center;
   gap: 16px;
   padding: 16px 20px;
   background: var(--color-surface);
   border-radius: 12px;
   border: 1px solid var(--color-border);
+  color: inherit;
+  font: inherit;
+  text-align: left;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.history-item:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
 }
 
 .history-item:hover {

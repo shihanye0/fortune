@@ -7,7 +7,11 @@ import pytest
 
 from app.models.user import User
 from app.models.daily_fortune import DailyFortune
+from app.models.push_delivery import PushDelivery
 from app.core.security import hash_password
+
+
+INTERNAL_HEADERS = {"X-API-Key": "test-internal-api-key"}
 
 
 def _create_user(db, push_enabled=True, push_channel="email", push_time="07:00",
@@ -42,6 +46,7 @@ class TestDailyPushAPI:
         res = client.post(
             "/api/v1/internal/daily-push",
             json={"hour": 7},
+            headers=INTERNAL_HEADERS,
         )
         assert res.status_code == 200
         data = res.json()
@@ -56,6 +61,7 @@ class TestDailyPushAPI:
         res = client.post(
             "/api/v1/internal/daily-push",
             json={"hour": 7},
+            headers=INTERNAL_HEADERS,
         )
         assert res.status_code == 200
         data = res.json()
@@ -71,6 +77,7 @@ class TestDailyPushAPI:
         res = client.post(
             "/api/v1/internal/daily-push",
             json={"hour": 7},
+            headers=INTERNAL_HEADERS,
         )
         assert res.status_code == 200
         data = res.json()
@@ -88,6 +95,7 @@ class TestDailyPushAPI:
         res = client.post(
             "/api/v1/internal/daily-push",
             json={"hour": 8},
+            headers=INTERNAL_HEADERS,
         )
         assert res.status_code == 200
         mock_feishu.assert_called_once()
@@ -105,6 +113,7 @@ class TestDailyPushAPI:
         res = client.post(
             "/api/v1/internal/daily-push",
             json={"hour": 9},
+            headers=INTERNAL_HEADERS,
         )
         assert res.status_code == 200
         mock_email.assert_called_once()
@@ -119,6 +128,7 @@ class TestDailyPushAPI:
         res = client.post(
             "/api/v1/internal/daily-push",
             json={"hour": 7},
+            headers=INTERNAL_HEADERS,
         )
         assert res.status_code == 200
         # 仍然推送，使用降级文本
@@ -130,7 +140,11 @@ class TestDailyPushAPI:
 
         with patch("app.services.push_email.send_fortune_email", return_value=True), \
              patch("fortune_engine.services.deepseek.interpret_daily", return_value="解读"):
-            client.post("/api/v1/internal/daily-push", json={"hour": 7})
+            client.post(
+                "/api/v1/internal/daily-push",
+                json={"hour": 7},
+                headers=INTERNAL_HEADERS,
+            )
 
         # 检查数据库中有运势记录
         fortune = db_session.query(DailyFortune).filter(
@@ -138,3 +152,63 @@ class TestDailyPushAPI:
         ).first()
         assert fortune is not None
         assert fortune.overall_score > 0
+
+    @patch("app.services.push_email.send_fortune_email", return_value=True)
+    @patch("fortune_engine.services.deepseek.interpret_daily", return_value="解读")
+    def test_delivery_is_idempotent_per_user_date_channel(self, mock_llm, mock_email, client, db_session):
+        user = _create_user(db_session, push_channel="email", push_time="07:00")
+
+        first = client.post(
+            "/api/v1/internal/daily-push",
+            json={"hour": 7},
+            headers=INTERNAL_HEADERS,
+        )
+        second = client.post(
+            "/api/v1/internal/daily-push",
+            json={"hour": 7},
+            headers=INTERNAL_HEADERS,
+        )
+
+        assert first.status_code == 200
+        assert second.status_code == 200
+        assert mock_email.call_count == 1
+        rows = db_session.query(PushDelivery).filter(PushDelivery.user_id == user.id).all()
+        assert len(rows) == 1
+        assert rows[0].status == "delivered"
+
+    @patch("app.services.push_feishu.send_fortune_feishu", return_value=False)
+    @patch("app.services.push_email.send_fortune_email", return_value=True)
+    @patch("fortune_engine.services.deepseek.interpret_daily", return_value="解读")
+    def test_each_channel_tracks_its_own_delivery_state(self, mock_llm, mock_email, mock_feishu, client, db_session):
+        user = _create_user(
+            db_session,
+            push_channel="both",
+            push_time="07:00",
+            feishu_webhook="https://open.feishu.cn/open-apis/bot/v2/hook/test",
+        )
+
+        res = client.post(
+            "/api/v1/internal/daily-push",
+            json={"hour": 7},
+            headers=INTERNAL_HEADERS,
+        )
+
+        assert res.status_code == 200
+        rows = {row.channel: row for row in db_session.query(PushDelivery).filter(PushDelivery.user_id == user.id).all()}
+        assert rows["email"].status == "delivered"
+        assert rows["feishu"].status == "pending"
+        assert rows["feishu"].attempts == 1
+        assert rows["feishu"].next_attempt_at is not None
+
+    def test_rejects_missing_or_invalid_internal_key(self, client, db_session):
+        _create_user(db_session)
+
+        missing = client.post("/api/v1/internal/daily-push", json={"hour": 7})
+        invalid = client.post(
+            "/api/v1/internal/daily-push",
+            json={"hour": 7},
+            headers={"X-API-Key": "wrong-key"},
+        )
+
+        assert missing.status_code == 401
+        assert invalid.status_code == 401

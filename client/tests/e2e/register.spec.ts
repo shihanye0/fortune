@@ -14,8 +14,10 @@ test.describe('注册页面', () => {
   })
 
   test('显示生辰信息区域', async ({ page }) => {
-    await expect(page.getByText('生辰信息')).toBeVisible()
-    await expect(page.getByText('出生日期')).toBeVisible()
+    await expect(page.getByText('生辰信息（用于排盘）', { exact: true })).toBeVisible()
+    await expect(page.getByText('出生年')).toBeVisible()
+    await expect(page.getByText('出生月')).toBeVisible()
+    await expect(page.getByText('出生日')).toBeVisible()
     await expect(page.getByText('出生时辰')).toBeVisible()
   })
 

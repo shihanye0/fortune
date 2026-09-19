@@ -33,3 +33,12 @@ Thumbs.db
 
 # 内部资料
 .internal/
+
+# 本地调试产物（不入库）
+server/browser-*.db
+server/browser-*.log
+server/week-api-check.db
+client/playwright-report/
+client/test-results/
+.v2c/
+.video_agent/

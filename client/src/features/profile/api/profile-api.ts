@@ -9,8 +9,7 @@ export interface UserProfile {
   birth_month: number | null
   birth_day: number | null
   birth_hour: number | null
-  birth_minute: number | null
-  gender: string | null
+  gender: number | null
   birth_location: string | null
   push_channel: string | null
   push_enabled: boolean
@@ -23,11 +22,42 @@ export interface UserProfile {
   llm_api_key_url: string | null
   llm_api_url: string | null
   llm_model: string | null
+  llm_config_source: 'personal' | 'server_default'
   created_at: string
+}
+
+export interface BaziPillar {
+  key: 'year' | 'month' | 'day' | 'hour'
+  label: string
+  pillar: string
+  ten_god: string | null
+}
+
+export interface MajorLuckCycle {
+  start_age: number
+  end_age: number
+  start_year: number
+  end_year: number
+  pillar: string
+}
+
+export interface BaziProfile {
+  pillars: BaziPillar[]
+  day_master: string
+  five_elements: Record<string, number>
+  favorable_elements: string[]
+  major_luck_cycles: MajorLuckCycle[]
+  calculation_note: string
+  usage_notice: string
 }
 
 export async function getProfile(): Promise<ApiResponse<UserProfile>> {
   const res = await client.get('/api/v1/users/me')
+  return res.data
+}
+
+export async function getBaziProfile(): Promise<ApiResponse<BaziProfile>> {
+  const res = await client.get('/api/v1/users/me/bazi-profile')
   return res.data
 }
 
@@ -41,6 +71,8 @@ export async function updateBirth(data: {
   birth_month: number
   birth_day: number
   birth_hour: number
+  gender?: number
+  birth_location?: string | null
 }): Promise<ApiResponse<UserProfile>> {
   const res = await client.put('/api/v1/users/me/birth', data)
   return res.data
@@ -64,6 +96,7 @@ export async function updateLLMSettings(data: {
   llm_api_key_url?: string
   llm_api_url?: string
   llm_model?: string
+  use_server_default?: boolean
 }): Promise<ApiResponse<UserProfile>> {
   const res = await client.put('/api/v1/users/me/llm-settings', data)
   return res.data

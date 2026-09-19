@@ -6,6 +6,7 @@ from fortune_engine.liuyao.hexagram import (
     time_divination,
     TRIGRAM_NAMES,
     HEXAGRAM_MAP,
+    _get_hexagram_name,
 )
 
 
@@ -54,6 +55,14 @@ class TestCoinDivination:
         result = coin_divination("最近工作是否顺利")
         assert result["question"] == "最近工作是否顺利"
 
+    def test_hexagram_map_has_all_64_canonical_entries(self):
+        """每个上、下卦组合都应存在，且不能把上、下卦顺序写反。"""
+        assert len(HEXAGRAM_MAP) == 64
+        assert _get_hexagram_name("乾", "坤") == "天地否"
+        assert _get_hexagram_name("坤", "乾") == "地天泰"
+        assert _get_hexagram_name("坎", "巽") == "水风井"
+        assert _get_hexagram_name("巽", "坎") == "风水涣"
+
 
 class TestTimeDivination:
     """时间起卦"""
@@ -63,6 +72,8 @@ class TestTimeDivination:
         result = time_divination("测试", 2026, 6, 20, 14)
         assert len(result["lines"]) == 6
         assert "name" in result
+        assert result["changing_lines"]
+        assert 1 <= result["changing_lines"][0] <= 6
 
     def test_deterministic(self):
         """同一时间应产生相同卦象"""

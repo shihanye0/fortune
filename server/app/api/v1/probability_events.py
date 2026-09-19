@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """概率事件推算接口"""
-from datetime import date
+from datetime import datetime
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
@@ -10,6 +10,7 @@ from app.api.deps import get_db
 from app.api.v1.users import get_current_user
 from app.models.user import User
 from app.models.probability_event_feedback import ProbabilityEventFeedback
+from app.models.base import CHINA_TZ
 
 router = APIRouter(prefix="/probability-events", tags=["概率事件"])
 
@@ -35,7 +36,8 @@ def get_today_events(
     from fortune_engine.bazi.hourly_fortune import calculate_all_hours_fortune
     from fortune_engine.probability_events import generate_probability_events
 
-    today = date.today()
+    now = datetime.now(CHINA_TZ)
+    today = now.date()
 
     # 1. 计算八字
     bazi = calculate_bazi(
@@ -54,7 +56,9 @@ def get_today_events(
     feedback_summary = _get_feedback_summary(db, current_user.id)
 
     # 5. 生成概率事件
-    events = generate_probability_events(bazi, daily, hourly, today, feedback_summary)
+    events = generate_probability_events(
+        bazi, daily, hourly, today, feedback_summary, current_hour=now.hour,
+    )
 
     # 6. 标记已反馈的事件
     today_feedbacks = (
@@ -93,7 +97,7 @@ def submit_event_feedback(
     db: Session = Depends(get_db),
 ):
     """提交概率事件反馈"""
-    today = date.today()
+    today = datetime.now(CHINA_TZ).date()
 
     # 查找是否已有反馈
     existing = (

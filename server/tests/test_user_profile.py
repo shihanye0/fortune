@@ -53,6 +53,35 @@ class TestGetProfile:
         assert res.status_code == 401
 
 
+class TestBaziProfile:
+    """GET /api/v1/users/me/bazi-profile"""
+
+    def test_returns_explainable_chart_with_actual_luck_cycles(self, client):
+        """命盘接口应给出四柱、五行口径和按节气计算的大运区间。"""
+        token = _register_and_login(client)
+
+        res = client.get(
+            "/api/v1/users/me/bazi-profile",
+            headers={"Authorization": f"Bearer {token}"},
+        )
+
+        assert res.status_code == 200
+        data = res.json()["data"]
+        assert [pillar["label"] for pillar in data["pillars"]] == ["年柱", "月柱", "日柱", "时柱"]
+        assert data["day_master"] == data["pillars"][2]["pillar"][0]
+        assert sum(data["five_elements"].values()) == 8
+        assert len(data["major_luck_cycles"]) == 8
+        assert data["major_luck_cycles"][0]["start_age"] != 10
+        assert "节气" in data["calculation_note"]
+        assert "重要决策" in data["usage_notice"]
+
+    def test_bazi_profile_requires_authentication(self, client):
+        """命盘属于用户私密资料，未登录不能读取。"""
+        res = client.get("/api/v1/users/me/bazi-profile")
+
+        assert res.status_code == 401
+
+
 class TestUpdateProfile:
     """PUT /api/v1/users/me"""
 

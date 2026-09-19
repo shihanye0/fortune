@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """占卜接口"""
+from datetime import datetime, timedelta, timezone
+
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
 from sqlalchemy import func
@@ -12,6 +14,7 @@ from app.models.user import User
 
 
 router = APIRouter(prefix="/divination", tags=["占卜功能"])
+CHINA_TZ = timezone(timedelta(hours=8))
 
 
 # --- Schema ---
@@ -44,13 +47,18 @@ def do_liuyao(
     db: Session = Depends(get_db),
 ):
     """六爻占卜"""
-    from fortune_engine.liuyao.hexagram import coin_divination
+    from fortune_engine.liuyao.hexagram import coin_divination, time_divination
     from fortune_engine.bazi.pillar import calculate_bazi
-    from fortune_engine.services.deepseek import interpret_liuyao
+    from fortune_engine.services.deepseek import get_user_llm_overrides, interpret_liuyao
+    from app.services.feedback_summary import get_outcome_history
 
     # 起卦
     question = req.question or ""
-    hexagram_data = coin_divination(question)
+    if req.method == "time":
+        now = datetime.now(CHINA_TZ)
+        hexagram_data = time_divination(question, now.year, now.month, now.day, now.hour)
+    else:
+        hexagram_data = coin_divination(question)
 
     # 获取用户八字信息
     bazi_info = ""
@@ -73,9 +81,8 @@ def do_liuyao(
     interpretation = interpret_liuyao(
         hexagram_data,
         bazi_info,
-        llm_api_key=current_user.llm_api_key,
-        llm_api_url=current_user.llm_api_url,
-        llm_model=current_user.llm_model,
+        get_outcome_history(db, current_user.id),
+        **get_user_llm_overrides(current_user),
     )
 
     # 存储记录
@@ -108,14 +115,16 @@ def do_qimen(
     db: Session = Depends(get_db),
 ):
     """奇门遁甲排盘"""
-    from datetime import datetime
     from fortune_engine.qimen.chart import calculate_qimen
     from fortune_engine.bazi.pillar import calculate_bazi
-    from fortune_engine.services.deepseek import interpret_qimen
+    from fortune_engine.services.deepseek import get_user_llm_overrides, interpret_qimen
+    from app.services.feedback_summary import get_outcome_history
 
     # 获取当前时间
-    now = datetime.now()
-    question = req.question or ""
+    now = datetime.now(CHINA_TZ)
+    question = (req.question or "").strip()
+    if req.mode == "question" and not question:
+        raise HTTPException(status_code=422, detail="一事一测需要填写具体问题")
 
     # 排盘
     chart_data = calculate_qimen(
@@ -124,6 +133,10 @@ def do_qimen(
         day=now.day,
         hour=now.hour,
     )
+    # 当前排盘引擎是可解释的简化教学规则；将模式和口径写入原始记录，
+    # 避免页面或后续 LLM 把它误述为节气精排盘。
+    chart_data["mode"] = req.mode
+    chart_data["calculation_note"] = "简化教学盘：按公历月分段推演，不是节气精排盘。"
 
     # 获取用户八字信息
     bazi_info = ""
@@ -147,9 +160,8 @@ def do_qimen(
         chart_data,
         question,
         bazi_info,
-        llm_api_key=current_user.llm_api_key,
-        llm_api_url=current_user.llm_api_url,
-        llm_model=current_user.llm_model,
+        get_outcome_history(db, current_user.id),
+        **get_user_llm_overrides(current_user),
     )
 
     # 存储记录

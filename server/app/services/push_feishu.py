@@ -4,6 +4,9 @@ import logging
 
 import httpx
 
+from app.core.outbound_urls import OutboundUrlError, normalize_feishu_webhook
+from fortune_engine.bazi.score import get_fortune_level, normalize_score
+
 logger = logging.getLogger(__name__)
 
 
@@ -21,13 +24,13 @@ def _build_hourly_text(hourly_fortunes: list) -> str:
     lines = ['**⏰ 时辰运势**\n']
     for h in hourly_fortunes:
         icon = icons.get(h.get('shichen', ''), '⏰')
-        score = h.get('score', 3)
+        score = normalize_score(h.get('score'))
         if score >= 4:
-            score_tag = f"<font color='green'>{score}分</font>"
+            score_tag = f"<font color='green'>{score}/5</font>"
         elif score >= 3:
-            score_tag = f"<font color='orange'>{score}分</font>"
+            score_tag = f"<font color='blue'>{score}/5</font>"
         else:
-            score_tag = f"<font color='red'>{score}分</font>"
+            score_tag = f"<font color='orange'>{score}/5</font>"
 
         favorable = '、'.join(h.get('favorable', []))
         unfavorable = '、'.join(h.get('unfavorable', []))
@@ -38,21 +41,13 @@ def _build_hourly_text(hourly_fortunes: list) -> str:
 
 
 def _build_events_text(events: list) -> str:
-    """构建概率事件文本"""
+    """构建不承诺伪精确概率的行动关注点文本。"""
     if not events:
         return ''
 
-    lines = ['\n**🎲 今日概率事件**\n']
+    lines = ['\n**🎲 今日行动关注点**', '按当日节奏生成，适合用于安排优先级。\n']
     for e in events:
-        prob = e.get('probability', 0)
-        if prob >= 70:
-            tag = f"<font color='green'>{prob}%</font>"
-        elif prob >= 40:
-            tag = f"<font color='orange'>{prob}%</font>"
-        else:
-            tag = f"<font color='red'>{prob}%</font>"
-
-        lines.append(f"• {e.get('event', '')}  {tag}")
+        lines.append(f"• {e.get('event', '')}")
 
     return '\n'.join(lines)
 
@@ -60,7 +55,7 @@ def _build_events_text(events: list) -> str:
 def _build_card(fortune_data: dict) -> dict:
     """构建飞书消息卡片"""
     date_str = fortune_data.get("date", "")
-    score = fortune_data.get("overall_score", 0)
+    score = normalize_score(fortune_data.get("overall_score"))
     career = fortune_data.get("career", {})
     wealth = fortune_data.get("wealth", {})
     love = fortune_data.get("love", {})
@@ -71,28 +66,13 @@ def _build_card(fortune_data: dict) -> dict:
     hourly_fortunes = fortune_data.get("hourly_fortunes", [])
     probability_events = fortune_data.get("probability_events", [])
 
-    # 运势等级
-    if score >= 90:
-        score_text = "大吉"
-    elif score >= 70:
-        score_text = "中吉"
-    elif score >= 50:
-        score_text = "小吉"
-    else:
-        score_text = "平"
-
-    # 分数颜色
-    if score >= 80:
-        score_color = "green"
-    elif score >= 60:
-        score_color = "orange"
-    else:
-        score_color = "red"
+    level = get_fortune_level(score)
+    score_color = "green" if score >= 4 else "blue" if score == 3 else "orange"
 
     elements = [
         {
             "tag": "markdown",
-            "content": f"**综合运势**  <font color='{score_color}'>{score}/100 {score_text}</font>",
+            "content": f"**综合状态**  <font color='{score_color}'>{score}/5 {level.label}</font>\n{level.guidance}",
         },
         {"tag": "hr"},
         {
@@ -100,8 +80,8 @@ def _build_card(fortune_data: dict) -> dict:
             "content": (
                 f"| 💼 事业 | 💰 财运 | 💕 感情 | 🏥 健康 |\n"
                 f"| :---: | :---: | :---: | :---: |\n"
-                f"| {career.get('score', '-')} | {wealth.get('score', '-')} "
-                f"| {love.get('score', '-')} | {health.get('score', '-')} |"
+                f"| {normalize_score(career.get('score'))}/5 | {normalize_score(wealth.get('score'))}/5 "
+                f"| {normalize_score(love.get('score'))}/5 | {normalize_score(health.get('score'))}/5 |"
             ),
         },
         {"tag": "hr"},
@@ -147,7 +127,7 @@ def _build_card(fortune_data: dict) -> dict:
                     "tag": "plain_text",
                     "content": f"每日运势播报 · {date_str}",
                 },
-                "template": "red",
+                "template": "green" if score >= 4 else "blue" if score == 3 else "orange",
             },
             "elements": elements,
         },
@@ -159,6 +139,7 @@ def send_fortune_feishu(webhook_url: str, fortune_data: dict) -> bool:
     card = _build_card(fortune_data)
 
     try:
+        webhook_url = normalize_feishu_webhook(webhook_url)
         response = httpx.post(
             webhook_url,
             json=card,
@@ -171,6 +152,9 @@ def send_fortune_feishu(webhook_url: str, fortune_data: dict) -> bool:
         else:
             logger.error("飞书推送失败: %s", result.get("msg"))
             return False
+    except OutboundUrlError:
+        logger.error("飞书推送地址不受信任")
+        return False
     except httpx.TimeoutException:
         logger.error("飞书推送超时")
         return False

@@ -5,8 +5,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from app.services.push_email import send_fortune_email
-from app.services.push_feishu import send_fortune_feishu
+from app.services.push_email import _build_html, send_fortune_email
+from app.services.push_feishu import _build_card, send_fortune_feishu
 
 
 # --- QQ 邮箱推送 ---
@@ -23,11 +23,11 @@ class TestSendFortuneEmail:
 
         fortune_data = {
             "date": "2026-06-20",
-            "overall_score": 82,
-            "career": {"score": 85, "detail": "事业运良好"},
-            "wealth": {"score": 78, "detail": "财运平稳"},
-            "love": {"score": 80, "detail": "感情运不错"},
-            "health": {"score": 85, "detail": "健康良好"},
+            "overall_score": 4,
+            "career": {"score": 4, "detail": "事业运良好"},
+            "wealth": {"score": 3, "detail": "财运平稳"},
+            "love": {"score": 4, "detail": "感情运不错"},
+            "health": {"score": 4, "detail": "健康良好"},
             "lucky_color": "红色",
             "lucky_number": "3, 7",
             "lucky_direction": "正南",
@@ -50,7 +50,7 @@ class TestSendFortuneEmail:
 
         result = send_fortune_email(
             to_email="test@qq.com",
-            fortune_data={"date": "2026-06-20", "overall_score": 70},
+            fortune_data={"date": "2026-06-20", "overall_score": 3},
         )
 
         assert result is False
@@ -63,7 +63,7 @@ class TestSendFortuneEmail:
 
         send_fortune_email(
             to_email="test@qq.com",
-            fortune_data={"date": "2026-06-20", "overall_score": 70},
+            fortune_data={"date": "2026-06-20", "overall_score": 3},
         )
 
         sent_msg = mock_server.send_message.call_args[0][0]
@@ -81,15 +81,40 @@ class TestSendFortuneEmail:
             to_email="test@qq.com",
             fortune_data={
                 "date": "2026-06-20",
-                "overall_score": 75,
+                "overall_score": 3,
                 "interpretation": "测试解读",
             },
         )
 
         sent_msg = mock_server.send_message.call_args[0][0]
         payload = sent_msg.get_payload()
-        body = payload[0].get_payload(decode=True).decode()
+        assert payload[0].get_content_type() == "text/plain"
+        body = payload[1].get_payload(decode=True).decode()
         assert "<html" in body.lower()
+
+    def test_email_uses_score_scale_detail_and_escapes_dynamic_content(self):
+        """邮件显示与计算层一致的 1--5 评分，且不执行动态 HTML。"""
+        body = _build_html({
+            "date": "2026-06-20",
+            "overall_score": 5,
+            "career": {"score": 4, "detail": "可推进重点事项"},
+            "interpretation": "<script>alert('xss')</script>",
+        })
+
+        assert "5<span" in body
+        assert "顺势" in body
+        assert "可推进重点事项" in body
+        assert "<script>" not in body
+        assert "&lt;script&gt;" in body
+
+    def test_email_events_are_action_points_not_percent_predictions(self):
+        body = _build_html({
+            "date": "2026-06-20",
+            "overall_score": 3,
+            "probability_events": [{"dimension": "事业", "event": "优先处理重点任务", "probability": 82}],
+        })
+        assert "今日行动关注点" in body
+        assert "82%" not in body
 
 
 # --- 飞书推送 ---
@@ -108,11 +133,11 @@ class TestSendFortuneFeishu:
 
         fortune_data = {
             "date": "2026-06-20",
-            "overall_score": 82,
-            "career": {"score": 85, "detail": "事业运良好"},
-            "wealth": {"score": 78, "detail": "财运平稳"},
-            "love": {"score": 80, "detail": "感情运不错"},
-            "health": {"score": 85, "detail": "健康良好"},
+            "overall_score": 4,
+            "career": {"score": 4, "detail": "事业运良好"},
+            "wealth": {"score": 3, "detail": "财运平稳"},
+            "love": {"score": 4, "detail": "感情运不错"},
+            "health": {"score": 4, "detail": "健康良好"},
             "lucky_color": "红色",
             "interpretation": "今日运势整体良好。",
         }
@@ -135,7 +160,7 @@ class TestSendFortuneFeishu:
 
         result = send_fortune_feishu(
             webhook_url="https://open.feishu.cn/open-apis/bot/v2/hook/bad",
-            fortune_data={"date": "2026-06-20", "overall_score": 70},
+            fortune_data={"date": "2026-06-20", "overall_score": 3},
         )
 
         assert result is False
@@ -148,7 +173,7 @@ class TestSendFortuneFeishu:
 
         result = send_fortune_feishu(
             webhook_url="https://open.feishu.cn/open-apis/bot/v2/hook/test",
-            fortune_data={"date": "2026-06-20", "overall_score": 70},
+            fortune_data={"date": "2026-06-20", "overall_score": 3},
         )
 
         assert result is False
@@ -165,11 +190,32 @@ class TestSendFortuneFeishu:
             webhook_url="https://open.feishu.cn/open-apis/bot/v2/hook/test",
             fortune_data={
                 "date": "2026-06-20",
-                "overall_score": 82,
-                "career": {"score": 85, "detail": "好"},
+                "overall_score": 5,
+                "career": {"score": 5, "detail": "好"},
             },
         )
 
         call_body = mock_post.call_args[1]["json"]
         card_str = str(call_body)
-        assert "82" in card_str
+        assert "5/5 顺势" in card_str
+
+    def test_feishu_card_uses_same_score_label(self):
+        card = _build_card({"date": "2026-06-20", "overall_score": 1})
+        assert "1/5 宜守" in str(card)
+
+    def test_feishu_events_are_action_points_not_percent_predictions(self):
+        card = _build_card({
+            "date": "2026-06-20",
+            "overall_score": 3,
+            "probability_events": [{"event": "优先处理重点任务", "probability": 82}],
+        })
+        assert "今日行动关注点" in str(card)
+        assert "82%" not in str(card)
+
+    @patch("app.services.push_feishu.httpx.post")
+    def test_feishu_rejects_untrusted_webhook_without_request(self, mock_post):
+        assert send_fortune_feishu(
+            "https://example.com/hook",
+            {"date": "2026-06-20", "overall_score": 3},
+        ) is False
+        mock_post.assert_not_called()

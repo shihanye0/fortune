@@ -39,9 +39,9 @@ npm run dev
 
 ## LLM 配置
 
-- 供应商：Xiaomi MiMo（OpenAI 兼容格式）
-- API URL：`https://token-plan-cn.xiaomimimo.com/v1`（不是 `/anthropic`）
-- 模型：`mimo-v2.5`（去掉 `[1M]` 等标注）
+- 默认供应商：DeepSeek（OpenAI 兼容格式；用户可保存其他兼容供应商覆盖）
+- API URL：`https://api.deepseek.com`（OpenAI 兼容 `/chat/completions`）
+- 默认模型：`deepseek-flash`
 - 配置层级：用户个人中心 > `.env` 服务器默认
 - 测试连接接口：`POST /api/v1/users/me/llm-test`
 

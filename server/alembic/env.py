@@ -19,6 +19,9 @@ from app.models.user import User  # noqa: F401
 from app.models.bazi_profile import BaziProfile  # noqa: F401
 from app.models.daily_fortune import DailyFortune  # noqa: F401
 from app.models.divination_record import DivinationRecord  # noqa: F401
+from app.models.prediction_outcome import PredictionOutcome  # noqa: F401
+from app.models.probability_event_feedback import ProbabilityEventFeedback  # noqa: F401
+from app.models.push_delivery import PushDelivery  # noqa: F401
 
 # Alembic Config
 config = context.config

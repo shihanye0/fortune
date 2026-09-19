@@ -10,6 +10,9 @@ from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_db
+from app.config import settings
+from app.core.credentials import CredentialError, decrypt_user_api_key, encrypt_user_api_key
+from app.core.outbound_urls import OutboundUrlError, normalize_feishu_webhook, normalize_https_url
 from app.core.security import verify_password, verify_token
 from app.models.daily_fortune import DailyFortune
 from app.models.divination_record import DivinationRecord
@@ -51,6 +54,8 @@ class UpdateBirthRequest(BaseModel):
     birth_month: int = Field(..., ge=1, le=12)
     birth_day: int = Field(..., ge=1, le=31)
     birth_hour: int = Field(..., ge=0, le=23)
+    gender: int | None = Field(None, ge=0, le=1)
+    birth_location: str | None = Field(None, max_length=100)
 
     @field_validator("birth_day")
     @classmethod
@@ -79,6 +84,16 @@ class PushSettingsRequest(BaseModel):
             raise ValueError("时间格式无效")
         return v
 
+    @field_validator("feishu_webhook")
+    @classmethod
+    def validate_feishu_webhook(cls, v: str | None) -> str | None:
+        if not v:
+            return None
+        try:
+            return normalize_feishu_webhook(v)
+        except OutboundUrlError as exc:
+            raise ValueError(str(exc)) from exc
+
 
 class LLMSettingsRequest(BaseModel):
     """LLM配置请求"""
@@ -89,6 +104,7 @@ class LLMSettingsRequest(BaseModel):
     llm_api_key_url: str | None = None
     llm_api_url: str | None = None
     llm_model: str | None = None
+    use_server_default: bool = False
 
     @field_validator("llm_api_key")
     @classmethod
@@ -97,6 +113,21 @@ class LLMSettingsRequest(BaseModel):
         if v and "***" in v:
             return None  # 返回 None 表示不更新
         return v
+
+    @field_validator("llm_api_url")
+    @classmethod
+    def validate_llm_api_url(cls, v: str | None) -> str | None:
+        if not v:
+            return None
+        allowed_hosts = {
+            host.strip().lower()
+            for host in settings.LLM_ALLOWED_HOSTS.split(",")
+            if host.strip()
+        }
+        try:
+            return normalize_https_url(v, allowed_hosts=allowed_hosts, field_name="LLM API 地址")
+        except OutboundUrlError as exc:
+            raise ValueError(str(exc)) from exc
 
 
 class DeleteAccountRequest(BaseModel):
@@ -131,6 +162,9 @@ def _user_to_dict(user: User) -> dict:
         "llm_api_key_url": user.llm_api_key_url,
         "llm_api_url": user.llm_api_url,
         "llm_model": user.llm_model,
+        "llm_config_source": "personal" if any(
+            (user.llm_api_key, user.llm_api_url, user.llm_model)
+        ) else "server_default",
         "created_at": user.created_at.isoformat() if user.created_at else None,
     }
 
@@ -139,6 +173,69 @@ def _user_to_dict(user: User) -> dict:
 def get_profile(current_user: User = Depends(get_current_user)):
     """获取个人信息"""
     return {"success": True, "data": _user_to_dict(current_user)}
+
+
+@router.get("/me/bazi-profile")
+def get_bazi_profile(current_user: User = Depends(get_current_user)):
+    """计算并返回当前用户的命盘基础数据。
+
+    不复用旧快照，避免用户更新生辰后看到过期的四柱或大运。该接口只
+    暴露计算结果，不返回原始出生地或其他额外敏感信息。
+    """
+    birth_values = (
+        current_user.birth_year,
+        current_user.birth_month,
+        current_user.birth_day,
+        current_user.birth_hour,
+        current_user.gender,
+    )
+    if any(value is None for value in birth_values):
+        raise HTTPException(status_code=422, detail="生辰信息不完整，无法生成命盘")
+
+    from fortune_engine.bazi.pillar import calculate_bazi
+
+    try:
+        bazi = calculate_bazi(
+            current_user.birth_year,
+            current_user.birth_month,
+            current_user.birth_day,
+            current_user.birth_hour,
+            current_user.gender,
+        )
+    except (TypeError, ValueError) as exc:
+        raise HTTPException(status_code=422, detail="生辰信息无效，无法生成命盘") from exc
+
+    pillar_labels = (
+        ("year", "年柱", "year_pillar"),
+        ("month", "月柱", "month_pillar"),
+        ("day", "日柱", "day_pillar"),
+        ("hour", "时柱", "hour_pillar"),
+    )
+    pillars = [
+        {
+            "key": key,
+            "label": label,
+            "pillar": bazi[pillar_key],
+            "ten_god": bazi["ten_gods"].get(key),
+        }
+        for key, label, pillar_key in pillar_labels
+    ]
+
+    return {
+        "success": True,
+        "data": {
+            "pillars": pillars,
+            "day_master": bazi["day_master"],
+            "five_elements": bazi["five_elements"],
+            "favorable_elements": bazi["favorable_elements"],
+            "major_luck_cycles": bazi["major_luck_cycles"],
+            "calculation_note": (
+                "四柱按节气（含立春）计算；五行统计包含天干与地支的可见字，"
+                "不含藏干权重和月令旺衰。出生地暂未用于真太阳时校正。"
+            ),
+            "usage_notice": "本内容仅供传统文化参考，不应用于医疗、法律或投资等重要决策。",
+        },
+    }
 
 
 @router.put("/me")
@@ -165,6 +262,10 @@ def update_birth(
     current_user.birth_month = req.birth_month
     current_user.birth_day = req.birth_day
     current_user.birth_hour = req.birth_hour
+    if req.gender is not None:
+        current_user.gender = req.gender
+    if req.birth_location is not None:
+        current_user.birth_location = req.birth_location.strip() or None
     db.commit()
     db.refresh(current_user)
     return {"success": True, "data": _user_to_dict(current_user)}
@@ -198,12 +299,28 @@ def update_llm_settings(
     db: Session = Depends(get_db),
 ):
     """更新LLM配置"""
+    if req.use_server_default:
+        # 仅在用户明确选择后清除个人覆盖项；运行时将回退 .env 的 DeepSeek 配置。
+        current_user.llm_provider = None
+        current_user.llm_notes = None
+        current_user.llm_website = None
+        current_user.llm_api_key = None
+        current_user.llm_api_key_url = None
+        current_user.llm_api_url = None
+        current_user.llm_model = None
+        db.commit()
+        db.refresh(current_user)
+        return {"success": True, "data": _user_to_dict(current_user)}
+
     current_user.llm_provider = req.llm_provider
     current_user.llm_notes = req.llm_notes
     current_user.llm_website = req.llm_website
     # API Key 只在有新值时更新（跳过脱敏值和空值）
     if req.llm_api_key and "***" not in req.llm_api_key:
-        current_user.llm_api_key = req.llm_api_key
+        try:
+            current_user.llm_api_key = encrypt_user_api_key(req.llm_api_key)
+        except CredentialError as exc:
+            raise HTTPException(status_code=503, detail=str(exc)) from exc
     current_user.llm_api_key_url = req.llm_api_key_url
     current_user.llm_api_url = req.llm_api_url
     current_user.llm_model = req.llm_model
@@ -218,6 +335,11 @@ class LLMTestRequest(BaseModel):
     llm_api_url: str | None = None
     llm_model: str | None = None
 
+    @field_validator("llm_api_url")
+    @classmethod
+    def validate_llm_api_url(cls, v: str | None) -> str | None:
+        return LLMSettingsRequest.validate_llm_api_url(v)
+
 
 @router.post("/me/llm-test")
 def test_llm_connection(
@@ -225,60 +347,40 @@ def test_llm_connection(
     current_user: User = Depends(get_current_user),
 ):
     """测试 LLM 连接（优先用请求参数，回退到数据库，再回退到 .env）"""
-    import httpx
-    from app.config import settings
-
-    api_key = (req.llm_api_key if req and req.llm_api_key else None) or current_user.llm_api_key or settings.DEEPSEEK_API_KEY
-    base_url = (req.llm_api_url if req and req.llm_api_url else None) or current_user.llm_api_url or settings.DEEPSEEK_BASE_URL
-    model = (req.llm_model if req and req.llm_model else None) or current_user.llm_model or "mimo-v2.5"
-
-    # 清理模型名称（去掉 [1M] 等标注）
-    if "[" in model:
-        model = model.split("[")[0].strip()
-
-    url = f"{base_url}/chat/completions"
-    headers = {
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json",
-    }
-    payload = {
-        "model": model,
-        "messages": [{"role": "user", "content": "你好，请回复OK"}],
-        "temperature": 0.7,
-        "max_tokens": 50,
-    }
+    from fortune_engine.services.deepseek import probe_llm_connection
 
     try:
-        response = httpx.post(url, json=payload, headers=headers, timeout=15)
-        if response.status_code == 200:
-            data = response.json()
-            reply = data.get("choices", [{}])[0].get("message", {}).get("content", "")
+        saved_api_key = decrypt_user_api_key(current_user.llm_api_key)
+    except CredentialError:
+        saved_api_key = None
+    api_key = (req.llm_api_key if req and req.llm_api_key else None) or saved_api_key or settings.DEEPSEEK_API_KEY
+    base_url = (req.llm_api_url if req and req.llm_api_url else None) or current_user.llm_api_url or settings.DEEPSEEK_BASE_URL
+    from fortune_engine.services.deepseek import DEFAULT_DEEPSEEK_MODEL
+    model = (req.llm_model if req and req.llm_model else None) or current_user.llm_model or DEFAULT_DEEPSEEK_MODEL
+
+    try:
+        reply, _, normalized_model = probe_llm_connection(api_key, base_url, model)
+        if reply:
             return {
                 "success": True,
                 "data": {
                     "status": "connected",
                     "message": f"连接成功！模型回复：{reply[:50]}",
-                    "model": model,
+                    "model": normalized_model,
                     "provider": current_user.llm_provider or "未知",
                 },
             }
-        else:
-            return {
-                "success": False,
-                "error": {
-                    "code": "LLM_CONNECTION_FAILED",
-                    "message": f"连接失败，HTTP {response.status_code}：{response.text[:200]}",
-                },
-            }
-    except httpx.TimeoutException:
         return {
             "success": False,
-            "error": {"code": "LLM_TIMEOUT", "message": "连接超时，请检查 API URL 是否正确"},
+            "error": {
+                "code": "LLM_CONNECTION_FAILED",
+                "message": "未收到有效模型回复，请检查 API Key、URL、模型名称或服务配额。",
+            },
         }
-    except Exception as e:
+    except Exception:
         return {
             "success": False,
-            "error": {"code": "LLM_ERROR", "message": f"连接异常：{str(e)[:200]}"},
+            "error": {"code": "LLM_ERROR", "message": "连接异常，请检查配置后重试。"},
         }
 
 
