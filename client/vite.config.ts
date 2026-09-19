@@ -22,7 +22,8 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        target: 'http://localhost:8080',
+        // 本地 8080 被 Windows 保留区间占用时，可用 API_PROXY_TARGET 指到其他端口
+        target: process.env.API_PROXY_TARGET || 'http://localhost:8080',
         changeOrigin: true,
       },
     },
