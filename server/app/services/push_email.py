@@ -9,9 +9,13 @@ from html import escape
 from typing import Any
 
 from app.config import settings
+from app.models.base import CHINA_TZ
 from fortune_engine.bazi.score import get_fortune_level, normalize_score
 
 logger = logging.getLogger(__name__)
+
+# 推送邮件页脚的个人中心入口（生产环境地址，见 CLAUDE.md）
+PROFILE_URL = "http://82.157.186.52/profile"
 
 SHICHEN_ICONS = {
     "子": "🌙", "丑": "🌑", "寅": "🌅", "卯": "🌄",
@@ -67,6 +71,64 @@ def _weekday_label(date_value: Any) -> str:
     return WEEKDAY_NAMES[dt.weekday()]
 
 
+def _now_minutes(now: datetime) -> int:
+    """当前时刻换算成当天分钟数，用于和时辰区间比较。"""
+    return now.hour * 60 + now.minute
+
+
+def _shichen_bounds(shichen_range: Any) -> tuple[int, int]:
+    """时辰区间 "07:00-09:00" 转为 (起始分钟, 结束分钟)；解析失败按全天处理。"""
+    try:
+        start_str, end_str = str(shichen_range).split("-")
+        sh, sm = (int(part) for part in start_str.split(":"))
+        eh, em = (int(part) for part in end_str.split(":"))
+        return sh * 60 + sm, eh * 60 + em
+    except (ValueError, AttributeError):
+        return 0, 24 * 60
+
+
+def _hour_status(item: dict, now_min: int) -> str:
+    """时辰相对发送时刻的状态：past（已过）/ current（进行中）/ upcoming（未到）。"""
+    start, end = _shichen_bounds(item.get("shichen_range"))
+    if now_min >= end:
+        return "past"
+    if now_min >= start:
+        return "current"
+    return "upcoming"
+
+
+def _pick_hourly(hours: list[dict], now_min: int) -> tuple[list[dict], list[dict]]:
+    """挑选宜/忌卡片素材：优先尚未结束的时辰；全天已过时退回全量（卡片会带"已过"标记）。
+
+    入选资格按评分取前二，入选后按开始时间排序，阅读顺序即行动顺序。
+    """
+    if not hours:
+        return [], []
+    live = [item for item in hours if _hour_status(item, now_min) != "past"]
+    pool = live or hours
+    ranked = sorted(pool, key=lambda item: normalize_score(item.get("score")), reverse=True)
+    by_start = lambda item: _shichen_bounds(item.get("shichen_range"))[0]  # noqa: E731
+    favourable = sorted(ranked[:2], key=by_start)
+    caution = sorted([item for item in reversed(ranked) if normalize_score(item.get("score")) <= 2][:2], key=by_start)
+    return favourable, caution
+
+
+def _status_badge(status: str, shichen_range: Any) -> str:
+    """卡片头部的时辰状态标记：已过 / 进行中 / HH:MM 开始。"""
+    if status == "current":
+        return (
+            '<span style="margin-left:6px; padding:1px 6px; border-radius:999px; '
+            'background:#dcfce7; color:#15803d; font-size:10px; font-weight:700;">进行中</span>'
+        )
+    if status == "past":
+        return (
+            '<span style="margin-left:6px; padding:1px 6px; border-radius:999px; '
+            'background:#f1f5f9; color:#94a3b8; font-size:10px; font-weight:700;">已过</span>'
+        )
+    start, _ = _shichen_bounds(shichen_range)
+    return f'<span style="margin-left:6px; font-size:10px; color:{MUTED};">{start // 60:02d}:{start % 60:02d} 开始</span>'
+
+
 def _header_meta(fortune_data: dict) -> str:
     """头部日期行：日期 · 干支日 · 星期，缺失的部分自动跳过。"""
     parts = [_safe(fortune_data.get("date"), "")]
@@ -79,12 +141,13 @@ def _header_meta(fortune_data: dict) -> str:
     return " · ".join(part for part in parts if part)
 
 
-def _preheader(fortune_data: dict, level, score: int) -> str:
+def _preheader(fortune_data: dict, level, score: int, now_min: int) -> str:
     """收件箱列表里显示的预览文案，抓最想被看到的一句。"""
     hours = [item for item in (fortune_data.get("hourly_fortunes") or []) if isinstance(item, dict)]
     hook = ""
     if hours:
-        best = max(hours, key=lambda item: normalize_score(item.get("score")))
+        live = [item for item in hours if _hour_status(item, now_min) != "past"] or hours
+        best = max(live, key=lambda item: normalize_score(item.get("score")))
         actions = "、".join(best.get("favorable", [])[:2])
         if actions:
             hook = f"{_safe(best.get('shichen'), '')}时宜{actions}。"
@@ -127,8 +190,8 @@ def _build_lucky_html(fortune_data: dict) -> str:
       <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin-top:14px;"><tr>{''.join(cells)}</tr></table>"""
 
 
-def _build_hourly_strip(hourly_fortunes: list | None) -> str:
-    """十二时辰吉时概览条：一屏看清全天起伏，细节交给下面的重点卡片。"""
+def _build_hourly_strip(hourly_fortunes: list | None, now_min: int) -> str:
+    """十二时辰吉时概览条：一屏看清全天起伏，已过时辰置灰、当前时辰高亮。"""
     hours = [item for item in (hourly_fortunes or []) if isinstance(item, dict)]
     if len(hours) < 4:
         return ""
@@ -136,12 +199,18 @@ def _build_hourly_strip(hourly_fortunes: list | None) -> str:
     cells = []
     for item in hours[:12]:
         score = normalize_score(item.get("score"))
-        color = get_fortune_level(score).color
+        status = _hour_status(item, now_min)
+        if status == "past":
+            name_color, dot_color, bg = "#cbd5e1", "#e2e8f0", SURFACE
+        elif status == "current":
+            name_color, dot_color, bg = "#4338ca", get_fortune_level(score).color, "#eef2ff"
+        else:
+            name_color, dot_color, bg = BODY, get_fortune_level(score).color, SURFACE
         cells.append(f"""
         <td align="center" style="padding:3px;">
-          <div style="padding:7px 0 6px; background:{SURFACE}; border-radius:8px;">
-            <div style="font-size:13px; font-weight:700; color:{BODY};">{_safe(item.get("shichen"), "")}</div>
-            <div style="margin-top:2px; font-size:9px; line-height:10px; color:{color};">●</div>
+          <div style="padding:7px 0 6px; background:{bg}; border-radius:8px;">
+            <div style="font-size:13px; font-weight:700; color:{name_color};">{_safe(item.get("shichen"), "")}</div>
+            <div style="margin-top:2px; font-size:9px; line-height:10px; color:{dot_color};">●</div>
           </div>
         </td>""")
 
@@ -149,76 +218,102 @@ def _build_hourly_strip(hourly_fortunes: list | None) -> str:
     row_second = "<tr>" + "".join(cells[6:12]) + "</tr>"
     return f"""
       <div style="margin-top:10px;">
-        <div style="font-size:12px; color:{MUTED};">十二时辰一览 · 圆点颜色对应各时辰评分</div>
+        <div style="font-size:12px; color:{MUTED};">十二时辰一览 · 灰色为已过，紫色为当前时辰</div>
         <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin-top:6px; table-layout:fixed;">{row_first}{row_second}</table>
       </div>"""
 
 
-def _build_hourly_html(hourly_fortunes: list | None) -> str:
-    """只呈现少量可行动的时段，避免在移动端塞入十二行宽表。"""
+def _build_hourly_html(hourly_fortunes: list | None, now_min: int) -> str:
+    """只呈现少量可行动的时段，避免在移动端塞入十二行宽表；已过时辰不再作为推荐。"""
     hours = [item for item in (hourly_fortunes or []) if isinstance(item, dict)]
     if not hours:
         return ""
 
-    ranked = sorted(hours, key=lambda item: normalize_score(item.get("score")))
-    favourable = list(reversed(ranked))[:2]
-    caution = [item for item in ranked if normalize_score(item.get("score")) <= 2][:2]
+    favourable, caution = _pick_hourly(hours, now_min)
 
     def card(item: dict, chip: str, accent: str) -> str:
         score = normalize_score(item.get("score"))
         icon = SHICHEN_ICONS.get(item.get("shichen", ""), "⏰")
+        status = _hour_status(item, now_min)
         actions = "、".join(item.get("favorable", [])[:2]) or "按自己的节奏安排"
         if chip == "忌":
             actions = "、".join(item.get("unfavorable", [])[:2]) or "重要事项多做一次核对"
         events = "、".join(item.get("events", [])[:2])
         event_line = f"<div style=\"margin-top:4px; color:#64748b;\">{_safe(events)}</div>" if events else ""
+        stem = item.get("hourly_stem") or ""
+        branch = item.get("hourly_branch") or ""
+        ten_god = item.get("ten_god") or ""
+        element = item.get("element") or ""
+        cause_bits = [f"{stem}{branch}时" if stem and branch else "", ten_god, element]
+        cause = " · ".join(bit for bit in cause_bits if bit)
+        cause_line = f'<div style="margin-top:3px; font-size:11px; color:#94a3b8;">{_safe(cause)}</div>' if cause else ""
         return f"""
           <div style="margin-top:8px; padding:10px 12px; border-left:3px solid {accent}; background:{SURFACE}; border-radius:0 8px 8px 0;">
             <span style="display:inline-block; padding:1px 8px; border-radius:999px; background:{accent}; color:#ffffff; font-size:11px; font-weight:700;">{chip}</span>
             <span style="font-weight:700; color:#1e293b;"> {icon} {_safe(item.get("shichen"))}时</span>
             <span style="color:{get_fortune_level(score).color}; font-size:12px;"> {score}/5</span>
+            {_status_badge(status, item.get("shichen_range"))}
+            {cause_line}
             <div style="margin-top:4px; color:#475569;">{_safe(item.get("shichen_range"))} · {_safe(actions)}</div>
             {event_line}
           </div>"""
 
     cards = "".join(card(item, "宜", ACT_GOOD) for item in favourable)
     cards += "".join(card(item, "忌", ACT_CAUTION) for item in caution)
-    strip = _build_hourly_strip(hours)
+    strip = _build_hourly_strip(hours, now_min)
     return f"""
       <div style="margin-top:22px;">
         <div style="font-size:15px; font-weight:700; color:#1e293b;">今日行动节奏</div>
-        <div style="margin-top:3px; font-size:12px; color:{MUTED};">从时辰数据中挑出的重点时段，仅供日程安排参考。</div>
+        <div style="margin-top:3px; font-size:12px; color:{MUTED};">优先推荐尚未开始的时段，仅供日程安排参考。</div>
         {strip}
         {cards}
       </div>"""
 
 
-def _build_events_html(events: list | None) -> str:
+def _event_time_label(event: dict, now_min: int) -> str:
+    """事件最佳时段标签：辰时 07:00-09:00 / 辰时 / 全天；已过的时段直接标注。"""
+    best_hour = event.get("best_hour") or ""
+    time_range = event.get("time_range") or ""
+    if time_range and time_range != "全天":
+        if _hour_status({"shichen_range": time_range}, now_min) == "past":
+            return "已过"
+        return f"{best_hour}时 {time_range}" if best_hour else time_range
+    return f"{best_hour}时" if best_hour else "全天"
+
+
+def _build_events_html(events: list | None, now_min: int) -> str:
     if not events:
         return ""
 
     rows = []
     for event in events[:3]:
+        time_label = _event_time_label(event, now_min)
+        time_color = "#94a3b8" if time_label == "已过" else MUTED
         rows.append(f"""
           <tr>
             <td width="72" style="padding:8px 0; border-bottom:1px solid {LINE};">
               <span style="display:inline-block; padding:2px 8px; border-radius:999px; background:#eef2ff; color:#4338ca; font-size:11px; font-weight:600;">{_safe(event.get("dimension"))}</span>
             </td>
             <td style="padding:8px 12px; border-bottom:1px solid {LINE}; color:{BODY};">{_safe(event.get("event"))}</td>
+            <td width="104" align="right" valign="top" style="padding:8px 0; border-bottom:1px solid {LINE};">
+              <span style="font-size:11px; line-height:16px; color:{time_color}; white-space:nowrap;">{_safe(time_label)}</span>
+            </td>
           </tr>""")
 
     return f"""
       <div style="margin-top:22px;">
         <div style="font-size:15px; font-weight:700; color:#1e293b;">今日行动关注点</div>
-        <div style="margin-top:3px; font-size:12px; color:{MUTED};">按当日节奏生成，适合用作安排优先级的参考。</div>
+        <div style="margin-top:3px; font-size:12px; color:{MUTED};">按当日节奏生成，右侧为建议时段，适合用作安排优先级的参考。</div>
         <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin-top:7px; font-size:13px;">
           {''.join(rows)}
         </table>
       </div>"""
 
 
-def _build_html(fortune_data: dict) -> str:
+def _build_html(fortune_data: dict, now: datetime | None = None) -> str:
     """构建兼容主流邮箱、优先移动端阅读的日运简报。"""
+    now = now or datetime.now(CHINA_TZ)
+    now_min = _now_minutes(now)
     score = normalize_score(fortune_data.get("overall_score"))
     level = get_fortune_level(score)
     career = fortune_data.get("career") or {}
@@ -245,7 +340,7 @@ def _build_html(fortune_data: dict) -> str:
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body style="margin:0; padding:0; background:#f1f5f9; font-family:'Microsoft YaHei','PingFang SC',Arial,sans-serif;">
-  <span style="display:none; max-height:0; overflow:hidden; mso-hide:all; font-size:1px; line-height:1px; color:#f1f5f9;">{_preheader(fortune_data, level, score)}</span>
+  <span style="display:none; max-height:0; overflow:hidden; mso-hide:all; font-size:1px; line-height:1px; color:#f1f5f9;">{_preheader(fortune_data, level, score, now_min)}</span>
   <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f1f5f9;">
     <tr><td align="center" style="padding:24px 12px;">
       <table role="presentation" width="620" cellspacing="0" cellpadding="0" style="width:100%; max-width:620px; background:#ffffff; border-radius:16px; overflow:hidden;">
@@ -276,10 +371,11 @@ def _build_html(fortune_data: dict) -> str:
             <div style="font-size:15px; font-weight:700; color:#312e81;">运势解读</div>
             <div style="margin-top:8px; font-size:14px; line-height:24px; color:#334155;">{_safe_paragraph(fortune_data.get("interpretation"))}</div>
           </div>
-          {_build_hourly_html(fortune_data.get("hourly_fortunes"))}
-          {_build_events_html(fortune_data.get("probability_events"))}
+          {_build_hourly_html(fortune_data.get("hourly_fortunes"), now_min)}
+          {_build_events_html(fortune_data.get("probability_events"), now_min)}
           <div style="margin-top:24px; padding-top:14px; border-top:1px solid {LINE}; font-size:11px; line-height:17px; color:#94a3b8;">
             本内容以传统文化信息为参考，不构成医疗、法律、投资或其他重要决策建议。<br>
+            推送时间与渠道可在<a href="{PROFILE_URL}" style="color:#6366f1; text-decoration:underline;">个人中心</a>调整。<br>
             本邮件由命理运势系统自动发送。
           </div>
         </td></tr>
@@ -290,8 +386,10 @@ def _build_html(fortune_data: dict) -> str:
 </html>"""
 
 
-def _build_text(fortune_data: dict) -> str:
+def _build_text(fortune_data: dict, now: datetime | None = None) -> str:
     """为纯文本客户端、屏幕阅读器保留同等信息。"""
+    now = now or datetime.now(CHINA_TZ)
+    now_min = _now_minutes(now)
     score = normalize_score(fortune_data.get("overall_score"))
     level = get_fortune_level(score)
     lines = [
@@ -316,9 +414,31 @@ def _build_text(fortune_data: dict) -> str:
         f"幸运数：{fortune_data.get('lucky_number') or '—'}",
         f"吉利方位：{fortune_data.get('lucky_direction') or '—'}",
     ])
+    hours = [item for item in (fortune_data.get("hourly_fortunes") or []) if isinstance(item, dict)]
+    favourable, caution = _pick_hourly(hours, now_min)
+    if favourable:
+        summary = "、".join(
+            f"{item.get('shichen', '')}时 {item.get('shichen_range') or ''}（{normalize_score(item.get('score'))}/5）"
+            for item in favourable
+        )
+        lines.append(f"今日吉时：{summary}")
+    if caution:
+        summary = "、".join(
+            f"{item.get('shichen', '')}时 {item.get('shichen_range') or ''}（{normalize_score(item.get('score'))}/5）"
+            for item in caution
+        )
+        lines.append(f"需留意时辰：{summary}")
+    events = fortune_data.get("probability_events") or []
+    if events:
+        parts = []
+        for event in events[:3]:
+            label = _event_time_label(event, now_min)
+            suffix = f"（建议时段：{label}）" if label != "全天" else ""
+            parts.append(f"{event.get('event', '')}{suffix}")
+        lines.extend(["", "今日行动关注点："] + [f"- {part}" for part in parts])
     if fortune_data.get("interpretation"):
         lines.extend(["", "运势解读：", str(fortune_data["interpretation"])])
-    lines.extend(["", "传统文化参考，不构成重要决策建议。"])
+    lines.extend(["", f"推送设置：{PROFILE_URL}", "传统文化参考，不构成重要决策建议。"])
     return "\n".join(lines)
 
 
@@ -331,12 +451,13 @@ def send_fortune_email(to_email: str, fortune_data: dict) -> bool:
     except (ValueError, TypeError):
         subject = f"【命理运势·日运简报】{date_str}"
 
+    now = datetime.now(CHINA_TZ)
     msg = MIMEMultipart("alternative")
     msg["Subject"] = subject
     msg["From"] = settings.SMTP_USER
     msg["To"] = to_email
-    msg.attach(MIMEText(_build_text(fortune_data), "plain", "utf-8"))
-    msg.attach(MIMEText(_build_html(fortune_data), "html", "utf-8"))
+    msg.attach(MIMEText(_build_text(fortune_data, now), "plain", "utf-8"))
+    msg.attach(MIMEText(_build_html(fortune_data, now), "html", "utf-8"))
 
     try:
         with smtplib.SMTP_SSL(settings.SMTP_HOST, settings.SMTP_PORT) as server:
