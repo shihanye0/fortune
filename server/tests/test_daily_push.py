@@ -100,10 +100,11 @@ class TestDailyPushAPI:
         assert res.status_code == 200
         mock_feishu.assert_called_once()
 
+    @patch("app.services.push_feishu.send_gushi_feishu", return_value=True)
     @patch("app.services.push_feishu.send_fortune_feishu", return_value=True)
     @patch("app.services.push_email.send_fortune_email", return_value=True)
     @patch("fortune_engine.services.deepseek.interpret_daily", return_value="解读")
-    def test_push_both_channels(self, mock_llm, mock_email, mock_feishu, client, db_session):
+    def test_push_both_channels(self, mock_llm, mock_email, mock_feishu, mock_gushi, client, db_session):
         """双渠道推送"""
         _create_user(
             db_session, push_enabled=True, push_channel="both", push_time="09:00",
@@ -176,10 +177,11 @@ class TestDailyPushAPI:
         assert len(rows) == 1
         assert rows[0].status == "delivered"
 
+    @patch("app.services.push_feishu.send_gushi_feishu", return_value=True)
     @patch("app.services.push_feishu.send_fortune_feishu", return_value=False)
     @patch("app.services.push_email.send_fortune_email", return_value=True)
     @patch("fortune_engine.services.deepseek.interpret_daily", return_value="解读")
-    def test_each_channel_tracks_its_own_delivery_state(self, mock_llm, mock_email, mock_feishu, client, db_session):
+    def test_each_channel_tracks_its_own_delivery_state(self, mock_llm, mock_email, mock_feishu, mock_gushi, client, db_session):
         user = _create_user(
             db_session,
             push_channel="both",

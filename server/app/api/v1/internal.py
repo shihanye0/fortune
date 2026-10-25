@@ -2,7 +2,7 @@
 """每日推送调度内部接口。"""
 import logging
 import secrets
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, time, timedelta, timezone
 
 from fastapi import APIRouter, Depends, Header, HTTPException
 from pydantic import BaseModel, Field
@@ -13,8 +13,10 @@ from app.api.deps import get_db
 from app.config import settings
 from app.models.base import CHINA_TZ
 from app.models.daily_fortune import DailyFortune
+from app.models.prediction_outcome import PredictionOutcome
 from app.models.push_delivery import PushDelivery
 from app.models.user import User
+from fortune_engine.bazi.score import normalize_score
 
 logger = logging.getLogger(__name__)
 
@@ -110,6 +112,59 @@ def _generate_fortune(user: User, today: date, db: Session) -> DailyFortune:
     return fortune
 
 
+def _build_weekly_recap(user_id: int, today: date, db: Session) -> dict | None:
+    """周日附加：本周预言命中回顾（来自用户反馈闭环）与周均分。无任何数据时返回 None。
+
+    verified_at 生产写入为 UTC（prediction_outcomes API），SQLite 读回是 naive 值，
+    且 SQL 侧对混合时区偏移的字符串比较不可靠，因此日期窗口过滤放在 Python 侧做。
+    """
+    week_start_utc = datetime.combine(
+        today - timedelta(days=7), time.min, tzinfo=CHINA_TZ
+    ).astimezone(timezone.utc)
+
+    def _as_utc(value: datetime | None) -> datetime | None:
+        if value is None:
+            return None
+        if value.tzinfo is None:
+            return value.replace(tzinfo=timezone.utc)
+        return value.astimezone(timezone.utc)
+
+    outcomes = (
+        db.query(PredictionOutcome)
+        .filter(
+            PredictionOutcome.user_id == user_id,
+            PredictionOutcome.verified.isnot(None),
+        )
+        .all()
+    )
+    week_outcomes = [
+        out for out in outcomes
+        if (moment := _as_utc(out.verified_at)) is not None and moment >= week_start_utc
+    ]
+    verified_total = len(week_outcomes)
+    hit_count = sum(1 for out in week_outcomes if out.verified)
+    scores = [
+        row[0]
+        for row in db.query(DailyFortune.overall_score)
+        .filter(
+            DailyFortune.user_id == user_id,
+            DailyFortune.date > today - timedelta(days=7),
+            DailyFortune.date <= today,
+        )
+        .all()
+        if row[0] is not None
+    ]
+    if verified_total == 0 and not scores:
+        return None
+    return {
+        "verified_total": verified_total,
+        "hit_count": hit_count,
+        "hit_rate": round(hit_count * 100 / verified_total) if verified_total else None,
+        "week_avg_score": round(sum(scores) / len(scores), 1) if scores else None,
+        "days_count": len(scores),
+    }
+
+
 def _build_payload(
     user: User,
     fortune: DailyFortune,
@@ -119,9 +174,11 @@ def _build_payload(
 ) -> dict:
     """创建可重试的冻结内容，避免重试时悄悄改变当天的推送文本。"""
     from app.services.feedback_summary import generate_feedback_summary
-    from fortune_engine.bazi.chongsha import get_day_chongsha
+    from fortune_engine.bazi.chongsha import get_day_chongsha, get_deity_directions
     from fortune_engine.bazi.daily_fortune import calculate_daily_fortune
     from fortune_engine.bazi.pillar import calculate_bazi
+    from fortune_engine.bazi.season import get_season_note
+    from fortune_engine.common.reflection import pick_reflection
     from fortune_engine.liuyao.hexagram import daily_hexagram
     from fortune_engine.probability_events import generate_probability_events
 
@@ -137,14 +194,17 @@ def _build_payload(
         generate_feedback_summary(db, user.id),
         current_hour=current_hour,
     )
+    day_stem = fortune.heavenly_stem or daily["heavenly_stem"]
+    day_seed = today.year * 10000 + today.month * 100 + today.day
     return {
         "date": today.isoformat(),
         "day_ganzhi": f"{fortune.heavenly_stem or ''}{fortune.earthly_branch or ''}",
-        "day_chongsha": get_day_chongsha(
-            fortune.heavenly_stem or daily["heavenly_stem"],
-            fortune.earthly_branch or daily["earthly_branch"],
-        ),
+        "day_chongsha": get_day_chongsha(day_stem, fortune.earthly_branch or daily["earthly_branch"]),
         "daily_hexagram": daily_hexagram(user.id, today.year, today.month, today.day),
+        "season_note": get_season_note(today),
+        "deity_directions": get_deity_directions(day_stem),
+        "reflection_question": pick_reflection(user.id, day_seed),
+        "weekly_recap": _build_weekly_recap(user.id, today, db) if today.weekday() == 6 else None,
         "overall_score": fortune.overall_score,
         "career": fortune.career_fortune or {},
         "wealth": fortune.wealth_fortune or {},
@@ -215,16 +275,114 @@ def _record_delivery_result(delivery: PushDelivery, success: bool, now: datetime
     return success
 
 
+def _find_upcoming_gushi(user: User, hour: int, today: date) -> dict | None:
+    """找到下一小时开始的吉时（评分≥4）；跨零点时用次日排盘。"""
+    from fortune_engine.bazi.hourly_fortune import calculate_all_hours_fortune
+    from fortune_engine.bazi.pillar import calculate_bazi
+
+    target_start = ((hour + 1) % 24) * 60
+    target_date = today + timedelta(days=1) if target_start == 0 else today
+    bazi = calculate_bazi(
+        user.birth_year, user.birth_month, user.birth_day, user.birth_hour, user.gender,
+    )
+    hourly = calculate_all_hours_fortune(bazi, target_date.year, target_date.month, target_date.day)
+    for item in hourly:
+        try:
+            start_str = str(item.get("shichen_range", "")).split("-")[0]
+            sh, sm = (int(part) for part in start_str.split(":"))
+        except (ValueError, AttributeError, IndexError):
+            continue
+        if sh * 60 + sm == target_start and normalize_score(item.get("score")) >= 4:
+            return item
+    return None
+
+
+def _send_gushi_reminders(db: Session, now: datetime, hour: int) -> int:
+    """吉时开始前一小时，向配置飞书的用户发即时提醒；每用户每天最多一次。"""
+    from app.services.push_feishu import send_gushi_feishu
+
+    today = now.date()
+    users = (
+        db.query(User)
+        .filter(
+            User.push_enabled.is_(True),
+            User.push_channel.in_(("feishu", "both")),
+            User.feishu_webhook.isnot(None),
+            User.feishu_webhook != "",
+        )
+        .all()
+    )
+    sent = 0
+    for user in users:
+        try:
+            existing = (
+                db.query(PushDelivery)
+                .filter(
+                    PushDelivery.user_id == user.id,
+                    PushDelivery.date == today,
+                    PushDelivery.channel == "feishu_gushi",
+                )
+                .first()
+            )
+            if existing:
+                continue
+            item = _find_upcoming_gushi(user, hour, today)
+            if not item:
+                continue
+            text = (
+                f"⏰ 吉时将至：{item['shichen']}时 {item['shichen_range']} · "
+                f"{normalize_score(item['score'])}/5\n"
+                f"宜：{'、'.join(item.get('favorable', [])[:3])}"
+            )
+            delivery = PushDelivery(
+                user_id=user.id,
+                date=today,
+                channel="feishu_gushi",
+                status="pending",
+                payload={"text": text, "shichen_range": item.get("shichen_range", "")},
+                next_attempt_at=now,
+            )
+            try:
+                with db.begin_nested():
+                    db.add(delivery)
+                    db.flush()
+            except IntegrityError:
+                db.rollback()
+                continue
+            db.commit()
+            db.refresh(delivery)
+            success = False
+            try:
+                success = send_gushi_feishu(user.feishu_webhook, text)
+            except Exception as exc:
+                logger.error("吉时提醒异常 user=%d: %s", user.id, type(exc).__name__)
+            _record_delivery_result(delivery, success, now, db)
+            if success:
+                sent += 1
+        except Exception as exc:
+            logger.error("吉时提醒流程失败 user=%d: %s", user.id, type(exc).__name__)
+            db.rollback()
+    return sent
+
+
 def _deliver(delivery: PushDelivery, user: User, now: datetime, db: Session) -> bool:
     """只发送一条 outbox 任务；email 与飞书互不影响。"""
-    from app.services.push_email import send_fortune_email
-    from app.services.push_feishu import send_fortune_feishu
+    from app.services.push_email import _now_minutes, _shichen_bounds, send_fortune_email
+    from app.services.push_feishu import send_fortune_feishu, send_gushi_feishu
 
     try:
         if delivery.channel == "email":
             success = send_fortune_email(user.email, delivery.payload)
         elif delivery.channel == "feishu" and user.feishu_webhook:
             success = send_fortune_feishu(user.feishu_webhook, delivery.payload)
+        elif delivery.channel == "feishu_gushi" and user.feishu_webhook:
+            # 吉时提醒有时效：重试时若时辰已结束，直接核销，不再打扰
+            bounds = _shichen_bounds(delivery.payload.get("shichen_range"))
+            if _now_minutes(now) >= bounds[1]:
+                logger.info("吉时提醒已过期核销 delivery=%d", delivery.id)
+                success = True
+            else:
+                success = send_gushi_feishu(user.feishu_webhook, delivery.payload.get("text", ""))
         else:
             success = False
     except Exception as exc:
@@ -288,6 +446,8 @@ def daily_push(
         else:
             retry_count += 1
 
+    gushi_sent = _send_gushi_reminders(db, now, req.hour)
+
     return {
         "success": True,
         "data": {
@@ -296,6 +456,7 @@ def daily_push(
             "delivered_count": delivered_count,
             "retry_scheduled_count": retry_count,
             "generation_failed_count": generation_failures,
+            "gushi_sent_count": gushi_sent,
             # 兼容原调用方的字段语义：统计成功投递的渠道数。
             "pushed_count": delivered_count,
             "failed_count": generation_failures + retry_count,

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Spec 017: 飞书机器人推送服务（增强版）"""
 import logging
+from html import escape
 
 import httpx
 
@@ -8,6 +9,11 @@ from app.core.outbound_urls import OutboundUrlError, normalize_feishu_webhook
 from fortune_engine.bazi.score import get_fortune_level, normalize_score
 
 logger = logging.getLogger(__name__)
+
+
+def _feishu_text(value) -> str:
+    """LLM/用户来源文本：转义尖括号防注入（飞书不渲染 HTML，避免原样穿透）。"""
+    return escape(str(value or ""), quote=True)
 
 
 def _build_hourly_text(hourly_fortunes: list) -> str:
@@ -89,11 +95,14 @@ def _build_card(fortune_data: dict) -> dict:
     probability_events = fortune_data.get("probability_events", [])
     chongsha = fortune_data.get("day_chongsha")
     hexagram = fortune_data.get("daily_hexagram")
+    deity = fortune_data.get("deity_directions") or {}
+    reflection = fortune_data.get("reflection_question", "")
 
     level = get_fortune_level(score)
     score_color = "green" if score >= 4 else "blue" if score == 3 else "orange"
 
     chongsha_text = _build_chongsha_text(chongsha)
+    season_line = _build_season_line(fortune_data)
     header_ganzhi = fortune_data.get("day_ganzhi", "")
     header_parts = [f"每日运势播报 · {date_str}"]
     if header_ganzhi:
@@ -107,6 +116,16 @@ def _build_card(fortune_data: dict) -> dict:
             "tag": "markdown",
             "content": f"**综合状态**  <font color='{score_color}'>{score}/5 {level.label}</font>\n{level.guidance}",
         },
+    ]
+
+    # 节气换月提示紧跟综合状态
+    if season_line:
+        elements.append({
+            "tag": "markdown",
+            "content": season_line,
+        })
+
+    elements.extend([
         {"tag": "hr"},
         {
             "tag": "markdown",
@@ -118,20 +137,31 @@ def _build_card(fortune_data: dict) -> dict:
             ),
         },
         {"tag": "hr"},
-        {
-            "tag": "markdown",
-            "content": f"🎨 幸运色：{lucky_color}　🔢 幸运数：{lucky_number}",
-        },
-    ]
+    ])
+
+    lucky_line = f"🎨 幸运色：{lucky_color}　🔢 幸运数：{lucky_number}"
+    if deity.get("caishen") or deity.get("xishen"):
+        parts = []
+        if deity.get("caishen"):
+            parts.append(f"💰 财神：{deity['caishen']}")
+        if deity.get("xishen"):
+            parts.append(f"😊 喜神：{deity['xishen']}")
+        lucky_line += "　" + "　".join(parts)
+    elements.append({
+        "tag": "markdown",
+        "content": lucky_line,
+    })
 
     # 运势解读
     if interpretation:
         if len(interpretation) > 300:
             interpretation = interpretation[:297] + "..."
+        interpretation = _feishu_text(interpretation)
+        question_line = f"\n💭 今日一问：{_feishu_text(reflection)}" if reflection else ""
         elements.append({"tag": "hr"})
         elements.append({
             "tag": "markdown",
-            "content": f"**🔮 运势解读**\n{interpretation}",
+            "content": f"**🔮 运势解读**\n{interpretation}{question_line}",
         })
 
     # 冲煞提示
@@ -148,6 +178,15 @@ def _build_card(fortune_data: dict) -> dict:
         elements.append({
             "tag": "markdown",
             "content": hexagram_text,
+        })
+
+    # 本周回顾（周日）
+    recap_text = _build_recap_text(fortune_data.get("weekly_recap"))
+    if recap_text:
+        elements.append({"tag": "hr"})
+        elements.append({
+            "tag": "markdown",
+            "content": recap_text,
         })
 
     # 时辰运势
@@ -181,6 +220,64 @@ def _build_card(fortune_data: dict) -> dict:
             "elements": elements,
         },
     }
+
+
+def _build_season_line(fortune_data: dict) -> str:
+    """节气换月提示行。"""
+    note = fortune_data.get("season_note")
+    return f"🍂 {note}" if note else ""
+
+
+def _build_recap_text(recap: dict | None) -> str:
+    """本周回顾段落：周均分 + 预言命中率（反馈闭环）。"""
+    if not recap:
+        return ''
+    lines = ['**📊 本周回顾**']
+    if recap.get("week_avg_score") is not None:
+        lines.append(f"本周均分 {recap['week_avg_score']}/5（{recap.get('days_count', 0)} 天）")
+    if recap.get("verified_total"):
+        lines.append(
+            f"预言命中 {recap['hit_count']}/{recap['verified_total']}（{recap['hit_rate']}%）"
+        )
+    else:
+        lines.append("还没有预言反馈——给预测打个分，看看准不准")
+    return "\n".join(lines)
+
+
+def send_gushi_feishu(webhook_url: str, text: str) -> bool:
+    """发送"吉时将至"即时提醒卡片。"""
+    card = {
+        "msg_type": "interactive",
+        "card": {
+            "header": {
+                "title": {"tag": "plain_text", "content": "吉时将至"},
+                "template": "green",
+            },
+            "elements": [{"tag": "markdown", "content": text}],
+        },
+    }
+    try:
+        webhook_url = normalize_feishu_webhook(webhook_url)
+        response = httpx.post(
+            webhook_url,
+            json=card,
+            timeout=10.0,
+        )
+        result = response.json()
+        if result.get("code") == 0:
+            logger.info("吉时提醒推送成功")
+            return True
+        logger.error("吉时提醒推送失败: %s", result.get("msg"))
+        return False
+    except OutboundUrlError:
+        logger.error("吉时提醒地址不受信任")
+        return False
+    except httpx.TimeoutException:
+        logger.error("吉时提醒推送超时")
+        return False
+    except Exception as e:
+        logger.error("吉时提醒推送异常: %s", e)
+        return False
 
 
 def send_fortune_feishu(webhook_url: str, fortune_data: dict) -> bool:

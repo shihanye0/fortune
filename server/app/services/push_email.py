@@ -212,22 +212,38 @@ def _dimension_cell(label: str, icon: str, dimension: dict | None, tint: str) ->
       </td>"""
 
 
+def _build_season_banner(fortune_data: dict) -> str:
+    """节气换月提示横幅：只在换节气当日/前一日出现。"""
+    note = fortune_data.get("season_note")
+    if not note:
+        return ""
+    return (
+        f'<div style="margin-top:14px; padding:10px 14px; background:#fffbeb; '
+        f'border:1px solid #fde68a; border-radius:10px; font-size:13px; color:#92400e;">🍂 {_safe(note)}</div>'
+    )
+
+
 def _build_lucky_html(fortune_data: dict) -> str:
-    cells = []
-    for icon, label, key in (
-        ("🎨", "幸运色", "lucky_color"),
-        ("🔢", "幸运数", "lucky_number"),
-        ("🧭", "吉利方位", "lucky_direction"),
-    ):
-        cells.append(f"""
-      <td width="33%" align="center" valign="top" style="padding:0 3px;">
+    entries = [
+        ("🎨", "幸运色", _safe(fortune_data.get("lucky_color"))),
+        ("🔢", "幸运数", _safe(fortune_data.get("lucky_number"))),
+        ("🧭", "吉利方位", _safe(fortune_data.get("lucky_direction"))),
+    ]
+    deity = fortune_data.get("deity_directions") or {}
+    if deity.get("caishen"):
+        entries.append(("💰", "财神", _safe(deity["caishen"])))
+    if deity.get("xishen"):
+        entries.append(("😊", "喜神", _safe(deity["xishen"])))
+    width = 100 // len(entries) if entries else 100
+    cells = "".join(f"""
+      <td width="{width}%" align="center" valign="top" style="padding:0 3px;">
         <div style="padding:11px 4px; background:{SURFACE}; border-radius:10px;">
           <div style="font-size:12px; color:{MUTED};">{icon} {label}</div>
-          <div style="margin-top:3px; font-size:14px; font-weight:700; color:{BODY};">{_safe(fortune_data.get(key))}</div>
+          <div style="margin-top:3px; font-size:14px; font-weight:700; color:{BODY};">{value}</div>
         </div>
-      </td>""")
+      </td>""" for icon, label, value in entries)
     return f"""
-      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin-top:14px;"><tr>{''.join(cells)}</tr></table>"""
+      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin-top:14px;"><tr>{cells}</tr></table>"""
 
 
 def _build_hourly_strip(hourly_fortunes: list | None, now_min: int) -> str:
@@ -350,6 +366,34 @@ def _build_events_html(events: list | None, now_min: int) -> str:
       </div>"""
 
 
+def _build_recap_html(recap: dict | None) -> str:
+    """本周回顾板块（周日）：周均分 + 预言命中率，突出反馈闭环。"""
+    if not recap:
+        return ""
+    rows = []
+    if recap.get("week_avg_score") is not None:
+        rows.append(
+            f'<div style="font-size:13px; color:{BODY};">📈 本周均分 '
+            f'<b>{recap["week_avg_score"]}/5</b>（共 {recap.get("days_count", 0)} 天）</div>'
+        )
+    if recap.get("verified_total"):
+        rows.append(
+            f'<div style="margin-top:4px; font-size:13px; color:{BODY};">🎯 预言命中 '
+            f'<b>{recap["hit_count"]}/{recap["verified_total"]}</b>（{recap["hit_rate"]}%）'
+            f'<span style="font-size:11px; color:{MUTED};"> · 数据来自你的真实反馈</span></div>'
+        )
+    else:
+        rows.append(
+            f'<div style="margin-top:4px; font-size:13px; color:{MUTED};">还没有预言反馈——'
+            f'<a href="{PROFILE_URL}" style="color:#6366f1;">去给预测打个分</a>，看看准不准</div>'
+        )
+    return f"""
+      <div style="margin-top:22px; padding:14px 16px; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:12px;">
+        <div style="font-size:15px; font-weight:700; color:#14532d;">📊 本周回顾</div>
+        {''.join(rows)}
+      </div>"""
+
+
 def _build_html(fortune_data: dict, now: datetime | None = None) -> str:
     """构建兼容主流邮箱、优先移动端阅读的日运简报。"""
     now = now or datetime.now(CHINA_TZ)
@@ -373,6 +417,14 @@ def _build_html(fortune_data: dict, now: datetime | None = None) -> str:
         </tr>
       </table>"""
 
+    reflection_html = ""
+    question = fortune_data.get("reflection_question")
+    if question:
+        reflection_html = (
+            f'<div style="margin-top:10px; padding-top:10px; border-top:1px dashed #ddd6fe; '
+            f'font-size:13px; color:#4338ca;">💭 今日一问：{_safe(question)}</div>'
+        )
+
     return f"""<!doctype html>
 <html lang="zh-CN">
 <head>
@@ -390,6 +442,7 @@ def _build_html(fortune_data: dict, now: datetime | None = None) -> str:
           <div style="margin-top:6px; font-size:13px; color:#e0e7ff;">{_header_meta(fortune_data)}</div>
         </td></tr>
         <tr><td style="padding:0 28px 28px;">
+          {_build_season_banner(fortune_data)}
           <div style="margin-top:16px; padding:18px 20px; background:{SURFACE}; border:1px solid {LINE}; border-radius:14px;">
             <table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr>
               <td valign="middle">
@@ -410,10 +463,12 @@ def _build_html(fortune_data: dict, now: datetime | None = None) -> str:
           <div style="margin-top:20px; padding:14px 16px; background:#fafaff; border:1px solid #ddd6fe; border-left:4px solid #6366f1; border-radius:10px;">
             <div style="font-size:15px; font-weight:700; color:#312e81;">运势解读</div>
             <div style="margin-top:8px; font-size:14px; line-height:24px; color:#334155;">{_safe_paragraph(fortune_data.get("interpretation"))}</div>
+            {reflection_html}
           </div>
           {_build_hexagram_html(fortune_data.get("daily_hexagram"))}
           {_build_hourly_html(fortune_data.get("hourly_fortunes"), now_min)}
           {_build_events_html(fortune_data.get("probability_events"), now_min)}
+          {_build_recap_html(fortune_data.get("weekly_recap"))}
           <div style="margin-top:24px; padding-top:14px; border-top:1px solid {LINE}; font-size:11px; line-height:17px; color:#94a3b8;">
             本内容以传统文化信息为参考，不构成医疗、法律、投资或其他重要决策建议。<br>
             推送时间与渠道可在<a href="{PROFILE_URL}" style="color:#6366f1; text-decoration:underline;">个人中心</a>调整。<br>
@@ -443,6 +498,9 @@ def _build_text(fortune_data: dict, now: datetime | None = None) -> str:
     chongsha = fortune_data.get("day_chongsha") or {}
     if chongsha.get("display"):
         lines.append(f"冲煞：{chongsha['display']}")
+    season_note = fortune_data.get("season_note")
+    if season_note:
+        lines.append(f"节气：{season_note}")
     lines.extend([
         f"综合状态：{score}/5 · {level.label}",
         level.guidance,
@@ -452,12 +510,17 @@ def _build_text(fortune_data: dict, now: datetime | None = None) -> str:
         dimension = fortune_data.get(key) or {}
         detail = dimension.get("detail") or dimension.get("description") or "—"
         lines.append(f"{label}：{normalize_score(dimension.get('score'))}/5 · {detail}")
+    deity = fortune_data.get("deity_directions") or {}
     lines.extend([
         "",
         f"幸运色：{fortune_data.get('lucky_color') or '—'}",
         f"幸运数：{fortune_data.get('lucky_number') or '—'}",
         f"吉利方位：{fortune_data.get('lucky_direction') or '—'}",
     ])
+    if deity.get("caishen"):
+        lines.append(f"财神方位：{deity['caishen']}")
+    if deity.get("xishen"):
+        lines.append(f"喜神方位：{deity['xishen']}")
     hours = [item for item in (fortune_data.get("hourly_fortunes") or []) if isinstance(item, dict)]
     favourable, caution = _pick_hourly(hours, now_min)
     if favourable:
@@ -488,6 +551,18 @@ def _build_text(fortune_data: dict, now: datetime | None = None) -> str:
         lines.extend(["", "今日行动关注点："] + [f"- {part}" for part in parts])
     if fortune_data.get("interpretation"):
         lines.extend(["", "运势解读：", str(fortune_data["interpretation"])])
+    question = fortune_data.get("reflection_question")
+    if question:
+        lines.append(f"今日一问：{question}")
+    recap = fortune_data.get("weekly_recap") or {}
+    if recap:
+        parts = []
+        if recap.get("week_avg_score") is not None:
+            parts.append(f"本周均分 {recap['week_avg_score']}/5（{recap.get('days_count', 0)} 天）")
+        if recap.get("verified_total"):
+            parts.append(f"预言命中 {recap['hit_count']}/{recap['verified_total']}（{recap['hit_rate']}%）")
+        if parts:
+            lines.extend(["", "本周回顾：" + "；".join(parts)])
     lines.extend(["", f"推送设置：{PROFILE_URL}", "传统文化参考，不构成重要决策建议。"])
     return "\n".join(lines)
 

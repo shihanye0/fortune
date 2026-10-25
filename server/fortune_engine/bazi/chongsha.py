@@ -26,6 +26,32 @@ for _branches, _direction in (
     for _branch in _branches:
         _SHA_DIRECTION[_branch] = _direction
 
+# 财神方位歌：甲乙东北是财神，丙丁向在西南寻，戊己正北坐方位，庚辛正东去安身，壬癸原来正南坐
+CAISHEN_DIRECTION = {
+    "甲": "东北", "乙": "东北", "丙": "西南", "丁": "西南",
+    "戊": "正北", "己": "正北", "庚": "正东", "辛": "正东",
+    "壬": "正南", "癸": "正南",
+}
+
+# 喜神方位歌：甲己在艮（东北），乙庚乾（西北），丙辛坤（西南），丁壬离（正南），戊癸巽（东南）
+XISHEN_DIRECTION = {
+    "甲": "东北", "己": "东北", "乙": "西北", "庚": "西北",
+    "丙": "西南", "辛": "西南", "丁": "正南", "壬": "正南",
+    "戊": "东南", "癸": "东南",
+}
+# 福神方位各家口诀分歧较大，暂不收录，避免给出互相矛盾的"权威"值。
+
+
+def get_deity_directions(heavenly_stem: str | None) -> dict | None:
+    """由日干取财神/喜神方位；干支非法时返回 None。"""
+    if not heavenly_stem:
+        return None
+    caishen = CAISHEN_DIRECTION.get(heavenly_stem)
+    xishen = XISHEN_DIRECTION.get(heavenly_stem)
+    if not caishen or not xishen:
+        return None
+    return {"caishen": caishen, "xishen": xishen}
+
 
 def get_day_chongsha(heavenly_stem: str | None, earthly_branch: str | None) -> dict | None:
     """由日干支推冲煞信息；干支缺失或非法时返回 None，调用方直接跳过展示。"""
