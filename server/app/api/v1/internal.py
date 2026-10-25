@@ -119,8 +119,10 @@ def _build_payload(
 ) -> dict:
     """创建可重试的冻结内容，避免重试时悄悄改变当天的推送文本。"""
     from app.services.feedback_summary import generate_feedback_summary
+    from fortune_engine.bazi.chongsha import get_day_chongsha
     from fortune_engine.bazi.daily_fortune import calculate_daily_fortune
     from fortune_engine.bazi.pillar import calculate_bazi
+    from fortune_engine.liuyao.hexagram import daily_hexagram
     from fortune_engine.probability_events import generate_probability_events
 
     bazi = calculate_bazi(
@@ -138,6 +140,11 @@ def _build_payload(
     return {
         "date": today.isoformat(),
         "day_ganzhi": f"{fortune.heavenly_stem or ''}{fortune.earthly_branch or ''}",
+        "day_chongsha": get_day_chongsha(
+            fortune.heavenly_stem or daily["heavenly_stem"],
+            fortune.earthly_branch or daily["earthly_branch"],
+        ),
+        "daily_hexagram": daily_hexagram(user.id, today.year, today.month, today.day),
         "overall_score": fortune.overall_score,
         "career": fortune.career_fortune or {},
         "wealth": fortune.wealth_fortune or {},

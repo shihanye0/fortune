@@ -67,6 +67,75 @@ HEXAGRAM_MAP = {
 }
 
 
+# 六十四卦卦义速查：tendency ∈ 吉 / 平 / 慎，advice 为一句话行动建议
+HEXAGRAM_MEANING = {
+    "乾为天": {"tendency": "吉", "advice": "刚健进取，宜主动担当"},
+    "坤为地": {"tendency": "平", "advice": "厚德包容，宜顺势配合"},
+    "坎为水": {"tendency": "慎", "advice": "险阻重重，宜守不宜进"},
+    "离为火": {"tendency": "平", "advice": "光明依附，宜借势明断"},
+    "震为雷": {"tendency": "平", "advice": "动而有应，宜应变不宜拖延"},
+    "巽为风": {"tendency": "平", "advice": "顺势而入，宜沟通协商"},
+    "艮为山": {"tendency": "慎", "advice": "止于当止，宜停顿蓄力"},
+    "兑为泽": {"tendency": "吉", "advice": "喜悦相通，宜交流联谊"},
+    "天地否": {"tendency": "慎", "advice": "闭塞不通，宜守成不宜冒进"},
+    "地天泰": {"tendency": "吉", "advice": "三阳开泰，宜推进合作"},
+    "水火既济": {"tendency": "吉", "advice": "大功将成，宜防盛极生变"},
+    "火水未济": {"tendency": "慎", "advice": "事未成局，宜蓄力待时"},
+    "雷山小过": {"tendency": "平", "advice": "小有过越，宜小事不宜大举"},
+    "山雷颐": {"tendency": "平", "advice": "养生蓄德，宜学习进补"},
+    "风泽中孚": {"tendency": "吉", "advice": "诚信感通，宜立约践诺"},
+    "泽风大过": {"tendency": "慎", "advice": "过度承载，宜减压减负"},
+    "天风姤": {"tendency": "平", "advice": "不期而遇，宜辨析是非"},
+    "风天小畜": {"tendency": "吉", "advice": "小有蓄积，宜筹备储蓄"},
+    "天泽履": {"tendency": "平", "advice": "履险如夷，宜循礼慎行"},
+    "泽天夬": {"tendency": "吉", "advice": "决断去害，宜了断旧事"},
+    "天火同人": {"tendency": "吉", "advice": "同心协力，宜结盟共事"},
+    "火天大有": {"tendency": "吉", "advice": "大有所获，宜分享成果"},
+    "天雷无妄": {"tendency": "平", "advice": "顺其自然，忌妄动强求"},
+    "雷天大壮": {"tendency": "吉", "advice": "声势正盛，宜乘势而上"},
+    "天水讼": {"tendency": "慎", "advice": "争讼不利，宜和解避争"},
+    "水天需": {"tendency": "平", "advice": "待时而动，宜耐心准备"},
+    "天山遁": {"tendency": "慎", "advice": "退避为上，宜抽身远纷扰"},
+    "山天大畜": {"tendency": "吉", "advice": "大有蓄养，宜积累进修"},
+    "地风升": {"tendency": "吉", "advice": "上升之象，宜求职晋级"},
+    "风地观": {"tendency": "平", "advice": "观察审视，宜调研观望"},
+    "地泽临": {"tendency": "吉", "advice": "居高临下，宜率领管理"},
+    "泽地萃": {"tendency": "吉", "advice": "聚集英才，宜聚会理财"},
+    "地火明夷": {"tendency": "慎", "advice": "光明受挫，宜韬光养晦"},
+    "火地晋": {"tendency": "吉", "advice": "晋升明进，宜展示才能"},
+    "地雷复": {"tendency": "吉", "advice": "一阳来复，宜重启旧事"},
+    "雷地豫": {"tendency": "吉", "advice": "顺而快乐，宜宴乐放松"},
+    "地水师": {"tendency": "平", "advice": "兴师动众，宜统御有方"},
+    "水地比": {"tendency": "吉", "advice": "亲比相助，宜求助结盟"},
+    "水风井": {"tendency": "平", "advice": "井养不穷，宜守成分享"},
+    "风水涣": {"tendency": "慎", "advice": "涣散离析，宜聚力破局"},
+    "水泽节": {"tendency": "平", "advice": "节制有度，宜理财律己"},
+    "泽水困": {"tendency": "慎", "advice": "困顿难行，宜守静待援"},
+    "水雷屯": {"tendency": "慎", "advice": "万事起头难，宜稳扎稳打"},
+    "雷水解": {"tendency": "吉", "advice": "疑难消解，宜处理积案"},
+    "水山蹇": {"tendency": "慎", "advice": "前路艰难，宜退守求援"},
+    "山水蒙": {"tendency": "平", "advice": "蒙昧待启，宜求教学习"},
+    "火风鼎": {"tendency": "吉", "advice": "鼎新革故，宜开创新局"},
+    "风火家人": {"tendency": "平", "advice": "家道内外，宜顾家修睦"},
+    "火泽睽": {"tendency": "慎", "advice": "乖背离心，宜求同存异"},
+    "泽火革": {"tendency": "吉", "advice": "变革之时，宜除旧布新"},
+    "火雷噬嗑": {"tendency": "平", "advice": "咬合除梗，宜断决纠纷"},
+    "雷火丰": {"tendency": "吉", "advice": "丰盛光大，宜趁热打铁"},
+    "火山旅": {"tendency": "平", "advice": "旅途在外，宜顺势流转"},
+    "山火贲": {"tendency": "平", "advice": "文饰其表，宜包装展示"},
+    "雷风恒": {"tendency": "平", "advice": "恒久之道，宜坚持习惯"},
+    "风雷益": {"tendency": "吉", "advice": "损上益下，宜投资助人"},
+    "雷泽归妹": {"tendency": "慎", "advice": "名分未正，宜慎对承诺"},
+    "泽雷随": {"tendency": "吉", "advice": "随时而安，宜随喜配合"},
+    "风山渐": {"tendency": "平", "advice": "循序渐进，宜按部就班"},
+    "山风蛊": {"tendency": "慎", "advice": "积弊需整，宜整顿清理"},
+    "山泽损": {"tendency": "平", "advice": "损己利人，宜舍小谋大"},
+    "泽山咸": {"tendency": "吉", "advice": "心灵感应，宜表白联谊"},
+    "地山谦": {"tendency": "吉", "advice": "谦而有终，宜低调礼让"},
+    "山地剥": {"tendency": "慎", "advice": "剥落削减，宜收缩防守"},
+}
+
+
 def _lines_to_trigram(lines: list[int]) -> str:
     """三爻转卦名（阴=0, 阳=1）"""
     binary = tuple(1 if l % 2 == 1 else 0 for l in lines)
@@ -186,4 +255,27 @@ def time_divination(question: str, year: int, month: int, day: int, hour: int) -
             "lower_trigram": changed_lower,
             "lines": changed_lines,
         },
+    }
+
+
+def daily_hexagram(user_key: int, year: int, month: int, day: int) -> dict:
+    """每日一卦：时间起卦按用户区分，同用户同一天结果稳定，附卦义与建议。
+
+    Args:
+        user_key: 用户标识（如 user_id），用于让不同用户得到不同的当日卦
+        year/month/day: 公历日期
+    """
+    result = time_divination("今日运势", year, month, day, user_key % 12)
+    meaning = HEXAGRAM_MEANING.get(result["name"], {"tendency": "平", "advice": "守常即安"})
+    changed = result.get("changed_hexagram") or {}
+    return {
+        "name": result["name"],
+        "upper_trigram": result["upper_trigram"],
+        "lower_trigram": result["lower_trigram"],
+        "upper_image": TRIGRAM_IMAGE[result["upper_trigram"]],
+        "lower_image": TRIGRAM_IMAGE[result["lower_trigram"]],
+        "changing_lines": result.get("changing_lines", []),
+        "changed_name": changed.get("name", ""),
+        "tendency": meaning["tendency"],
+        "advice": meaning["advice"],
     }

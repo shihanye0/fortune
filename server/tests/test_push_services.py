@@ -228,6 +228,19 @@ class TestHourlyPushRendering:
         assert "建议时段：未时 13:00-15:00" in text
         assert "推送设置：" in text
 
+    def test_hai_hour_wraps_midnight(self):
+        """亥时区间 22:00-00:00 跨午夜，深夜仍应识别为进行中。"""
+        body = _build_html({
+            "date": "2026-06-20",
+            "overall_score": 3,
+            "hourly_fortunes": [
+                _hour("戌", "20:00", "22:00", 4),
+                _hour("亥", "22:00", "00:00", 5),
+            ],
+        }, now=datetime(2026, 6, 20, 23, 30, tzinfo=CHINA_TZ))
+        assert "进行中" in body
+        assert "22:00-00:00" in body
+
     def test_footer_contains_profile_link(self):
         """页脚包含个人中心入口链接。"""
         body = _build_html({"date": "2026-06-20", "overall_score": 3})

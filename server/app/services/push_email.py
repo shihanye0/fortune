@@ -77,14 +77,21 @@ def _now_minutes(now: datetime) -> int:
 
 
 def _shichen_bounds(shichen_range: Any) -> tuple[int, int]:
-    """时辰区间 "07:00-09:00" 转为 (起始分钟, 结束分钟)；解析失败按全天处理。"""
+    """时辰区间 "07:00-09:00" 转为 (起始分钟, 结束分钟)；解析失败按全天处理。
+
+    亥时区间为 "22:00-00:00"（跨午夜），结束时间需补一天。
+    """
     try:
         start_str, end_str = str(shichen_range).split("-")
         sh, sm = (int(part) for part in start_str.split(":"))
         eh, em = (int(part) for part in end_str.split(":"))
-        return sh * 60 + sm, eh * 60 + em
     except (ValueError, AttributeError):
         return 0, 24 * 60
+    start = sh * 60 + sm
+    end = eh * 60 + em
+    if end <= start:
+        end += 24 * 60
+    return start, end
 
 
 def _hour_status(item: dict, now_min: int) -> str:
@@ -130,15 +137,48 @@ def _status_badge(status: str, shichen_range: Any) -> str:
 
 
 def _header_meta(fortune_data: dict) -> str:
-    """头部日期行：日期 · 干支日 · 星期，缺失的部分自动跳过。"""
+    """头部日期行：日期 · 干支日 · 冲煞 · 星期，缺失的部分自动跳过。"""
     parts = [_safe(fortune_data.get("date"), "")]
     ganzhi = _safe(fortune_data.get("day_ganzhi"), "")
     if ganzhi:
         parts.append(f"{ganzhi}日")
+    chongsha = fortune_data.get("day_chongsha") or {}
+    chongsha_short = _safe(chongsha.get("display_short"), "")
+    if chongsha_short:
+        parts.append(chongsha_short)
     weekday = _weekday_label(fortune_data.get("date"))
     if weekday:
         parts.append(weekday)
     return " · ".join(part for part in parts if part)
+
+
+HEXAGRAM_TENDENCY_STYLE = {
+    "吉": {"label": "吉", "bg": ACT_GOOD},
+    "平": {"label": "平", "bg": "#4338ca"},
+    "慎": {"label": "慎", "bg": ACT_CAUTION},
+}
+
+
+def _build_hexagram_html(hexagram: dict | None) -> str:
+    """今日一卦卡片：六爻时间起卦 + 卦义一句话建议。"""
+    if not hexagram or not hexagram.get("name"):
+        return ""
+
+    tendency = HEXAGRAM_TENDENCY_STYLE.get(hexagram.get("tendency", "平"), HEXAGRAM_TENDENCY_STYLE["平"])
+    changed_name = hexagram.get("changed_name") or ""
+    changed_line = f'<span style="margin-left:6px; font-size:11px; color:{MUTED};">变卦 {_safe(changed_name)}</span>' if changed_name else ""
+    structure = f"{_safe(hexagram.get('upper_image'))}{_safe(hexagram.get('lower_image'))}"
+    return f"""
+          <div style="margin-top:20px; padding:14px 16px; background:#f7f9fc; border:1px solid {LINE}; border-left:4px solid #7c3aed; border-radius:10px;">
+            <div style="font-size:15px; font-weight:700; color:#1e293b;">☯ 今日一卦</div>
+            <div style="margin-top:8px;">
+              <span style="display:inline-block; padding:1px 8px; border-radius:999px; background:{tendency['bg']}; color:#ffffff; font-size:11px; font-weight:700;">{tendency['label']}</span>
+              <span style="margin-left:6px; font-size:18px; font-weight:700; color:#312e81;">{_safe(hexagram.get("name"))}</span>
+              {changed_line}
+            </div>
+            <div style="margin-top:4px; font-size:11px; color:#94a3b8;">上{_safe(hexagram.get("upper_trigram"))}下{_safe(hexagram.get("lower_trigram"))} · {structure}之象</div>
+            <div style="margin-top:6px; font-size:13px; line-height:21px; color:#334155;">{_safe(hexagram.get("advice"))}</div>
+          </div>"""
 
 
 def _preheader(fortune_data: dict, level, score: int, now_min: int) -> str:
@@ -371,6 +411,7 @@ def _build_html(fortune_data: dict, now: datetime | None = None) -> str:
             <div style="font-size:15px; font-weight:700; color:#312e81;">运势解读</div>
             <div style="margin-top:8px; font-size:14px; line-height:24px; color:#334155;">{_safe_paragraph(fortune_data.get("interpretation"))}</div>
           </div>
+          {_build_hexagram_html(fortune_data.get("daily_hexagram"))}
           {_build_hourly_html(fortune_data.get("hourly_fortunes"), now_min)}
           {_build_events_html(fortune_data.get("probability_events"), now_min)}
           <div style="margin-top:24px; padding-top:14px; border-top:1px solid {LINE}; font-size:11px; line-height:17px; color:#94a3b8;">
@@ -399,6 +440,9 @@ def _build_text(fortune_data: dict, now: datetime | None = None) -> str:
     ganzhi = fortune_data.get("day_ganzhi")
     if ganzhi:
         lines.append(f"干支：{ganzhi}日")
+    chongsha = fortune_data.get("day_chongsha") or {}
+    if chongsha.get("display"):
+        lines.append(f"冲煞：{chongsha['display']}")
     lines.extend([
         f"综合状态：{score}/5 · {level.label}",
         level.guidance,
@@ -428,6 +472,12 @@ def _build_text(fortune_data: dict, now: datetime | None = None) -> str:
             for item in caution
         )
         lines.append(f"需留意时辰：{summary}")
+    hexagram = fortune_data.get("daily_hexagram") or {}
+    if hexagram.get("name"):
+        line = f"今日一卦：{hexagram['name']}（{hexagram.get('tendency', '平')}）——{hexagram.get('advice', '')}"
+        if hexagram.get("changed_name"):
+            line += f"；变卦 {hexagram['changed_name']}"
+        lines.append(line)
     events = fortune_data.get("probability_events") or []
     if events:
         parts = []

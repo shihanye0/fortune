@@ -52,6 +52,28 @@ def _build_events_text(events: list) -> str:
     return '\n'.join(lines)
 
 
+def _build_chongsha_text(chongsha: dict | None) -> str:
+    """头部冲煞信息：今日冲X(XX) 煞X。"""
+    if not chongsha or not chongsha.get('display'):
+        return ''
+    animal = chongsha.get('clash_animal', '')
+    suffix = f"，属{animal}者今日宜低调稳妥" if animal else ""
+    return f"⚠️ 今日{chongsha['display']}{suffix}"
+
+
+def _build_hexagram_text(hexagram: dict | None) -> str:
+    """今日一卦段落：卦名（吉凶）+ 一句话建议 + 变卦。"""
+    if not hexagram or not hexagram.get('name'):
+        return ''
+
+    tendency = hexagram.get('tendency', '平')
+    color = 'green' if tendency == '吉' else 'orange' if tendency == '慎' else 'blue'
+    line = f"**☯ 今日一卦**  <font color='{color}'>{hexagram['name']}（{tendency}）</font>\n{hexagram.get('advice', '')}"
+    if hexagram.get('changed_name'):
+        line += f"\n变卦：{hexagram['changed_name']}"
+    return line
+
+
 def _build_card(fortune_data: dict) -> dict:
     """构建飞书消息卡片"""
     date_str = fortune_data.get("date", "")
@@ -65,9 +87,20 @@ def _build_card(fortune_data: dict) -> dict:
     interpretation = fortune_data.get("interpretation", "")
     hourly_fortunes = fortune_data.get("hourly_fortunes", [])
     probability_events = fortune_data.get("probability_events", [])
+    chongsha = fortune_data.get("day_chongsha")
+    hexagram = fortune_data.get("daily_hexagram")
 
     level = get_fortune_level(score)
     score_color = "green" if score >= 4 else "blue" if score == 3 else "orange"
+
+    chongsha_text = _build_chongsha_text(chongsha)
+    header_ganzhi = fortune_data.get("day_ganzhi", "")
+    header_parts = [f"每日运势播报 · {date_str}"]
+    if header_ganzhi:
+        header_parts.append(f"{header_ganzhi}日")
+    if chongsha_text:
+        header_parts.append(chongsha.get("display_short", ""))
+    header_title = " ｜ ".join(part for part in header_parts if part)
 
     elements = [
         {
@@ -101,6 +134,22 @@ def _build_card(fortune_data: dict) -> dict:
             "content": f"**🔮 运势解读**\n{interpretation}",
         })
 
+    # 冲煞提示
+    if chongsha_text:
+        elements.append({
+            "tag": "markdown",
+            "content": chongsha_text,
+        })
+
+    # 今日一卦
+    hexagram_text = _build_hexagram_text(hexagram)
+    if hexagram_text:
+        elements.append({"tag": "hr"})
+        elements.append({
+            "tag": "markdown",
+            "content": hexagram_text,
+        })
+
     # 时辰运势
     hourly_text = _build_hourly_text(hourly_fortunes)
     if hourly_text:
@@ -125,7 +174,7 @@ def _build_card(fortune_data: dict) -> dict:
             "header": {
                 "title": {
                     "tag": "plain_text",
-                    "content": f"每日运势播报 · {date_str}",
+                    "content": header_title,
                 },
                 "template": "green" if score >= 4 else "blue" if score == 3 else "orange",
             },
