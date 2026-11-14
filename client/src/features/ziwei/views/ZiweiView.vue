@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getZiweiChart, doZiwei, getZiweiRecords, submitDivinationFeedback } from '../api/ziwei-api'
+import { getDivinationDetail } from '@/features/divination/api/divination-api'
 import type { ZiweiChart, DivinationRecord } from '../api/ziwei-api'
 
 const chart = ref<ZiweiChart | null>(null)
@@ -74,6 +75,17 @@ async function loadRecords() {
   } catch { /* silent */ }
 }
 
+async function loadLatestInterpretation() {
+  if (!historyList.value.length || interpretation.value) return
+  try {
+    const res = await getDivinationDetail(historyList.value[0].id)
+    if (res.success && res.data?.interpretation) {
+      interpretation.value = res.data.interpretation
+      interpRecordId.value = res.data.id
+    }
+  } catch { /* silent */ }
+}
+
 async function openFeedback(r: DivinationRecord) {
   feedbackRecord.value = r
   feedbackRating.value = r.user_rating || 5
@@ -102,7 +114,7 @@ async function markAccuracy(record: DivinationRecord, mark: number) {
     await loadRecords()
   } catch { ElMessage.error('记录失败') }
 }
-onMounted(() => { loadChart(); loadRecords() })
+onMounted(async () => { await loadRecords(); loadLatestInterpretation(); loadChart() })
 </script>
 
 <template>

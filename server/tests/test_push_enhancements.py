@@ -354,3 +354,15 @@ class TestZiweiDailyPush:
         assert "紫微流日" in text
         assert "一卦解读：" in text
         assert "化禄" in text
+
+    def test_email_dayun_and_daxian(self):
+        from app.services.push_email import _build_html
+        p = self._payload()
+        p["bazi_dayun"] = {"pillar": "甲申", "start_year": 2023, "end_year": 2032,
+                           "start_age": 34, "end_age": 43}
+        p["ziwei_daily"]["daxian"] = {"range_text": "35-44岁", "palace_display": "子女宫",
+                                      "hint": "子女缘分与创作成果"}
+        body = _build_html(p)
+        assert "八字大运" in body and "甲申" in body
+        assert "当前大限" in body and "子女宫" in body
+        assert "2023-2032" in body

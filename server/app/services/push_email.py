@@ -394,6 +394,13 @@ def _build_ziwei_html(ziwei_daily: dict | None) -> str:
     """紫微流日卡：今日日干四化落本命何宫（确定性引擎输出）。"""
     if not ziwei_daily or not ziwei_daily.get("sihua"):
         return ""
+    dx = ziwei_daily.get("daxian") or {}
+    daxian_line = ""
+    if dx.get("palace_display"):
+        daxian_line = (
+            f'<div style="margin-top:8px; font-size:12px; color:#64748b;">当前大限：{dx["range_text"]} 行{_safe(dx["palace_display"])}'
+            + (f' · {_safe(dx["hint"])}' if dx.get("hint") else '') + '</div>'
+        )
     rows = []
     tint = {"禄": "#dcfce7", "权": "#fee2e2", "科": "#dbeafe", "忌": "#ede9fe"}
     color = {"禄": "#15803d", "权": "#b91c1c", "科": "#1d4ed8", "忌": "#6d28d9"}
@@ -410,8 +417,21 @@ def _build_ziwei_html(ziwei_daily: dict | None) -> str:
       <div style="margin-top:20px; padding:14px 16px; background:#faf5ff; border:1px solid {LINE}; border-left:4px solid #a855f7; border-radius:10px;">
         <div style="font-size:15px; font-weight:700; color:#581c87;">✦ 紫微流日 · 今日四化</div>
         <div style="margin-top:2px; font-size:11px; color:#94a3b8;">今日日干四化落你的本命宫位（命宫 {_safe(ziwei_daily.get("soul_palace"))} · {_safe(ziwei_daily.get("five_elements"))}）</div>
+        {daxian_line}
         {''.join(rows)}
       </div>"""
+
+
+def _build_dayun_banner(bazi_dayun: dict | None) -> str:
+    """八字大运横幅：当前大运干支与年份区间。"""
+    if not bazi_dayun or not bazi_dayun.get("pillar"):
+        return ""
+    return (
+        f'<div style="margin-top:14px; padding:10px 14px; background:#f0f9ff; '
+        f'border:1px solid #bae6fd; border-radius:10px; font-size:13px; color:#0c4a6e;">'
+        f'🏗 八字大运 · 当前 <b>{_safe(bazi_dayun["pillar"])}</b> 运'
+        f'（{bazi_dayun["start_year"]}-{bazi_dayun["end_year"]} 年，虚岁 {bazi_dayun["start_age"]}-{bazi_dayun["end_age"]}）</div>'
+    )
 
 
 def _build_html(fortune_data: dict, now: datetime | None = None) -> str:
@@ -463,6 +483,7 @@ def _build_html(fortune_data: dict, now: datetime | None = None) -> str:
         </td></tr>
         <tr><td style="padding:0 28px 28px;">
           {_build_season_banner(fortune_data)}
+          {_build_dayun_banner(fortune_data.get("bazi_dayun"))}
           <div style="margin-top:16px; padding:18px 20px; background:{SURFACE}; border:1px solid {LINE}; border-radius:14px;">
             <table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr>
               <td valign="middle">
@@ -565,6 +586,14 @@ def _build_text(fortune_data: dict, now: datetime | None = None) -> str:
         interp = (fortune_data.get("hexagram_interpretation") or "").strip()
         if interp:
             lines.append(f"一卦解读：{interp}")
+    dayun = fortune_data.get("bazi_dayun") or {}
+    if dayun.get("pillar"):
+        lines.append(f"八字大运：当前 {dayun['pillar']} 运（{dayun['start_year']}-{dayun['end_year']} 年，虚岁 {dayun['start_age']}-{dayun['end_age']}）")
+    ziwei_daily = fortune_data.get("ziwei_daily") or {}
+    if ziwei_daily.get("sihua"):
+        dx = ziwei_daily.get("daxian") or {}
+        if dx.get("palace_display"):
+            lines.append(f"紫微大限：{dx['range_text']} 行{dx['palace_display']}")
     ziwei_daily = fortune_data.get("ziwei_daily") or {}
     if ziwei_daily.get("sihua"):
         lines.append(f"紫微流日（命宫{ziwei_daily.get('soul_palace')} · {ziwei_daily.get('five_elements')}）：")

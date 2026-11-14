@@ -210,15 +210,26 @@ def _build_payload(
         hexagram_interpretation = ""
     ziwei_daily = None
     try:
+        from fortune_engine.ziwei.words import current_daxian
         chart = calculate_ziwei(user.birth_year, user.birth_month, user.birth_day, user.birth_hour, user.gender)
         stem_idx = "甲乙丙丁戊己庚辛壬癸".index(day_stem)
         ziwei_daily = {
             "soul_palace": chart["soul_palace"],
             "five_elements": chart["five_elements"],
             "sihua": daily_signal(chart, stem_idx),
+            "daxian": current_daxian(chart),
         }
     except Exception:
         ziwei_daily = None
+    bazi_dayun = None
+    try:
+        for cyc in bazi.get("major_luck_cycles") or []:
+            if cyc.get("start_year") and cyc.get("end_year") and cyc["start_year"] <= today.year <= cyc["end_year"]:
+                bazi_dayun = {"pillar": cyc.get("pillar"), "start_year": cyc["start_year"],
+                              "end_year": cyc["end_year"], "start_age": cyc["start_age"], "end_age": cyc["end_age"]}
+                break
+    except Exception:
+        bazi_dayun = None
     return {
         "date": today.isoformat(),
         "day_ganzhi": f"{fortune.heavenly_stem or ''}{fortune.earthly_branch or ''}",
@@ -226,6 +237,7 @@ def _build_payload(
         "daily_hexagram": hexagram,
         "hexagram_interpretation": hexagram_interpretation,
         "ziwei_daily": ziwei_daily,
+        "bazi_dayun": bazi_dayun,
         "season_note": get_season_note(today),
         "deity_directions": get_deity_directions(day_stem),
         "reflection_question": pick_reflection(user.id, day_seed),

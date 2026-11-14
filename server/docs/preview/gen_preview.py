@@ -52,7 +52,11 @@ payload = {
     "daily_hexagram": {"name": "水火既济", "tendency": "吉", "advice": "事将成之际最忌松懈",
                        "changed_name": "水火未济", "upper_trigram": "坎", "lower_trigram": "离"},
     "hexagram_interpretation": "既济卦：事情将成之际最忌松懈。今天推进到 80% 的任务最值得收尾，上午贵人现身时敲定关键细节。",
-    "ziwei_daily": {"soul_palace": "卯", "five_elements": "土五局", "sihua": daily_signal(chart, 3)},
+    "ziwei_daily": {
+        "soul_palace": "卯", "five_elements": "土五局", "sihua": daily_signal(chart, 3),
+        "daxian": {"range_text": "35-44岁", "palace_display": "子女宫", "hint": "子女缘分与创作成果"},
+    },
+    "bazi_dayun": {"pillar": "甲申", "start_year": 2023, "end_year": 2032, "start_age": 34, "end_age": 43},
     "reflection_question": "今天最想推进一步的那件事，卡住你的到底是什么？",
     "calculation_notice": "传统文化参考，不构成医疗、法律或投资建议。",
 }

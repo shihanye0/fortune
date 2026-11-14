@@ -125,6 +125,13 @@ def _build_card(fortune_data: dict) -> dict:
             "content": season_line,
         })
 
+    dayun = fortune_data.get("bazi_dayun")
+    if dayun and dayun.get("pillar"):
+        elements.append({
+            "tag": "markdown",
+            "content": f"🏗 **八字大运** 当前 {_feishu_text(dayun['pillar'])} 运（{dayun['start_year']}-{dayun['end_year']} 年，虚岁 {dayun['start_age']}-{dayun['end_age']}）",
+        })
+
     elements.extend([
         {"tag": "hr"},
         {
@@ -326,6 +333,9 @@ def _build_ziwei_text(ziwei_daily: dict | None) -> str:
     if not ziwei_daily or not ziwei_daily.get('sihua'):
         return ''
     lines = ['**✦ 紫微流日**']
+    dx = ziwei_daily.get('daxian') or {}
+    if dx.get('palace_display'):
+        lines.append(f"当前大限：{dx['range_text']} 行{dx['palace_display']}" + (f" · {dx['hint']}" if dx.get('hint') else ''))
     tag = {'禄': 'green', '权': 'red', '科': 'blue', '忌': 'violet'}
     for item in ziwei_daily['sihua']:
         palace_disp = item.get('palace') or '不入本命十四主辅星盘'

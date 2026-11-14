@@ -114,3 +114,18 @@ def daily_signal(chart, day_stem_idx):
         hint = PALACE_MEANINGS.get(palace, "") if palace else ""
         out.append({"type": tag, "star": star, "palace": palace, "hint": hint})
     return out
+
+
+def current_daxian(chart):
+    """Current da xian row for push: {range_text, palace_display, hint} or None."""
+    age = chart.get("current_age")
+    for d in chart.get("da_xians") or []:
+        if d["start_age"] <= age <= d["end_age"]:
+            name = d["palace_name"]
+            disp = name if name.endswith("宫") else name + "宫"
+            return {
+                "range_text": f"{d['start_age']}-{d['end_age']}岁",
+                "palace_display": disp,
+                "hint": PALACE_MEANINGS.get(name, ""),
+            }
+    return None
