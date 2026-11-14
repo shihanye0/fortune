@@ -102,7 +102,6 @@ describe('FortuneView', () => {
         user_feedback_text: null,
         accuracy_mark: null,
         calculation_version: null,
-  calculation_version: null,
       },
       error: null,
       meta: null,
