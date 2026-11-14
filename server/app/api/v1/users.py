@@ -507,3 +507,33 @@ def _calculate_dimension_accuracy(db: Session, user_id: int) -> dict:
         }
 
     return result
+
+
+@router.get("/me/ziwei-chart")
+def get_ziwei_chart(current_user: User = Depends(get_current_user)):
+    """当前用户的紫微命盘（实时计算，口径 notes 一并返回）。
+
+    与 bazi-profile 同模式：不复用快照，用户改生辰后即反映新盘。
+    """
+    birth_values = (
+        current_user.birth_year,
+        current_user.birth_month,
+        current_user.birth_day,
+        current_user.birth_hour,
+        current_user.gender,
+    )
+    if any(value is None for value in birth_values):
+        raise HTTPException(status_code=422, detail="生辰信息不完整，无法生成紫微命盘")
+    from fortune_engine.ziwei.chart import calculate_ziwei
+
+    try:
+        chart = calculate_ziwei(
+            current_user.birth_year,
+            current_user.birth_month,
+            current_user.birth_day,
+            current_user.birth_hour,
+            current_user.gender,
+        )
+    except (TypeError, ValueError) as exc:
+        raise HTTPException(422, detail="生辰信息无效，无法生成紫微命盘") from exc
+    return {"success": True, "data": chart}

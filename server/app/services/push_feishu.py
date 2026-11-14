@@ -173,11 +173,23 @@ def _build_card(fortune_data: dict) -> dict:
 
     # 今日一卦
     hexagram_text = _build_hexagram_text(hexagram)
+    hexagram_interp = (fortune_data.get("hexagram_interpretation") or "").strip()
+    if hexagram_interp:
+        hexagram_text += f"\n**AI 解读** {_feishu_text(hexagram_interp)}"
     if hexagram_text:
         elements.append({"tag": "hr"})
         elements.append({
             "tag": "markdown",
             "content": hexagram_text,
+        })
+
+    # 紫微流日
+    ziwei_text = _build_ziwei_text(fortune_data.get("ziwei_daily"))
+    if ziwei_text:
+        elements.append({"tag": "hr"})
+        elements.append({
+            "tag": "markdown",
+            "content": ziwei_text,
         })
 
     # 本周回顾（周日）
@@ -307,3 +319,17 @@ def send_fortune_feishu(webhook_url: str, fortune_data: dict) -> bool:
     except Exception as e:
         logger.error("飞书推送异常: %s", e)
         return False
+
+
+def _build_ziwei_text(ziwei_daily: dict | None) -> str:
+    """紫微流日段落：今日日干四化落本命何宫。"""
+    if not ziwei_daily or not ziwei_daily.get('sihua'):
+        return ''
+    lines = ['**✦ 紫微流日**']
+    tag = {'禄': 'green', '权': 'red', '科': 'blue', '忌': 'violet'}
+    for item in ziwei_daily['sihua']:
+        palace_disp = item.get('palace') or '不入本命十四主辅星盘'
+        lines.append(f"<font color='{tag.get(item['type'], 'grey')}'>化{item['type']}</font> "
+                     f"{item.get('star', '')} 落 {palace_disp}宫"
+                     + (f" · {item.get('hint', '')}" if item.get('hint') else ''))
+    return '\n'.join(lines)

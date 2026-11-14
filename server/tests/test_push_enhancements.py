@@ -298,3 +298,59 @@ def _start_minutes(item: dict) -> int:
 def _score_of(item: dict) -> int:
     from fortune_engine.bazi.score import normalize_score
     return normalize_score(item.get("score"))
+
+
+class TestZiweiDailyPush:
+    """紫微流日卡 + 一卦 AI 解读 + 全量时段/关注点（2026-11 新增）。"""
+
+    def _payload(self):
+        from fortune_engine.ziwei.chart import calculate_ziwei
+        from fortune_engine.ziwei.words import daily_signal
+        chart = calculate_ziwei(1990, 8, 15, 7, 0)
+        return {
+            "date": "2026-11-15",
+            "day_ganzhi": "庚申日",
+            "overall_score": 4,
+            "hourly_fortunes": [],
+            "probability_events": [
+                {"dimension": "事业", "event": "推进重点任务", "probability": 82,
+                 "best_hour": "未", "time_range": "13:00-15:00", "description": "流时十神得地"},
+                {"dimension": "人际", "event": "回复旧消息", "probability": 55,
+                 "best_hour": "辰", "time_range": "07:00-09:00", "description": "旧关系宜修复"},
+            ],
+            "daily_hexagram": {"name": "乾", "tendency": "吉", "advice": "自强不息",
+                               "changed_name": "姤", "upper_trigram": "乾", "lower_trigram": "乾"},
+            "hexagram_interpretation": "乾卦主刚健进取，今天适合把搁置的事推一步。",
+            "ziwei_daily": {"soul_palace": "卯", "five_elements": "土五局",
+                            "sihua": daily_signal(chart, 6)},
+        }
+
+    def test_email_contains_ziwei_card(self):
+        from app.services.push_email import _build_html
+        body = _build_html(self._payload())
+        assert "紫微流日" in body
+        assert "化禄" in body and "化忌" in body
+        assert "命宫 卯" in body.replace(" ", " ") or "命宫" in body
+        assert "82%" not in body
+
+    def test_email_hexagram_ai_interpretation(self):
+        from app.services.push_email import _build_html
+        body = _build_html(self._payload())
+        assert "AI 解读" in body
+        assert "把搁置的事推一步" in body
+
+    def test_feishu_card_contains_ziwei(self):
+        from app.services.push_feishu import _build_card
+        card = _build_card(self._payload())
+        texts = [e.get("content", "") for e in card["card"]["elements"] if e.get("tag") == "markdown"]
+        joined = "\n".join(texts)
+        assert "紫微流日" in joined
+        assert "化禄" in joined
+        assert "AI 解读" in joined
+
+    def test_text_version_contains_ziwei_and_interp(self):
+        from app.services.push_email import _build_text
+        text = _build_text(self._payload())
+        assert "紫微流日" in text
+        assert "一卦解读：" in text
+        assert "化禄" in text

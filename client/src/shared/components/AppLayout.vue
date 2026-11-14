@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { HomeFilled, MagicStick, Sunny, User } from '@element-plus/icons-vue'
+import { Aim, HomeFilled, MagicStick, Sunny, User } from '@element-plus/icons-vue'
 import { useAuthStore } from '@/features/auth/stores/auth'
 import { ElMessageBox } from 'element-plus'
 
@@ -51,6 +51,10 @@ async function handleLogout() {
         <el-menu-item index="divination">
           <el-icon><MagicStick /></el-icon>
           <span>占卜</span>
+        </el-menu-item>
+        <el-menu-item v-if="authStore.isLoggedIn" index="ziwei">
+          <el-icon><Aim /></el-icon>
+          <span>紫微</span>
         </el-menu-item>
         <el-menu-item v-if="authStore.isLoggedIn" index="profile">
           <el-icon><User /></el-icon>

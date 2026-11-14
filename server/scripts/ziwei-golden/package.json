@@ -1,0 +1,12 @@
+{
+  "name": "ziwei-golden-gen",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "gen": "node gen.mjs"
+  },
+  "dependencies": {
+    "iztro": "^2.5.8",
+    "lunar-javascript": "^1.7.8"
+  }
+}

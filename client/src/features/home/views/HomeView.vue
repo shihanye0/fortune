@@ -21,6 +21,13 @@ const features = [
     to: { name: 'divination' },
   },
   {
+    icon: '✦',
+    title: '紫微命盘',
+    desc: '十二宫排盘（与 iztro 逐字段对齐），四化流日与 AI 解读分层呈现。',
+    gradient: 'linear-gradient(135deg, #a855f7 0%, #6366f1 100%)',
+    to: { name: 'ziwei' },
+  },
+  {
     icon: '🌌',
     title: '奇门遁甲',
     desc: '简化教学盘展示九星、八门、八神；查看盘面规则与传统文化说明。',

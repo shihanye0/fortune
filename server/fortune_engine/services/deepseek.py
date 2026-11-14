@@ -501,3 +501,89 @@ def interpret_qimen(
         model=llm_model,
     )
     return _strip_markdown(result) if result else FALLBACK_QIMEN
+
+
+ZIWEI_PROMPT = """你是一位精通紫微斗数的资深命理师。请用专业但易懂的语言解读以下命盘。
+本盘为确定性排盘引擎按主流口径（农历正月初一换年、闰月前15天归本月）排出，
+请基于盘面事实解读，不要自行重排或改算。
+
+问题（可空，空则解读整体格局）：{question}
+
+盘面信息：
+{chart_summary}
+
+用户八字信息：{bazi_info}
+
+历史验证结果：{outcome_history}
+
+重要格式要求（必须严格遵守）：
+- 禁止使用任何markdown格式符号，如**、##、-、*等
+- 直接用纯文字描述，像平时聊天一样
+- 先总述命宫主星与格局基调，再挑 2-3 个重点宫位展开
+- 如有化忌等需要注意的配置，给出温和但明确的提示
+- 结合用户八字做交叉印证（紫微看格局、八字看气势）
+- 语气温和专业，不做绝对化断言
+- 总字数控制在 300-450 字"""
+
+FALLBACK_ZIWEI = "紫微命盘解读暂不可用，请稍后再试。您可查看命盘数据了解基本信息。"
+
+
+def interpret_ziwei(
+    chart_summary: str,
+    question: str = "",
+    bazi_info: str = "",
+    outcome_history: str = "",
+    llm_api_key: str | None = None,
+    llm_api_url: str | None = None,
+    llm_model: str | None = None,
+) -> str:
+    """解读紫微命盘（盘面摘要由 words.build_chart_summary 确定性生成）。"""
+    q = question or "整体命盘格局与近期大限流年"
+    prompt = ZIWEI_PROMPT.format(
+        question=q,
+        chart_summary=chart_summary,
+        bazi_info=bazi_info or "暂无八字信息",
+        outcome_history=outcome_history or "暂无历史验证数据",
+    )
+    result = _call_deepseek(
+        prompt,
+        api_key=llm_api_key,
+        base_url=llm_api_url,
+        model=llm_model,
+    )
+    return _strip_markdown(result) if result else FALLBACK_ZIWEI
+    result = _call_deepseek(
+        prompt,
+        api_key=llm_api_key,
+        base_url=llm_api_url,
+        model=llm_model,
+    )
+    return _strip_markdown(result) if result else FALLBACK_ZIWEI
+
+
+DAILY_HEXAGRAM_PROMPT = """你是一位精通六爻的命理师。根据下面的今日卦象与用户八字，写一段今日一卦的解读。
+
+卦名：{hex_name}（{tendency}），变卦：{changed}
+卦义提示：{advice}
+
+用户八字信息：{bazi_info}
+
+要求：纯文字，禁用任何markdown符号；先一句话点出卦象对今天的主基调，
+再给 2-3 条贴合卦义的具体行动建议；语气温和不说教；总字数 120-180 字"""
+
+FALLBACK_DAILY_HEXAGRAM = ""
+
+
+def interpret_daily_hexagram(hexagram, bazi_info="", llm_api_key=None, llm_api_url=None, llm_model=None):
+    """今日一卦的短解读（推送用）；LLM 不可用时返回空串，由推送侧回退到卦义提示。"""
+    if not hexagram or not hexagram.get("name"):
+        return FALLBACK_DAILY_HEXAGRAM
+    prompt = DAILY_HEXAGRAM_PROMPT.format(
+        hex_name=hexagram.get("name", ""),
+        tendency=hexagram.get("tendency", "平"),
+        changed=hexagram.get("changed_name") or "无",
+        advice=hexagram.get("advice") or "（无卦义提示）",
+        bazi_info=bazi_info or "暂无",
+    )
+    result = _call_deepseek(prompt, api_key=llm_api_key, base_url=llm_api_url, model=llm_model)
+    return _strip_markdown(result) if result else FALLBACK_DAILY_HEXAGRAM

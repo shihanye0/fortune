@@ -31,6 +31,12 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
+      path: '/ziwei',
+      name: 'ziwei',
+      component: () => import('@/features/ziwei/views/ZiweiView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
       path: '/profile',
       name: 'profile',
       component: () => import('@/features/profile/views/ProfileView.vue'),

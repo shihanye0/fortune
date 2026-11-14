@@ -159,7 +159,7 @@ HEXAGRAM_TENDENCY_STYLE = {
 }
 
 
-def _build_hexagram_html(hexagram: dict | None) -> str:
+def _build_hexagram_html(hexagram: dict | None, interpretation: str = "") -> str:
     """今日一卦卡片：六爻时间起卦 + 卦义一句话建议。"""
     if not hexagram or not hexagram.get("name"):
         return ""
@@ -178,6 +178,9 @@ def _build_hexagram_html(hexagram: dict | None) -> str:
             </div>
             <div style="margin-top:4px; font-size:11px; color:#94a3b8;">上{_safe(hexagram.get("upper_trigram"))}下{_safe(hexagram.get("lower_trigram"))} · {structure}之象</div>
             <div style="margin-top:6px; font-size:13px; line-height:21px; color:#334155;">{_safe(hexagram.get("advice"))}</div>
+            <div style="margin-top:8px; padding-top:8px; border-top:1px dashed {LINE}; font-size:13px; line-height:22px; color:#475569;">
+              <span style="color:#7c3aed; font-weight:700;">AI 解读</span> {_safe(interpretation or hexagram.get("advice") or "")}
+            </div>
           </div>"""
 
 
@@ -280,49 +283,40 @@ def _build_hourly_strip(hourly_fortunes: list | None, now_min: int) -> str:
 
 
 def _build_hourly_html(hourly_fortunes: list | None, now_min: int) -> str:
-    """只呈现少量可行动的时段，避免在移动端塞入十二行宽表；已过时辰不再作为推荐。"""
+    """十二时辰全量行：一屏看清全天行动节奏，已过置灰、当前高亮。"""
     hours = [item for item in (hourly_fortunes or []) if isinstance(item, dict)]
     if not hours:
         return ""
 
-    favourable, caution = _pick_hourly(hours, now_min)
-
-    def card(item: dict, chip: str, accent: str) -> str:
+    def row(item: dict) -> str:
         score = normalize_score(item.get("score"))
-        icon = SHICHEN_ICONS.get(item.get("shichen", ""), "⏰")
+        chip, accent = ("宜", ACT_GOOD) if score >= 4 else (("慎", ACT_CAUTION) if score <= 2 else ("平", "#94a3b8"))
         status = _hour_status(item, now_min)
         actions = "、".join(item.get("favorable", [])[:2]) or "按自己的节奏安排"
-        if chip == "忌":
+        if chip == "慎":
             actions = "、".join(item.get("unfavorable", [])[:2]) or "重要事项多做一次核对"
-        events = "、".join(item.get("events", [])[:2])
-        event_line = f"<div style=\"margin-top:4px; color:#64748b;\">{_safe(events)}</div>" if events else ""
-        stem = item.get("hourly_stem") or ""
-        branch = item.get("hourly_branch") or ""
-        ten_god = item.get("ten_god") or ""
-        element = item.get("element") or ""
-        cause_bits = [f"{stem}{branch}时" if stem and branch else "", ten_god, element]
+        cause_bits = [f"{item.get('hourly_stem','')}{item.get('hourly_branch','')}时" if item.get('hourly_stem') else "", item.get("ten_god") or ""]
         cause = " · ".join(bit for bit in cause_bits if bit)
-        cause_line = f'<div style="margin-top:3px; font-size:11px; color:#94a3b8;">{_safe(cause)}</div>' if cause else ""
-        return f"""
-          <div style="margin-top:8px; padding:10px 12px; border-left:3px solid {accent}; background:{SURFACE}; border-radius:0 8px 8px 0;">
-            <span style="display:inline-block; padding:1px 8px; border-radius:999px; background:{accent}; color:#ffffff; font-size:11px; font-weight:700;">{chip}</span>
-            <span style="font-weight:700; color:#1e293b;"> {icon} {_safe(item.get("shichen"))}时</span>
-            <span style="color:{get_fortune_level(score).color}; font-size:12px;"> {score}/5</span>
-            {_status_badge(status, item.get("shichen_range"))}
-            {cause_line}
-            <div style="margin-top:4px; color:#475569;">{_safe(item.get("shichen_range"))} · {_safe(actions)}</div>
-            {event_line}
-          </div>"""
-
-    cards = "".join(card(item, "宜", ACT_GOOD) for item in favourable)
-    cards += "".join(card(item, "忌", ACT_CAUTION) for item in caution)
+        style_bits = {"past": 'color:#94a3b8;', "current": 'background:#eef2ff;'}
+        extra = style_bits.get(status, '')
+        return (
+            f'<tr style="{extra}">'
+            f'<td width="72" style="padding:6px 0; border-bottom:1px solid {LINE}; font-weight:700; color:#1e293b;">{SHICHEN_ICONS.get(item.get("shichen", ""), "")}{_safe(item.get("shichen"), "")}时'
+            f'<br><span style="font-size:10px; font-weight:400; color:#94a3b8;">{_safe(item.get("shichen_range"), "")}</span></td>'
+            f'<td width="40"><span style="display:inline-block; padding:1px 7px; border-radius:999px; background:{accent}; color:#fff; font-size:11px; font-weight:700;">{chip}</span></td>'
+            f'<td width="46" style="color:{get_fortune_level(score).color};">{score}<span style="font-size:10px; color:{MUTED};">/5</span></td>'
+            f'<td style="padding:6px 8px; border-bottom:1px solid {LINE}; color:#475569;">{_safe(actions)}<span style="font-size:11px; color:#94a3b8;"> {_safe(cause)}</span></td>'
+            f'<td width="64" align="right" style="font-size:11px; color:{MUTED};">{_status_badge(status, item.get("shichen_range"))}</td>'
+            f'</tr>'
+        )
+    rows = "".join(row(item) for item in hours[:12])
     strip = _build_hourly_strip(hours, now_min)
     return f"""
       <div style="margin-top:22px;">
         <div style="font-size:15px; font-weight:700; color:#1e293b;">今日行动节奏</div>
-        <div style="margin-top:3px; font-size:12px; color:{MUTED};">优先推荐尚未开始的时段，仅供日程安排参考。</div>
+        <div style="margin-top:3px; font-size:12px; color:{MUTED};">十二时辰全量展示：已过置灰、进行中高亮，行内附干支成因。</div>
         {strip}
-        {cards}
+        {rows}
       </div>"""
 
 
@@ -342,15 +336,17 @@ def _build_events_html(events: list | None, now_min: int) -> str:
         return ""
 
     rows = []
-    for event in events[:3]:
+    for event in events:
         time_label = _event_time_label(event, now_min)
         time_color = "#94a3b8" if time_label == "已过" else MUTED
+        desc = _safe(event.get("description") or "")
+        desc_line = f'<div style="margin-top:2px; font-size:11px; line-height:17px; color:#94a3b8;">{desc}</div>' if desc else ""
         rows.append(f"""
           <tr>
             <td width="72" style="padding:8px 0; border-bottom:1px solid {LINE};">
               <span style="display:inline-block; padding:2px 8px; border-radius:999px; background:#eef2ff; color:#4338ca; font-size:11px; font-weight:600;">{_safe(event.get("dimension"))}</span>
             </td>
-            <td style="padding:8px 12px; border-bottom:1px solid {LINE}; color:{BODY};">{_safe(event.get("event"))}</td>
+            <td style="padding:8px 12px; border-bottom:1px solid {LINE}; color:{BODY};">{_safe(event.get("event"))}{desc_line}</td>
             <td width="104" align="right" valign="top" style="padding:8px 0; border-bottom:1px solid {LINE};">
               <span style="font-size:11px; line-height:16px; color:{time_color}; white-space:nowrap;">{_safe(time_label)}</span>
             </td>
@@ -359,7 +355,7 @@ def _build_events_html(events: list | None, now_min: int) -> str:
     return f"""
       <div style="margin-top:22px;">
         <div style="font-size:15px; font-weight:700; color:#1e293b;">今日行动关注点</div>
-        <div style="margin-top:3px; font-size:12px; color:{MUTED};">按当日节奏生成，右侧为建议时段，适合用作安排优先级的参考。</div>
+        <div style="margin-top:3px; font-size:12px; color:{MUTED};">全量展示当日行动关注点：名称+一句依据+建议时段，按此安排优先级。</div>
         <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin-top:7px; font-size:13px;">
           {''.join(rows)}
         </table>
@@ -390,6 +386,30 @@ def _build_recap_html(recap: dict | None) -> str:
     return f"""
       <div style="margin-top:22px; padding:14px 16px; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:12px;">
         <div style="font-size:15px; font-weight:700; color:#14532d;">📊 本周回顾</div>
+        {''.join(rows)}
+      </div>"""
+
+
+def _build_ziwei_html(ziwei_daily: dict | None) -> str:
+    """紫微流日卡：今日日干四化落本命何宫（确定性引擎输出）。"""
+    if not ziwei_daily or not ziwei_daily.get("sihua"):
+        return ""
+    rows = []
+    tint = {"禄": "#dcfce7", "权": "#fee2e2", "科": "#dbeafe", "忌": "#ede9fe"}
+    color = {"禄": "#15803d", "权": "#b91c1c", "科": "#1d4ed8", "忌": "#6d28d9"}
+    for item in ziwei_daily["sihua"]:
+        palace_disp = item.get("palace") or "不在本命十四主辅星盘"
+        hint = _safe(item.get("hint") or "")
+        rows.append(
+            f'<div style="margin-top:6px; font-size:13px; line-height:20px; color:#334155;">'
+            f'<span style="display:inline-block; padding:1px 8px; border-radius:999px; background:{tint[item["type"]]}; color:{color[item["type"]]}; font-size:11px; font-weight:700;">化{item["type"]}</span>'
+            f' <b>{_safe(item.get("star"))}</b> 落 <b>{_safe(palace_disp)}宫</b>'
+            f'<span style="color:#64748b;"> · {hint}</span></div>'
+        )
+    return f"""
+      <div style="margin-top:20px; padding:14px 16px; background:#faf5ff; border:1px solid {LINE}; border-left:4px solid #a855f7; border-radius:10px;">
+        <div style="font-size:15px; font-weight:700; color:#581c87;">✦ 紫微流日 · 今日四化</div>
+        <div style="margin-top:2px; font-size:11px; color:#94a3b8;">今日日干四化落你的本命宫位（命宫 {_safe(ziwei_daily.get("soul_palace"))} · {_safe(ziwei_daily.get("five_elements"))}）</div>
         {''.join(rows)}
       </div>"""
 
@@ -465,7 +485,8 @@ def _build_html(fortune_data: dict, now: datetime | None = None) -> str:
             <div style="margin-top:8px; font-size:14px; line-height:24px; color:#334155;">{_safe_paragraph(fortune_data.get("interpretation"))}</div>
             {reflection_html}
           </div>
-          {_build_hexagram_html(fortune_data.get("daily_hexagram"))}
+          {_build_hexagram_html(fortune_data.get("daily_hexagram"), fortune_data.get("hexagram_interpretation") or "")}
+          {_build_ziwei_html(fortune_data.get("ziwei_daily"))}
           {_build_hourly_html(fortune_data.get("hourly_fortunes"), now_min)}
           {_build_events_html(fortune_data.get("probability_events"), now_min)}
           {_build_recap_html(fortune_data.get("weekly_recap"))}
@@ -541,6 +562,23 @@ def _build_text(fortune_data: dict, now: datetime | None = None) -> str:
         if hexagram.get("changed_name"):
             line += f"；变卦 {hexagram['changed_name']}"
         lines.append(line)
+        interp = (fortune_data.get("hexagram_interpretation") or "").strip()
+        if interp:
+            lines.append(f"一卦解读：{interp}")
+    ziwei_daily = fortune_data.get("ziwei_daily") or {}
+    if ziwei_daily.get("sihua"):
+        lines.append(f"紫微流日（命宫{ziwei_daily.get('soul_palace')} · {ziwei_daily.get('five_elements')}）：")
+        for item in ziwei_daily["sihua"]:
+            palace_disp = item.get("palace") or "不入本命盘"
+            hint = f"，{item.get('hint')}" if item.get("hint") else ""
+            lines.append(f"- 化{item['type']} {item.get('star')} 落{palace_disp}宫{hint}")
+    events = fortune_data.get("probability_events") or []
+    if events:
+        parts = []
+        for event in events:
+            label = _event_time_label(event, now_min)
+            suffix = f"（建议时段：{label}）" if label != "全天" else ""
+            parts.append(f"{event.get('event', '')}{suffix}")
     events = fortune_data.get("probability_events") or []
     if events:
         parts = []

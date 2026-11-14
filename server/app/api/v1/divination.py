@@ -29,6 +29,10 @@ class QimenRequest(BaseModel):
     mode: str = Field(..., pattern=r"^(question|realtime)$")
 
 
+class ZiweiRequest(BaseModel):
+    question: str | None = None
+
+
 class DivinationFeedbackRequest(BaseModel):
     rating: int = Field(..., ge=1, le=5)
     feedback_text: str | None = None
@@ -191,7 +195,7 @@ def do_qimen(
 def list_divination_records(
     page: int = Query(1, ge=1),
     limit: int = Query(20, ge=1, le=100),
-    type: str | None = Query(None, pattern=r"^(liuyao|qimen)$"),
+    type: str | None = Query(None, pattern=r"^(liuyao|qimen|ziwei)$"),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
@@ -252,7 +256,7 @@ def get_divination_detail(
             "id": record.id,
             "question": record.question,
             "hexagram": record.raw_data if record.type == "liuyao" else None,
-            "chart": record.raw_data if record.type == "qimen" else None,
+            "chart": record.raw_data if record.type in ("qimen", "ziwei") else None,
             "interpretation": record.llm_interpretation,
         },
     }
@@ -337,4 +341,69 @@ def _record_to_list_dict(r: DivinationRecord) -> dict:
         "accuracy_mark": r.accuracy_mark,
         "outcome_verified": r.outcome_verified,
         "created_at": r.created_at.isoformat() if r.created_at else None,
+    }
+
+
+@router.post("/ziwei")
+def do_ziwei(
+    req: ZiweiRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """紫微命盘解读：现算盘面 → LLM 解读 → 存 DivinationRecord(type=ziwei)。"""
+    from fortune_engine.ziwei.chart import calculate_ziwei
+    from fortune_engine.ziwei.words import build_chart_summary
+    from fortune_engine.bazi.pillar import calculate_bazi
+    from fortune_engine.services.deepseek import get_user_llm_overrides, interpret_ziwei
+    from app.services.feedback_summary import get_outcome_history
+
+    question = (req.question or "").strip()
+    birth_values = (current_user.birth_year, current_user.birth_month,
+                    current_user.birth_day, current_user.birth_hour, current_user.gender)
+    if any(v is None for v in birth_values):
+        raise HTTPException(status_code=422, detail="生辰信息不完整，无法生成紫微命盘")
+    chart = calculate_ziwei(
+        current_user.birth_year, current_user.birth_month,
+        current_user.birth_day, current_user.birth_hour, current_user.gender,
+    )
+    chart_summary = build_chart_summary(chart)
+    bazi_info = ""
+    try:
+        bazi_result = calculate_bazi(
+            current_user.birth_year, current_user.birth_month,
+            current_user.birth_day, current_user.birth_hour, current_user.gender,
+        )
+        bazi_info = (
+            f"八字：{bazi_result['year_pillar']} {bazi_result['month_pillar']} "
+            f"{bazi_result['day_pillar']} {bazi_result['hour_pillar']}，"
+            f"日主：{bazi_result['day_master']}，"
+            f"喜用神：{'、'.join(bazi_result.get('favorable_elements', []))}"
+        )
+    except Exception:
+        pass
+    interpretation = interpret_ziwei(
+        chart_summary,
+        question,
+        bazi_info,
+        get_outcome_history(db, current_user.id),
+        **get_user_llm_overrides(current_user),
+    )
+    record = DivinationRecord(
+        user_id=current_user.id,
+        type="ziwei",
+        question=question or None,
+        raw_data=chart,
+        llm_interpretation=interpretation,
+    )
+    db.add(record)
+    db.commit()
+    db.refresh(record)
+    return {
+        "success": True,
+        "data": {
+            "id": record.id,
+            "question": question or None,
+            "chart": chart,
+            "interpretation": interpretation,
+        },
     }

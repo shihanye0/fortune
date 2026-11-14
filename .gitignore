@@ -42,3 +42,6 @@ client/playwright-report/
 client/test-results/
 .v2c/
 .video_agent/
+
+# 会话工具缓存
+.zcode/

@@ -181,6 +181,9 @@ def _build_payload(
     from fortune_engine.common.reflection import pick_reflection
     from fortune_engine.liuyao.hexagram import daily_hexagram
     from fortune_engine.probability_events import generate_probability_events
+    from fortune_engine.ziwei.chart import calculate_ziwei
+    from fortune_engine.ziwei.words import daily_signal
+    from fortune_engine.services.deepseek import interpret_daily_hexagram, get_user_llm_overrides
 
     bazi = calculate_bazi(
         user.birth_year, user.birth_month, user.birth_day, user.birth_hour, user.gender,
@@ -196,11 +199,33 @@ def _build_payload(
     )
     day_stem = fortune.heavenly_stem or daily["heavenly_stem"]
     day_seed = today.year * 10000 + today.month * 100 + today.day
+    hexagram = daily_hexagram(user.id, today.year, today.month, today.day)
+    try:
+        hexagram_interpretation = interpret_daily_hexagram(
+            hexagram,
+            bazi_info=f"八字：{bazi['year_pillar']} {bazi['month_pillar']} {bazi['day_pillar']} {bazi['hour_pillar']}，日主{bazi['day_master']}",
+            **get_user_llm_overrides(user),
+        )
+    except Exception:
+        hexagram_interpretation = ""
+    ziwei_daily = None
+    try:
+        chart = calculate_ziwei(user.birth_year, user.birth_month, user.birth_day, user.birth_hour, user.gender)
+        stem_idx = "甲乙丙丁戊己庚辛壬癸".index(day_stem)
+        ziwei_daily = {
+            "soul_palace": chart["soul_palace"],
+            "five_elements": chart["five_elements"],
+            "sihua": daily_signal(chart, stem_idx),
+        }
+    except Exception:
+        ziwei_daily = None
     return {
         "date": today.isoformat(),
         "day_ganzhi": f"{fortune.heavenly_stem or ''}{fortune.earthly_branch or ''}",
         "day_chongsha": get_day_chongsha(day_stem, fortune.earthly_branch or daily["earthly_branch"]),
-        "daily_hexagram": daily_hexagram(user.id, today.year, today.month, today.day),
+        "daily_hexagram": hexagram,
+        "hexagram_interpretation": hexagram_interpretation,
+        "ziwei_daily": ziwei_daily,
         "season_note": get_season_note(today),
         "deity_directions": get_deity_directions(day_stem),
         "reflection_question": pick_reflection(user.id, day_seed),

@@ -158,10 +158,10 @@ class TestHourlyPushRendering:
     def test_past_hours_excluded_from_recommendations(self):
         """已过时辰不再进入宜/忌卡，未到时辰带开始时间。"""
         body = _build_html(self._data(), now=self._NOW)
-        # 卡片才会渲染时辰区间；评分最高的辰时已过，不应出现在卡片里
-        assert "07:00-09:00" not in body
-        assert "11:00-13:00" not in body
-        # 未时进行中、申时未到 → 作为推荐卡
+        # 十二时辰全量行：已过时辰保留在表内（置灰 + 已过角标）
+        assert "07:00-09:00" in body
+        assert "11:00-13:00" in body
+        # 未时进行中、申时未到 → 开始时间角标
         assert "进行中" in body
         assert "15:00 开始" in body
         assert "13:00-15:00" in body
