@@ -15,6 +15,6 @@ def test_config_has_default_values():
     """配置应有合理的默认值"""
     from app.config import settings
 
-    assert settings.APP_PORT == 8080
+    assert settings.APP_PORT == 8000  # 代码默认值；生产由 .env/部署脚本覆盖为 8080
     assert settings.JWT_EXPIRE_HOURS == 24
     assert settings.SMTP_HOST == "smtp.qq.com"
