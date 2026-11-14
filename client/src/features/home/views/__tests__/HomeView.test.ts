@@ -11,6 +11,7 @@ function createTestRouter() {
       { path: '/', name: 'home', component: HomeView },
       { path: '/login', name: 'login', component: { template: '<div/>' } },
       { path: '/register', name: 'register', component: { template: '<div/>' } },
+      { path: '/ziwei', name: 'ziwei', component: { template: '<div/>' } },
       { path: '/fortune', name: 'fortune', component: { template: '<div/>' } },
       { path: '/divination', name: 'divination', component: { template: '<div/>' } },
     ],
