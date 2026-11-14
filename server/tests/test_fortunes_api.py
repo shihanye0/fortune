@@ -151,7 +151,7 @@ class TestFortuneHistory:
             fortune_date=today_cn() - timedelta(days=1), overall_score=3
         )
         fortune_factory(
-            fortune_date=date.today() - timedelta(days=2), overall_score=5
+            fortune_date=today_cn() - timedelta(days=2), overall_score=5
         )
 
         resp = client.get(
@@ -163,7 +163,7 @@ class TestFortuneHistory:
         assert body["success"] is True
         assert len(body["data"]) == 3
         # 倒序：最新的在前
-        assert body["data"][0]["date"] == date.today().isoformat()
+        assert body["data"][0]["date"] == today_cn().isoformat()
         assert body["meta"]["total"] == 3
         assert body["meta"]["page"] == 1
 
@@ -188,7 +188,7 @@ class TestFortuneHistory:
 
         for i in range(25):
             fortune_factory(
-                fortune_date=date.today() - timedelta(days=i), overall_score=3
+                fortune_date=today_cn() - timedelta(days=i), overall_score=3
             )
 
         # 第 1 页
