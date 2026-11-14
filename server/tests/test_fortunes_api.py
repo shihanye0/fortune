@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Spec 019-021: 运势查看 API 测试"""
-from datetime import date, datetime
+from datetime import date, datetime, timedelta, timezone
 from unittest.mock import patch
 
 import pytest
@@ -8,6 +8,12 @@ from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
 from app.models.daily_fortune import DailyFortune
+
+CHINA_TZ = timezone(timedelta(hours=8))
+
+
+def today_cn() -> date:
+    return datetime.now(CHINA_TZ).date()
 from app.models.user import User
 from app.core.security import hash_password, create_access_token
 
@@ -49,7 +55,7 @@ def fortune_factory(db_session: Session, auth_user):
         user_feedback_tags=None,
         user_feedback_text=None,
     ):
-        d = fortune_date or date.today()
+        d = fortune_date or today_cn()
         f = DailyFortune(
             user_id=user.id,
             date=d,
@@ -95,7 +101,7 @@ class TestTodayFortune:
         body = resp.json()
         assert body["success"] is True
         data = body["data"]
-        assert data["date"] == date.today().isoformat()
+        assert data["date"] == today_cn().isoformat()
         assert data["overall_score"] == 4
         assert data["career"]["score"] == 4
         assert data["wealth"]["score"] == 3
@@ -140,9 +146,9 @@ class TestFortuneHistory:
         # 创建 3 条不同日期的记录
         from datetime import timedelta
 
-        fortune_factory(fortune_date=date.today(), overall_score=4)
+        fortune_factory(fortune_date=today_cn(), overall_score=4)
         fortune_factory(
-            fortune_date=date.today() - timedelta(days=1), overall_score=3
+            fortune_date=today_cn() - timedelta(days=1), overall_score=3
         )
         fortune_factory(
             fortune_date=date.today() - timedelta(days=2), overall_score=5
