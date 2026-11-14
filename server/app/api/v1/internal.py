@@ -90,12 +90,15 @@ def _generate_fortune(user: User, today: date, db: Session) -> DailyFortune:
         logger.error("推送 LLM 解读失败 user=%d: %s", user.id, type(exc).__name__)
         interpretation = FALLBACK_DAILY
 
+    from fortune_engine import ENGINE_VERSION
+
     fortune = DailyFortune(
         user_id=user.id,
         date=today,
         heavenly_stem=daily["heavenly_stem"],
         earthly_branch=daily["earthly_branch"],
         overall_score=daily["overall_score"],
+        calculation_version=ENGINE_VERSION,
         career_fortune=daily.get("career_fortune"),
         wealth_fortune=daily.get("wealth_fortune"),
         love_fortune=daily.get("love_fortune"),
@@ -213,11 +216,14 @@ def _build_payload(
         from fortune_engine.ziwei.words import current_daxian
         chart = calculate_ziwei(user.birth_year, user.birth_month, user.birth_day, user.birth_hour, user.gender)
         stem_idx = "甲乙丙丁戊己庚辛壬癸".index(day_stem)
+        flow_stem_idx = (today.year - 4) % 10
         ziwei_daily = {
             "soul_palace": chart["soul_palace"],
             "five_elements": chart["five_elements"],
             "sihua": daily_signal(chart, stem_idx),
             "daxian": current_daxian(chart),
+            "flow_ganzhi": chart["flow_year"]["ganzhi"],
+            "flow_sihua": daily_signal(chart, flow_stem_idx),
         }
     except Exception:
         ziwei_daily = None

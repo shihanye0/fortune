@@ -455,7 +455,7 @@ async function handleAccuracyMark(fortuneId: number, mark: number) {
 
       <!-- 解读 -->
       <div class="interpretation-section">
-        <h3 class="interpretation-title">🔮 运势解读</h3>
+        <h3 class="interpretation-title">🔮 运势解读<span v-if="todayFortune.calculation_version" class="engine-version">算法版本 {{ todayFortune.calculation_version }}</span></h3>
         <div class="interpretation-content">
           <div v-for="(para, idx) in splitInterpretation(todayFortune.interpretation)" :key="idx" class="interpretation-para">
             {{ para }}
@@ -1078,6 +1078,7 @@ async function handleAccuracyMark(fortuneId: number, mark: number) {
   border: 1px solid rgba(99, 102, 241, 0.2);
 }
 
+.engine-version { margin-left: 8px; font-size: 11px; font-weight: 400; color: var(--el-text-color-secondary); }
 .interpretation-title {
   font-size: 18px;
   font-weight: 600;

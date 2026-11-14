@@ -44,6 +44,7 @@ const mockProfile = {
   birth_hour: 8,
   gender: 1,
   birth_location: '北京',
+  birth_longitude: 116.4,
   push_channel: 'email',
   push_enabled: true,
   push_time: '07:00',

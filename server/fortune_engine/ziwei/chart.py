@@ -13,6 +13,7 @@ from datetime import date
 from lunar_python import Solar
 
 from fortune_engine.common.dst_cn import is_china_dst
+from fortune_engine.common.solar_time import adjusted_birth_for_chart
 
 STEMS = ("甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸")
 BRANCHES = ("子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥")
@@ -77,6 +78,8 @@ BRIGHTNESS.update({
     "陀罗": "陷_庙陷_庙陷_庙陷_庙",
 })
 
+# branch -> opposite branch ( zi-wu, chou-wei ... )
+BRANCH_OPPOSITE = {BRANCHES[i]: BRANCHES[(i + 6) % 12] for i in range(12)}
 JU_BY_WUXING = {1: 3, 2: 4, 3: 2, 4: 6, 5: 5}
 JU_NAMES = {2: "水二局", 3: "木三局", 4: "金四局", 5: "土五局", 6: "火六局"}
 TIGER_RULE = {0: 2, 1: 4, 2: 6, 3: 8, 4: 0, 5: 2, 6: 4, 7: 6, 8: 8, 9: 0}
@@ -191,14 +194,22 @@ def _calc_da_xian(soul_p, ju, yang_year, male):
     return rows
 
 
-def calculate_ziwei(year, month, day, hour, gender, today=None):
+def calculate_ziwei(year, month, day, hour, gender, today=None, longitude=None):
     """Main entry. year/month/day solar birth date, hour 0-23, gender 0=F/1=M."""
     if not (isinstance(hour, int) and 0 <= hour <= 23):
         raise ValueError("hour must be 0-23")
     if gender not in (0, 1):
         raise ValueError("gender must be 0/1")
     birth = date(year, month, day)
-    shichen = clock_hour_to_shichen(hour)
+    ts_note = None
+    if longitude is not None:
+        adj = adjusted_birth_for_chart(year, month, day, hour, longitude)
+        if adj:
+            year, month, day, shichen, ts_note = adj
+        else:
+            shichen = clock_hour_to_shichen(hour)
+    else:
+        shichen = clock_hour_to_shichen(hour)
     ly, lm_signed, ld, y_stem, y_branch = solar_to_lunar(year, month, day)
     is_leap = lm_signed < 0
     abs_lm = abs(lm_signed)
@@ -245,6 +256,8 @@ def calculate_ziwei(year, month, day, hour, gender, today=None):
         "排盘口径：农历正月初一换年（主流紫微口径，与八字立春口径不同）",
         "闰月口径：前 15 天归本月、16 起（含 16）归下月",
     ]
+    if ts_note:
+        notes.append(ts_note)
     if is_china_dst(year, month, day):
         notes.append(
             "夏令时提示：出生日期处于中国大陆夏令时期，钟表时间比标准时快 1 小时，"

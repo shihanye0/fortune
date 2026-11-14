@@ -6,7 +6,7 @@ STAR_DESCRIPTIONS（MIT License，已逐字核对）。本词表只做"确定性
 固定词表"，供 LLM 解读作上下文；解读本身交给 LLM（确定性排盘与生成式解释分层）。
 """
 
-from fortune_engine.ziwei.chart import SI_HUA_TABLE
+from fortune_engine.ziwei.chart import BRANCH_OPPOSITE, SI_HUA_TABLE
 
 # 十四主星关键词（来源：Renhuai123 STAR_DESCRIPTIONS，MIT）
 STAR_TRAITS = {
@@ -82,7 +82,13 @@ def build_chart_summary(chart):
                 seg += "化" + s["mutagen"]
             parts.append(seg)
         if not p["major_stars"]:
-            parts = ["空宫（借对宫主星）"] + parts
+            opp = None
+            for q in chart["palaces"]:
+                if q["branch"] == BRANCH_OPPOSITE.get(p["branch"]):
+                    opp = q
+                    break
+            borrowed = "、".join(s["name"] for s in (opp["major_stars"] if opp else [])[:2]) or "对宫亦空"
+            parts = [f"空宫（借对宫{borrowed}）"] + parts
         star_txt = "、".join(parts)
         disp = p["name"] if p["name"].endswith("宫") else p["name"] + "宫"
         lines.append(f"{disp}（{p['branch']}宫干{p['stem']}）：" + star_txt)

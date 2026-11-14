@@ -56,6 +56,7 @@ class UpdateBirthRequest(BaseModel):
     birth_hour: int = Field(..., ge=0, le=23)
     gender: int | None = Field(None, ge=0, le=1)
     birth_location: str | None = Field(None, max_length=100)
+    birth_longitude: float | None = Field(None, ge=-180, le=180)
 
     @field_validator("birth_day")
     @classmethod
@@ -151,6 +152,7 @@ def _user_to_dict(user: User) -> dict:
         "birth_hour": user.birth_hour,
         "gender": user.gender,
         "birth_location": user.birth_location,
+        "birth_longitude": user.birth_longitude,
         "push_channel": user.push_channel,
         "push_enabled": user.push_enabled,
         "push_time": user.push_time,
@@ -266,6 +268,8 @@ def update_birth(
         current_user.gender = req.gender
     if req.birth_location is not None:
         current_user.birth_location = req.birth_location.strip() or None
+    if req.birth_longitude is not None:
+        current_user.birth_longitude = req.birth_longitude
     db.commit()
     db.refresh(current_user)
     return {"success": True, "data": _user_to_dict(current_user)}
@@ -533,6 +537,7 @@ def get_ziwei_chart(current_user: User = Depends(get_current_user)):
             current_user.birth_day,
             current_user.birth_hour,
             current_user.gender,
+            longitude=current_user.birth_longitude,
         )
     except (TypeError, ValueError) as exc:
         raise HTTPException(422, detail="生辰信息无效，无法生成紫微命盘") from exc

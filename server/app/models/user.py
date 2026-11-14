@@ -24,6 +24,8 @@ class User(TimestampMixin, Base):
     birth_hour: Mapped[int] = mapped_column(SMALLINT, nullable=False)
     gender: Mapped[int] = mapped_column(SMALLINT, nullable=False, comment="0=女 1=男")
     birth_location: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    # 出生地经度（可选）：设置后紫微排盘按真太阳时校正（经度差+均时差）
+    birth_longitude: Mapped[float | None] = mapped_column(nullable=True)
 
     # 推送设置
     push_channel: Mapped[str] = mapped_column(

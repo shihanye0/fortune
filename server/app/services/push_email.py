@@ -401,9 +401,20 @@ def _build_ziwei_html(ziwei_daily: dict | None) -> str:
             f'<div style="margin-top:8px; font-size:12px; color:#64748b;">当前大限：{dx["range_text"]} 行{_safe(dx["palace_display"])}'
             + (f' · {_safe(dx["hint"])}' if dx.get("hint") else '') + '</div>'
         )
-    rows = []
     tint = {"禄": "#dcfce7", "权": "#fee2e2", "科": "#dbeafe", "忌": "#ede9fe"}
     color = {"禄": "#15803d", "权": "#b91c1c", "科": "#1d4ed8", "忌": "#6d28d9"}
+    flow_lines = []
+    fx = ziwei_daily.get("flow_sihua") or []
+    if fx:
+        flow_lines.append(f'<div style="margin-top:8px; font-size:12px; color:#64748b;">流年{_safe(ziwei_daily.get("flow_ganzhi"))}四化：</div>')
+        for item in fx:
+            palace_disp = item.get("palace") or "不入本命盘"
+            flow_lines.append(
+                f'<div style="margin-top:4px; font-size:13px; color:#334155;">'
+                f'<span style="display:inline-block; padding:1px 8px; border-radius:999px; background:{tint[item["type"]]}; color:{color[item["type"]]}; font-size:11px; font-weight:700;">流年化{item["type"]}</span>'
+                f' <b>{_safe(item.get("star"))}</b> 落 <b>{_safe(palace_disp)}宫</b></div>'
+            )
+    rows = []
     for item in ziwei_daily["sihua"]:
         palace_disp = item.get("palace") or "不在本命十四主辅星盘"
         hint = _safe(item.get("hint") or "")
@@ -418,6 +429,7 @@ def _build_ziwei_html(ziwei_daily: dict | None) -> str:
         <div style="font-size:15px; font-weight:700; color:#581c87;">✦ 紫微流日 · 今日四化</div>
         <div style="margin-top:2px; font-size:11px; color:#94a3b8;">今日日干四化落你的本命宫位（命宫 {_safe(ziwei_daily.get("soul_palace"))} · {_safe(ziwei_daily.get("five_elements"))}）</div>
         {daxian_line}
+        {''.join(flow_lines)}
         {''.join(rows)}
       </div>"""
 
@@ -594,6 +606,10 @@ def _build_text(fortune_data: dict, now: datetime | None = None) -> str:
         dx = ziwei_daily.get("daxian") or {}
         if dx.get("palace_display"):
             lines.append(f"紫微大限：{dx['range_text']} 行{dx['palace_display']}")
+        fx = ziwei_daily.get("flow_sihua") or []
+        for item in fx:
+            palace_disp = item.get("palace") or "不入本命盘"
+            lines.append(f"- 流年化{item['type']} {item.get('star')} 落{palace_disp}宫")
     ziwei_daily = fortune_data.get("ziwei_daily") or {}
     if ziwei_daily.get("sihua"):
         lines.append(f"紫微流日（命宫{ziwei_daily.get('soul_palace')} · {ziwei_daily.get('five_elements')}）：")

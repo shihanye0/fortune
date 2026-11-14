@@ -31,6 +31,22 @@ const editingUsername = ref(false)
 const usernameForm = reactive({ username: '' })
 
 const editingBirth = ref(false)
+const CHINA_CITIES = [
+  { name: '北京', lon: 116.4 }, { name: '上海', lon: 121.5 }, { name: '广州', lon: 113.3 },
+  { name: '深圳', lon: 114.1 }, { name: '杭州', lon: 120.2 }, { name: '南京', lon: 118.8 },
+  { name: '成都', lon: 104.1 }, { name: '重庆', lon: 106.5 }, { name: '武汉', lon: 114.3 },
+  { name: '西安', lon: 108.9 }, { name: '苏州', lon: 120.6 }, { name: '天津', lon: 117.2 },
+  { name: '长沙', lon: 113.0 }, { name: '郑州', lon: 113.6 }, { name: '福州', lon: 119.3 },
+  { name: '厦门', lon: 118.1 }, { name: '合肥', lon: 117.3 }, { name: '青岛', lon: 120.4 },
+  { name: '济南', lon: 117.0 }, { name: '沈阳', lon: 123.4 }, { name: '哈尔滨', lon: 126.5 },
+  { name: '大连', lon: 121.6 }, { name: '昆明', lon: 102.7 }, { name: '贵阳', lon: 106.7 },
+  { name: '南宁', lon: 108.3 }, { name: '太原', lon: 112.5 }, { name: '石家庄', lon: 114.5 },
+  { name: '长春', lon: 125.3 }, { name: '南昌', lon: 115.9 }, { name: '乌鲁木齐', lon: 87.6 },
+  { name: '兰州', lon: 103.8 }, { name: '海口', lon: 110.3 }, { name: '呼和浩特', lon: 111.7 },
+  { name: '银川', lon: 106.3 }, { name: '西宁', lon: 101.8 }, { name: '拉萨', lon: 91.1 },
+  { name: '香港', lon: 114.2 }, { name: '澳门', lon: 113.5 }, { name: '台北', lon: 121.5 },
+]
+const birthCity = ref<number | null>(null)
 const birthForm = reactive({
   birth_year: 1990,
   birth_month: 1,
@@ -183,6 +199,7 @@ onMounted(async () => {
       birthForm.birth_hour = res.data.birth_hour ?? 0
       birthForm.gender = res.data.gender ?? 1
       birthForm.birth_location = res.data.birth_location || ''
+      birthCity.value = res.data.birth_longitude ?? null
       pushForm.push_enabled = res.data.push_enabled
       pushForm.push_channel = res.data.push_channel || 'email'
       pushForm.push_time = res.data.push_time || '07:00'
@@ -227,7 +244,7 @@ async function handleUpdateUsername() {
 
 async function handleUpdateBirth() {
   try {
-    const res = await updateBirth(birthForm)
+    const res = await updateBirth({ ...birthForm, birth_longitude: birthCity.value })
     if (res.success) {
       profile.value = res.data
       editingBirth.value = false
@@ -474,12 +491,17 @@ async function handleDeleteAccount() {
                 <el-radio :value="0">女</el-radio>
               </el-radio-group>
             </el-form-item>
+            <el-form-item label="出生城市">
+              <el-select v-model="birthCity" filterable clearable placeholder="选填；选择后紫微盘按真太阳时校正" class="birth-city-select">
+                <el-option v-for="c in CHINA_CITIES" :key="c.name" :label="c.name + '（' + c.lon + '°）'" :value="c.lon" />
+              </el-select>
+            </el-form-item>
             <el-form-item label="出生地">
               <el-input
                 v-model="birthForm.birth_location"
                 name="birth-location"
                 autocomplete="address-level2"
-                placeholder="选填；当前不参与真太阳时校正"
+                placeholder="选填备注，不参与排盘"
               />
             </el-form-item>
             <el-form-item>

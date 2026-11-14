@@ -11,6 +11,7 @@ export interface UserProfile {
   birth_hour: number | null
   gender: number | null
   birth_location: string | null
+  birth_longitude: number | null
   push_channel: string | null
   push_enabled: boolean
   push_time: string | null
@@ -73,6 +74,7 @@ export async function updateBirth(data: {
   birth_hour: number
   gender?: number
   birth_location?: string | null
+  birth_longitude?: number | null
 }): Promise<ApiResponse<UserProfile>> {
   const res = await client.put('/api/v1/users/me/birth', data)
   return res.data

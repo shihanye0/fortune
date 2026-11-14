@@ -335,12 +335,15 @@ def _generate_fortune_on_demand(user: User, today: date, db: Session) -> DailyFo
             interpretation = FALLBACK_DAILY
 
         # 4. 存入数据库
+        from fortune_engine import ENGINE_VERSION
+
         fortune = DailyFortune(
             user_id=user.id,
             date=today,
             heavenly_stem=daily["heavenly_stem"],
             earthly_branch=daily["earthly_branch"],
             overall_score=daily["overall_score"],
+            calculation_version=ENGINE_VERSION,
             career_fortune=daily.get("career_fortune"),
             wealth_fortune=daily.get("wealth_fortune"),
             love_fortune=daily.get("love_fortune"),
@@ -400,6 +403,7 @@ def _fortune_to_detail_dict(f: DailyFortune) -> dict:
         "lucky_direction": f.lucky_direction,
         "hourly_fortunes": f.hourly_fortunes,
         "interpretation": f.llm_interpretation,
+        "calculation_version": f.calculation_version,
         "user_rating": f.user_rating,
         "user_feedback_tags": f.user_feedback_tags,
         "user_feedback_text": f.user_feedback_text,

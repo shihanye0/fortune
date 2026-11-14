@@ -33,6 +33,11 @@ function mutagenClass(m: string | null) {
 function dispName(name: string) {
   return name.endsWith('宫') ? name : name + '宫'
 }
+const FLOW_TAGS = ['禄', '权', '科', '忌']
+function flowTag(star: string): string {
+  const idx = chart.value?.flow_year?.sihua_stars?.indexOf(star) ?? -1
+  return idx >= 0 ? FLOW_TAGS[idx] : ''
+}
 
 async function loadChart() {
   loadingChart.value = true
@@ -148,7 +153,7 @@ onMounted(async () => { await loadRecords(); loadLatestInterpretation(); loadCha
           </div>
           <div class="palace-stars">
             <span v-for="s in p.major_stars" :key="s.name" class="star major" :class="mutagenClass(s.mutagen)">
-              {{ s.name }}{{ s.brightness || '' }}<i v-if="s.mutagen" class="mu">{{ s.mutagen }}</i>
+              {{ s.name }}{{ s.brightness || '' }}<i v-if="s.mutagen" class="mu">{{ s.mutagen }}</i><i v-if="flowTag(s.name)" class="mu flow-mu">流{{ flowTag(s.name) }}</i>
             </span>
             <span v-for="s in p.minor_stars" :key="s.name" class="star minor">{{ s.name }}{{ s.brightness || '' }}<i v-if="s.mutagen" class="mu">{{ s.mutagen }}</i></span>
           </div>
@@ -228,6 +233,7 @@ onMounted(async () => { await loadRecords(); loadLatestInterpretation(); loadCha
 .mutagen-权 { color: #ef4444; }
 .mutagen-科 { color: #38bdf8; }
 .mutagen-忌 { color: #a78bfa; }
+.flow-mu { color: #f59e0b; font-size: 10px; border: 1px solid rgba(245,158,11,0.6); border-radius: 3px; padding: 0 2px; }
 .palace-foot { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-size: 11px; color: var(--el-text-color-secondary); }
 .borrowed { color: var(--el-text-color-secondary); font-style: italic; }
 .daxian { margin-left: auto; }

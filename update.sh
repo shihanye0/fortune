@@ -30,7 +30,7 @@ cd $APP_DIR/client
 npm install -q
 npm run build
 
-systemctl restart fortune
+sudo -n systemctl restart fortune 2>/dev/null ||   echo "  ⚠ 自动重启失败（无免密 sudo 或无 TTY），请手动执行: sudo systemctl restart fortune"
 
 echo ""
 echo "  更新完成！"

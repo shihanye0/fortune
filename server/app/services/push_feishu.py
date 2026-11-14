@@ -336,6 +336,13 @@ def _build_ziwei_text(ziwei_daily: dict | None) -> str:
     dx = ziwei_daily.get('daxian') or {}
     if dx.get('palace_display'):
         lines.append(f"当前大限：{dx['range_text']} 行{dx['palace_display']}" + (f" · {dx['hint']}" if dx.get('hint') else ''))
+    fx = ziwei_daily.get('flow_sihua') or []
+    if fx:
+        lines.append(f"流年{ziwei_daily.get('flow_ganzhi', '')}四化：")
+        for item in fx:
+            palace_disp = item.get('palace') or '不入本命盘'
+            lines.append(f"<font color='{tag.get(item['type'], 'grey')}'>流年化{item['type']}</font> "
+                         f"{item.get('star', '')} 落 {palace_disp}宫")
     tag = {'禄': 'green', '权': 'red', '科': 'blue', '忌': 'violet'}
     for item in ziwei_daily['sihua']:
         palace_disp = item.get('palace') or '不入本命十四主辅星盘'

@@ -35,6 +35,8 @@ class DailyFortune(TimestampMixin, Base):
 
     # LLM 解读
     llm_interpretation: Mapped[str | None] = mapped_column(TEXT, nullable=True)
+    # 生成该记录时的算法版本（ENGINE_VERSION），历史口径可追溯
+    calculation_version: Mapped[str | None] = mapped_column(String(32), nullable=True)
 
     # 用户反馈
     user_rating: Mapped[int | None] = mapped_column(SMALLINT, nullable=True)

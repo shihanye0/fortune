@@ -36,6 +36,7 @@ export interface FortuneDetail {
   lucky_direction: string
   hourly_fortunes: HourlyFortune[] | null
   interpretation: string
+  calculation_version: string | null
   user_rating: number | null
   user_feedback_tags: string[]
   user_feedback_text: string | null
