@@ -353,7 +353,7 @@ def _build_events_html(events: list | None, now_min: int) -> str:
             f'<div style="font-size:13px; color:{BODY};">'
             f'<span style="display:inline-block; padding:1px 8px; border-radius:999px; background:#eef2ff; color:#4338ca; font-size:11px; font-weight:600;">{_safe(event.get("dimension"))}</span>'
             f' {_safe(event.get("event"))}'
-            f'<span style="float:right; font-size:11px; color:{time_color};">{_safe(time_label)}</span>'
+            f'<span style="font-size:11px; color:{time_color};">（{_safe(time_label)}）</span>'
             f'</div>'
             + (f'<div style="margin-top:3px; font-size:12px; color:#64748b;">{desc}</div>' if desc else "")
             + '</div>'
