@@ -261,7 +261,7 @@ onMounted(async () => { await loadRecords(); loadLatestInterpretation(); loadCha
 .h-q { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .h-actions { margin-top: 4px; }
 .fb-input { margin-top: 10px; }
-'.daily-card { margin-top: 16px; }
+.daily-card { margin-top: 16px; }
 .daily-row { margin-top: 8px; font-size: 14px; }
 .daily-tag { display: inline-block; padding: 1px 8px; border-radius: 999px; color: #fff; font-size: 11px; font-weight: 700; margin-right: 6px; }
 .daily-禄 { background: #22c55e; }
