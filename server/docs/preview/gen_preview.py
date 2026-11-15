@@ -60,6 +60,7 @@ payload = {
         "interpretation": "今日化忌落夫妻宫，亲密关系上少说教、多倾听；化禄落迁移宫，外出办事与远行沟通格外顺，可主动推进。",
     },
     "bazi_dayun": {"pillar": "甲申", "start_year": 2023, "end_year": 2032, "start_age": 34, "end_age": 43},
+    "daily_overview": {"interpretation": "今日主基调偏顺：日运 4/5，一卦「水火既济」主事将成，紫微化禄落迁移宫利外出推进。最值得做的是把卡了 80% 的任务收尾、主动约谈合作。最需留意的是化忌落夫妻宫，亲密关系上少说教多倾听，别把工作情绪带回家。"},
     "reflection_question": "今天最想推进一步的那件事，卡住你的到底是什么？",
     "calculation_notice": "传统文化参考，不构成医疗、法律或投资建议。",
 }

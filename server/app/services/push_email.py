@@ -215,6 +215,19 @@ def _dimension_cell(label: str, icon: str, dimension: dict | None, tint: str) ->
       </td>"""
 
 
+def _build_overview_html(overview: dict | None) -> str:
+    """今日总览卡：置顶 3-4 句总结（先结论后细节）。"""
+    if not overview or not overview.get("interpretation"):
+        return ""
+    return (
+        f'<div style="margin-top:16px; padding:14px 16px; background:linear-gradient(135deg,#eef2ff 0%,#faf5ff 100%); '
+        f'border:1px solid #c7d2fe; border-radius:12px;">'
+        f'<div style="font-size:15px; font-weight:700; color:#312e81;">🧭 今日总览</div>'
+        f'<div style="margin-top:6px; font-size:13px; line-height:22px; color:#334155;">{_safe(overview["interpretation"])}</div>'
+        f'</div>'
+    )
+
+
 def _build_season_banner(fortune_data: dict) -> str:
     """节气换月提示横幅：只在换节气当日/前一日出现。"""
     note = fortune_data.get("season_note")
@@ -511,6 +524,7 @@ def _build_html(fortune_data: dict, now: datetime | None = None) -> str:
           <div style="margin-top:6px; font-size:13px; color:#e0e7ff;">{_header_meta(fortune_data)}</div>
         </td></tr>
         <tr><td style="padding:0 28px 28px;">
+          {_build_overview_html(fortune_data.get("daily_overview"))}
           {_build_season_banner(fortune_data)}
           {_build_dayun_banner(fortune_data.get("bazi_dayun"))}
           <div style="margin-top:16px; padding:18px 20px; background:{SURFACE}; border:1px solid {LINE}; border-radius:14px;">
@@ -577,6 +591,9 @@ def _build_text(fortune_data: dict, now: datetime | None = None) -> str:
         level.guidance,
         "",
     ])
+    overview = fortune_data.get("daily_overview") or {}
+    if overview.get("interpretation"):
+        lines.extend(["今日总览：" + overview["interpretation"], ""])
     for label, key in (("事业", "career"), ("财运", "wealth"), ("感情", "love"), ("健康", "health")):
         dimension = fortune_data.get(key) or {}
         detail = dimension.get("detail") or dimension.get("description") or "—"

@@ -168,6 +168,68 @@ def _build_weekly_recap(user_id: int, today: date, db: Session) -> dict | None:
     }
 
 
+def _build_daily_overview(payload, user, bazi):
+    """今日总览：各板块确定性数据 → LLM 3-4 句总结；失败回退确定性模板文案。"""
+    from fortune_engine.services.deepseek import interpret_daily_overview, get_user_llm_overrides
+
+    ziwei = payload.get("ziwei_daily") or {}
+    parts = []
+    parts.append(f"日运综合 {payload.get('overall_score', 0)}/5")
+    hx = payload.get("daily_hexagram") or {}
+    if hx.get("name"):
+        parts.append(f"今日一卦「{hx['name']}」（{hx.get('tendency', '平')}），卦义：{hx.get('advice', '')}")
+    sihua = ziwei.get("sihua") or []
+    ji = next((x for x in sihua if x["type"] == "忌"), None)
+    lu = next((x for x in sihua if x["type"] == "禄"), None)
+    if ji and ji.get("palace"):
+        parts.append(f"紫微今日化忌落{ji['palace']}宫（{ji.get('hint', '')}）")
+    if lu and lu.get("palace"):
+        parts.append(f"化禄落{lu['palace']}宫（{lu.get('hint', '')}）")
+    dx = ziwei.get("daxian") or {}
+    if dx.get("palace_display"):
+        parts.append(f"当前大限{dx['range_text']}行{dx['palace_display']}，五行局{ziwei.get('five_elements', '')}")
+    dy = payload.get("bazi_dayun") or {}
+    if dy.get("pillar"):
+        parts.append(f"八字当前{dy['pillar']}大运（{dy['start_year']}-{dy['end_year']}年）")
+    events = payload.get("probability_events") or []
+    if events:
+        ev_names = "、".join(e.get("event", "") for e in events[:2])
+        parts.append(f"今日关注点前两条：{ev_names}")
+    lucky = payload.get("deity_directions") or {}
+    lucky_bits = []
+    if payload.get("lucky_color"):
+        lucky_bits.append(f"幸运色{payload['lucky_color']}")
+    if lucky.get("caishen"):
+        lucky_bits.append(f"财神方{lucky['caishen']}")
+    if lucky_bits:
+        parts.append("、".join(lucky_bits))
+    if payload.get("season_note"):
+        parts.append(f"节气：{payload['season_note']}")
+    digest = chr(10).join(parts)
+
+    try:
+        text = interpret_daily_overview(
+            digest,
+            bazi_info=f"八字：{bazi['year_pillar']} {bazi['month_pillar']} {bazi['day_pillar']} {bazi['hour_pillar']}，日主{bazi['day_master']}",
+            **get_user_llm_overrides(user),
+        )
+    except Exception:
+        text = ""
+    if not text:
+        tone = "平稳" if (payload.get("overall_score") or 0) >= 3 else "需谨慎"
+        text = f"今日日运{payload.get('overall_score', 0)}/5、整体{tone}"
+        if hx.get("name"):
+            text += f"，一卦「{hx['name']}」倾向{hx.get('tendency', '平')}"
+        if ji and ji.get("palace"):
+            text += f"；化忌落{ji['palace']}宫宜缓宜细"
+        if lu and lu.get("palace"):
+            text += f"，化禄落{lu['palace']}宫可顺势"
+        if events:
+            text += f"；优先关注「{events[0].get('event', '')}」"
+        text += "。"
+    return {"digest": digest, "interpretation": text}
+
+
 def _build_payload(
     user: User,
     fortune: DailyFortune,
@@ -272,6 +334,7 @@ def _build_payload(
         "ziwei_daily": ziwei_daily,
         "bazi_dayun": bazi_dayun,
         "ziwei_daily_interpretation": ziwei_daily_interpretation,
+        "_payload_ready": True,
         "season_note": get_season_note(today),
         "deity_directions": get_deity_directions(day_stem),
         "reflection_question": pick_reflection(user.id, day_seed),
@@ -289,6 +352,9 @@ def _build_payload(
         "probability_events": probability_events,
         "calculation_notice": "传统文化参考，不构成医疗、法律或投资建议。",
     }
+    payload.pop("_payload_ready", None)
+    payload["daily_overview"] = _build_daily_overview(payload, user, bazi)
+    return payload
 
 
 def _create_deliveries(user: User, today: date, payload: dict, now: datetime, db: Session) -> list[PushDelivery]:

@@ -118,6 +118,14 @@ def _build_card(fortune_data: dict) -> dict:
         },
     ]
 
+    # 今日总览紧跟综合状态
+    overview = fortune_data.get("daily_overview") or {}
+    if overview.get("interpretation"):
+        elements.append({
+            "tag": "markdown",
+            "content": "**🧭 今日总览**" + chr(10) + _feishu_text(overview["interpretation"]),
+        })
+
     # 节气换月提示紧跟综合状态
     if season_line:
         elements.append({

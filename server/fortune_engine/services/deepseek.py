@@ -612,3 +612,25 @@ def interpret_ziwei_daily(signal_summary, bazi_info="", llm_api_key=None, llm_ap
     )
     result = _call_deepseek(prompt, api_key=llm_api_key, base_url=llm_api_url, model=llm_model)
     return _strip_markdown(result) if result else FALLBACK_ZIWEI_DAILY
+
+
+DAILY_OVERVIEW_PROMPT = """你是一位命理运势编辑。根据下面这位用户今天各板块的确定性数据，写一段"今日总览"。
+
+{digest}
+
+要求：纯文字，禁用任何markdown符号；共 3-4 句：
+第一句综合定调（结合日运评分、卦象倾向、紫微流日基调）；
+第二句说今天最值得顺势做的一两件事；
+第三句说最需要留意或避开的一件事；
+如数据里有节气/大运背景可再补一句；总字数 100-160 字，语气温和不绝对化"""
+
+FALLBACK_DAILY_OVERVIEW = ""
+
+
+def interpret_daily_overview(digest, bazi_info="", llm_api_key=None, llm_api_url=None, llm_model=None):
+    """今日总览短总结（推送置顶用）；LLM 不可用时返回空串，由推送侧回退确定性文案。"""
+    if not digest:
+        return FALLBACK_DAILY_OVERVIEW
+    prompt = DAILY_OVERVIEW_PROMPT.format(digest=digest, bazi_info=bazi_info or "暂无")
+    result = _call_deepseek(prompt, api_key=llm_api_key, base_url=llm_api_url, model=llm_model)
+    return _strip_markdown(result) if result else FALLBACK_DAILY_OVERVIEW
