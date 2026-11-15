@@ -214,7 +214,8 @@ def _build_payload(
     ziwei_daily = None
     try:
         from fortune_engine.ziwei.words import current_daxian
-        chart = calculate_ziwei(user.birth_year, user.birth_month, user.birth_day, user.birth_hour, user.gender)
+        chart = calculate_ziwei(user.birth_year, user.birth_month, user.birth_day,
+                                user.birth_hour, user.gender, longitude=user.birth_longitude)
         stem_idx = "甲乙丙丁戊己庚辛壬癸".index(day_stem)
         flow_stem_idx = (today.year - 4) % 10
         ziwei_daily = {

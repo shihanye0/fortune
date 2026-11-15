@@ -295,19 +295,26 @@ def _build_hourly_html(hourly_fortunes: list | None, now_min: int) -> str:
         actions = "、".join(item.get("favorable", [])[:2]) or "按自己的节奏安排"
         if chip == "慎":
             actions = "、".join(item.get("unfavorable", [])[:2]) or "重要事项多做一次核对"
-        cause_bits = [f"{item.get('hourly_stem','')}{item.get('hourly_branch','')}时" if item.get('hourly_stem') else "", item.get("ten_god") or ""]
+        stem = item.get("hourly_stem") or ""
+        branch = item.get("hourly_branch") or ""
+        ten_god = item.get("ten_god") or ""
+        cause_bits = [f"{stem}{branch}时" if stem else "", ten_god]
         cause = " · ".join(bit for bit in cause_bits if bit)
-        style_bits = {"past": 'color:#94a3b8;', "current": 'background:#eef2ff;'}
-        extra = style_bits.get(status, '')
+        head_bg = SURFACE if status == "past" else ("#eef2ff" if status == "current" else SURFACE)
+        head_color = "#94a3b8" if status == "past" else "#1e293b"
         return (
-            f'<tr style="{extra}">'
-            f'<td width="72" style="padding:6px 0; border-bottom:1px solid {LINE}; font-weight:700; color:#1e293b;">{SHICHEN_ICONS.get(item.get("shichen", ""), "")}{_safe(item.get("shichen"), "")}时'
-            f'<br><span style="font-size:10px; font-weight:400; color:#94a3b8;">{_safe(item.get("shichen_range"), "")}</span></td>'
-            f'<td width="40"><span style="display:inline-block; padding:1px 7px; border-radius:999px; background:{accent}; color:#fff; font-size:11px; font-weight:700;">{chip}</span></td>'
-            f'<td width="46" style="color:{get_fortune_level(score).color};">{score}<span style="font-size:10px; color:{MUTED};">/5</span></td>'
-            f'<td style="padding:6px 8px; border-bottom:1px solid {LINE}; color:#475569;">{_safe(actions)}<span style="font-size:11px; color:#94a3b8;"> {_safe(cause)}</span></td>'
-            f'<td width="64" align="right" style="font-size:11px; color:{MUTED};">{_status_badge(status, item.get("shichen_range"))}</td>'
-            f'</tr>'
+            f'<div style="margin-top:6px; padding:8px 12px; background:{head_bg}; border-left:3px solid {accent}; border-radius:0 8px 8px 0;">'
+            f'<div style="font-size:13px; font-weight:700; color:{head_color};">'
+            f'<span style="display:inline-block; padding:1px 7px; border-radius:999px; background:{accent}; color:#ffffff; font-size:11px; font-weight:700;">{chip}</span>'
+            f' {SHICHEN_ICONS.get(item.get("shichen", ""), "")}{_safe(item.get("shichen"), "")}时 '
+            f'<span style="font-size:11px; font-weight:400; color:#94a3b8;">{_safe(item.get("shichen_range"), "")}</span>'
+            f'<span style="color:{get_fortune_level(score).color}; font-size:12px;"> {score}<span style="font-size:10px;">/5</span></span>'
+            f'{_status_badge(status, item.get("shichen_range"))}'
+            f'</div>'
+            f'<div style="margin-top:3px; font-size:12px; line-height:18px; color:#475569;">{_safe(actions)}'
+            + (f'<span style="font-size:11px; color:#94a3b8;"> · {_safe(cause)}</span>' if cause else '') +
+            f'</div>'
+            f'</div>'
         )
     rows = "".join(row(item) for item in hours[:12])
     strip = _build_hourly_strip(hours, now_min)
@@ -340,25 +347,22 @@ def _build_events_html(events: list | None, now_min: int) -> str:
         time_label = _event_time_label(event, now_min)
         time_color = "#94a3b8" if time_label == "已过" else MUTED
         desc = _safe(event.get("description") or "")
-        desc_line = f'<div style="margin-top:2px; font-size:11px; line-height:17px; color:#94a3b8;">{desc}</div>' if desc else ""
-        rows.append(f"""
-          <tr>
-            <td width="72" style="padding:8px 0; border-bottom:1px solid {LINE};">
-              <span style="display:inline-block; padding:2px 8px; border-radius:999px; background:#eef2ff; color:#4338ca; font-size:11px; font-weight:600;">{_safe(event.get("dimension"))}</span>
-            </td>
-            <td style="padding:8px 12px; border-bottom:1px solid {LINE}; color:{BODY};">{_safe(event.get("event"))}{desc_line}</td>
-            <td width="104" align="right" valign="top" style="padding:8px 0; border-bottom:1px solid {LINE};">
-              <span style="font-size:11px; line-height:16px; color:{time_color}; white-space:nowrap;">{_safe(time_label)}</span>
-            </td>
-          </tr>""")
-
+        desc_line = f'<span style="font-size:11px; color:#94a3b8;"> · {desc}</span>' if desc else ""
+        rows.append(
+            f'<div style="margin-top:6px; padding:8px 12px; background:{SURFACE}; border-left:3px solid #6366f1; border-radius:0 8px 8px 0;">'
+            f'<div style="font-size:13px; color:{BODY};">'
+            f'<span style="display:inline-block; padding:1px 8px; border-radius:999px; background:#eef2ff; color:#4338ca; font-size:11px; font-weight:600;">{_safe(event.get("dimension"))}</span>'
+            f' {_safe(event.get("event"))}'
+            f'<span style="float:right; font-size:11px; color:{time_color};">{_safe(time_label)}</span>'
+            f'</div>'
+            + (f'<div style="margin-top:3px; font-size:12px; color:#64748b;">{desc}</div>' if desc else "")
+            + '</div>'
+        )
     return f"""
       <div style="margin-top:22px;">
         <div style="font-size:15px; font-weight:700; color:#1e293b;">今日行动关注点</div>
         <div style="margin-top:3px; font-size:12px; color:{MUTED};">全量展示当日行动关注点：名称+一句依据+建议时段，按此安排优先级。</div>
-        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin-top:7px; font-size:13px;">
-          {''.join(rows)}
-        </table>
+        {''.join(rows)}
       </div>"""
 
 
