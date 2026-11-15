@@ -135,3 +135,11 @@ def current_daxian(chart):
                 "hint": PALACE_MEANINGS.get(name, ""),
             }
     return None
+
+
+def daily_flow_signal(chart, solar_y, solar_m, solar_d):
+    """Today's ziwei daily signal: day-pillar stem sihua mapped to natal palaces."""
+    from lunar_python import Solar
+    gz = Solar.fromYmd(solar_y, solar_m, solar_d).getLunar().getDayInGanZhi()
+    stem_idx = "甲乙丙丁戊己庚辛壬癸".index(gz[0])
+    return {"day_ganzhi": gz, "sihua": daily_signal(chart, stem_idx)}

@@ -541,4 +541,13 @@ def get_ziwei_chart(current_user: User = Depends(get_current_user)):
         )
     except (TypeError, ValueError) as exc:
         raise HTTPException(422, detail="生辰信息无效，无法生成紫微命盘") from exc
-    return {"success": True, "data": chart}
+    daily = None
+    try:
+        from datetime import datetime, timedelta, timezone
+        from fortune_engine.ziwei.words import daily_flow_signal
+        ch = timezone(timedelta(hours=8))
+        today = datetime.now(ch).date()
+        daily = daily_flow_signal(chart, today.year, today.month, today.day)
+    except Exception:
+        daily = None
+    return {"success": True, "data": {**chart, "daily": daily}}

@@ -34,6 +34,7 @@ export interface ZiweiChart {
   da_xians: { start_age: number; end_age: number; palace_name: string; branch: string }[]
   flow_year: { year: number; ganzhi: string; ming_gong_branch: string; sihua_stars: string[] }
   notes: string[]
+  daily?: { day_ganzhi: string; sihua: { type: string; star: string; palace: string | null; hint: string }[] } | null
 }
 
 export interface DivinationRecord {

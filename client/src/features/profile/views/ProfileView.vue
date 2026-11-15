@@ -45,6 +45,11 @@ const CHINA_CITIES = [
   { name: '兰州', lon: 103.8 }, { name: '海口', lon: 110.3 }, { name: '呼和浩特', lon: 111.7 },
   { name: '银川', lon: 106.3 }, { name: '西宁', lon: 101.8 }, { name: '拉萨', lon: 91.1 },
   { name: '香港', lon: 114.2 }, { name: '澳门', lon: 113.5 }, { name: '台北', lon: 121.5 },
+  { name: '保定', lon: 115.5 }, { name: '唐山', lon: 118.2 }, { name: '唐县', lon: 115.0 },
+  { name: '邯郸', lon: 114.5 }, { name: '邢台', lon: 114.5 }, { name: '张家口', lon: 114.9 },
+  { name: '承德', lon: 117.9 }, { name: '沧州', lon: 116.9 }, { name: '廊坊', lon: 116.7 },
+  { name: '衡水', lon: 115.7 }, { name: '秦皇岛', lon: 119.6 },
+]
 ]
 const birthCity = ref<number | null>(null)
 const birthForm = reactive({

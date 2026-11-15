@@ -178,6 +178,14 @@ onMounted(async () => { await loadRecords(); loadLatestInterpretation(); loadCha
       </div>
       <el-alert v-if="chart && chart.notes.length" :title="chart.notes.join('；')" type="info" :closable="false" class="notes-alert" />
     </el-card>
+    <el-card v-if="chart?.daily" class="daily-card animate-fade-in">
+      <template #header><div class="card-header"><span>今日紫微流日 · {{ chart.daily.day_ganzhi }}日</span></div></template>
+      <div v-for="item in chart.daily.sihua" :key="item.type" class="daily-row">
+        <span class="daily-tag" :class="'daily-' + item.type">化{{ item.type }}</span>
+        <b>{{ item.star }}</b> 落 <b>{{ item.palace ? dispName(item.palace) : '不入本命盘' }}</b>
+        <span v-if="item.hint" class="daily-hint"> · {{ item.hint }}</span>
+      </div>
+    </el-card>
     <el-card class="interp-card animate-fade-in">
       <template #header><div class="card-header"><span>AI 命盘解读</span></div></template>
       <el-input v-model="question" placeholder="想了解什么？可空，如：今年事业运如何" maxlength="120" class="q-input" />
@@ -253,6 +261,14 @@ onMounted(async () => { await loadRecords(); loadLatestInterpretation(); loadCha
 .h-q { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .h-actions { margin-top: 4px; }
 .fb-input { margin-top: 10px; }
+'.daily-card { margin-top: 16px; }
+.daily-row { margin-top: 8px; font-size: 14px; }
+.daily-tag { display: inline-block; padding: 1px 8px; border-radius: 999px; color: #fff; font-size: 11px; font-weight: 700; margin-right: 6px; }
+.daily-禄 { background: #22c55e; }
+.daily-权 { background: #ef4444; }
+.daily-科 { background: #38bdf8; }
+.daily-忌 { background: #a78bfa; }
+.daily-hint { color: var(--el-text-color-secondary); font-size: 12px; }
 @media (max-width: 640px) {
   .chart-grid { display: flex; flex-direction: column; }
   .palace-cell, .center-panel { min-height: auto; }
