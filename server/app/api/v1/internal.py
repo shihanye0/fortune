@@ -325,7 +325,7 @@ def _build_payload(
     except Exception:
         ziwei_daily_interpretation = ""
     bazi_dayun = None
-    return {
+    payload = {
         "date": today.isoformat(),
         "day_ganzhi": f"{fortune.heavenly_stem or ''}{fortune.earthly_branch or ''}",
         "day_chongsha": get_day_chongsha(day_stem, fortune.earthly_branch or daily["earthly_branch"]),
@@ -334,7 +334,6 @@ def _build_payload(
         "ziwei_daily": ziwei_daily,
         "bazi_dayun": bazi_dayun,
         "ziwei_daily_interpretation": ziwei_daily_interpretation,
-        "_payload_ready": True,
         "season_note": get_season_note(today),
         "deity_directions": get_deity_directions(day_stem),
         "reflection_question": pick_reflection(user.id, day_seed),
@@ -352,7 +351,6 @@ def _build_payload(
         "probability_events": probability_events,
         "calculation_notice": "传统文化参考，不构成医疗、法律或投资建议。",
     }
-    payload.pop("_payload_ready", None)
     payload["daily_overview"] = _build_daily_overview(payload, user, bazi)
     return payload
 

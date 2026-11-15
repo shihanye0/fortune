@@ -214,3 +214,33 @@ class TestDailyPushAPI:
 
         assert missing.status_code == 401
         assert invalid.status_code == 401
+
+
+class TestPayloadContract:
+    """payload 端到端契约：防止"子函数对、装配函数死代码"类回归（2026-11-15 事故）。"""
+
+    @patch("fortune_engine.services.deepseek.interpret_daily_overview", return_value="总览文本测试")
+    @patch("fortune_engine.services.deepseek.interpret_ziwei_daily", return_value="流日解读测试")
+    @patch("fortune_engine.services.deepseek.interpret_daily_hexagram", return_value="一卦解读测试")
+    @patch("app.services.push_email.send_fortune_email", return_value=True)
+    def test_payload_contains_overview_and_ziwei_interp(
+        self, mock_email, mock_hex, mock_zw, mock_ov, client, db_session
+    ):
+        from app.models.push_delivery import PushDelivery
+
+        _create_user(db_session, push_enabled=True, push_channel="email", push_time="07:00")
+        res = client.post("/api/v1/internal/daily-push", json={"hour": 7}, headers=INTERNAL_HEADERS)
+        assert res.status_code == 200
+        row = (
+            db_session.query(PushDelivery)
+            .filter_by(channel="email")
+            .order_by(PushDelivery.id.desc())
+            .first()
+        )
+        assert row is not None
+        payload = row.payload
+        assert "daily_overview" in payload, "总览必须进 payload（防 return 死代码回归）"
+        assert payload["daily_overview"]["interpretation"] == "总览文本测试"
+        assert "_payload_ready" not in payload
+        assert (payload.get("ziwei_daily") or {}).get("interpretation") == "流日解读测试"
+        assert payload.get("hexagram_interpretation") == "一卦解读测试"
