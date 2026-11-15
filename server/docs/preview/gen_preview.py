@@ -57,6 +57,7 @@ payload = {
         "daxian": {"range_text": "35-44岁", "palace_display": "子女宫", "hint": "子女缘分与创作成果"},
         "flow_ganzhi": "丙午",
         "flow_sihua": daily_signal(chart, 2),
+        "interpretation": "今日化忌落夫妻宫，亲密关系上少说教、多倾听；化禄落迁移宫，外出办事与远行沟通格外顺，可主动推进。",
     },
     "bazi_dayun": {"pillar": "甲申", "start_year": 2023, "end_year": 2032, "start_age": 34, "end_age": 43},
     "reflection_question": "今天最想推进一步的那件事，卡住你的到底是什么？",

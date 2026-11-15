@@ -349,4 +349,7 @@ def _build_ziwei_text(ziwei_daily: dict | None) -> str:
         lines.append(f"<font color='{tag.get(item['type'], 'grey')}'>化{item['type']}</font> "
                      f"{item.get('star', '')} 落 {palace_disp}宫"
                      + (f" · {item.get('hint', '')}" if item.get('hint') else ''))
+    interp = (ziwei_daily.get('interpretation') or '').strip()
+    if interp:
+        lines.append("**AI 解读** " + _feishu_text(interp))
     return '\n'.join(lines)

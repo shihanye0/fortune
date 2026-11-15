@@ -587,3 +587,28 @@ def interpret_daily_hexagram(hexagram, bazi_info="", llm_api_key=None, llm_api_u
     )
     result = _call_deepseek(prompt, api_key=llm_api_key, base_url=llm_api_url, model=llm_model)
     return _strip_markdown(result) if result else FALLBACK_DAILY_HEXAGRAM
+
+
+ZIWEI_DAILY_PROMPT = """你是一位精通紫微斗数的命理师。根据下面的今日流日四化信息，写一段简短的今日提示。
+
+{signal_summary}
+
+用户八字信息：{bazi_info}
+
+要求：纯文字，禁用任何markdown符号；先一句话点出今日四化格局的主基调，
+重点展开化忌落宫需要注意什么、化禄落宫可顺势做什么（各一两句，结合宫位含义）；
+语气温和不绝对化；总字数 120-180 字"""
+
+FALLBACK_ZIWEI_DAILY = ""
+
+
+def interpret_ziwei_daily(signal_summary, bazi_info="", llm_api_key=None, llm_api_url=None, llm_model=None):
+    """紫微流日短解读（推送用）；LLM 不可用时返回空串，由推送侧回退确定性文案。"""
+    if not signal_summary:
+        return FALLBACK_ZIWEI_DAILY
+    prompt = ZIWEI_DAILY_PROMPT.format(
+        signal_summary=signal_summary,
+        bazi_info=bazi_info or "暂无",
+    )
+    result = _call_deepseek(prompt, api_key=llm_api_key, base_url=llm_api_url, model=llm_model)
+    return _strip_markdown(result) if result else FALLBACK_ZIWEI_DAILY

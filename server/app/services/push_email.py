@@ -407,6 +407,16 @@ def _build_ziwei_html(ziwei_daily: dict | None) -> str:
         )
     tint = {"禄": "#dcfce7", "权": "#fee2e2", "科": "#dbeafe", "忌": "#ede9fe"}
     color = {"禄": "#15803d", "权": "#b91c1c", "科": "#1d4ed8", "忌": "#6d28d9"}
+    interp = (ziwei_daily.get("interpretation") or "").strip()
+    if not interp:
+        ji = next((x for x in ziwei_daily.get("sihua") or [] if x["type"] == "忌"), None)
+        lu = next((x for x in ziwei_daily.get("sihua") or [] if x["type"] == "禄"), None)
+        if ji and ji.get("palace"):
+            hint_j = ji.get("hint") or "相关事宜"
+            interp = f"今日化忌落{ji['palace']}宫（{hint_j}），相关事项宜缓宜细、多一分耐心"
+            if lu and lu.get("palace"):
+                interp += f"；化禄落{lu['palace']}宫，可顺势推进"
+            interp += "。"
     flow_lines = []
     fx = ziwei_daily.get("flow_sihua") or []
     if fx:
@@ -434,6 +444,9 @@ def _build_ziwei_html(ziwei_daily: dict | None) -> str:
         <div style="margin-top:2px; font-size:11px; color:#94a3b8;">今日日干四化落你的本命宫位（命宫 {_safe(ziwei_daily.get("soul_palace"))} · {_safe(ziwei_daily.get("five_elements"))}）</div>
         {daxian_line}
         {''.join(flow_lines)}
+        <div style="margin-top:10px; padding-top:8px; border-top:1px dashed {LINE}; font-size:13px; line-height:22px; color:#475569;">
+          <span style="color:#a855f7; font-weight:700;">AI 解读</span> {_safe(interp)}
+        </div>
         {''.join(rows)}
       </div>"""
 
@@ -614,6 +627,9 @@ def _build_text(fortune_data: dict, now: datetime | None = None) -> str:
         for item in fx:
             palace_disp = item.get("palace") or "不入本命盘"
             lines.append(f"- 流年化{item['type']} {item.get('star')} 落{palace_disp}宫")
+        interp = (ziwei_daily.get("interpretation") or "").strip()
+        if interp:
+            lines.append(f"流日解读：{interp}")
     ziwei_daily = fortune_data.get("ziwei_daily") or {}
     if ziwei_daily.get("sihua"):
         lines.append(f"紫微流日（命宫{ziwei_daily.get('soul_palace')} · {ziwei_daily.get('five_elements')}）：")

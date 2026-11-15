@@ -143,3 +143,22 @@ def daily_flow_signal(chart, solar_y, solar_m, solar_d):
     gz = Solar.fromYmd(solar_y, solar_m, solar_d).getLunar().getDayInGanZhi()
     stem_idx = "甲乙丙丁戊己庚辛壬癸".index(gz[0])
     return {"day_ganzhi": gz, "sihua": daily_signal(chart, stem_idx)}
+
+
+def build_daily_signal_summary(ziwei_daily):
+    """Compact deterministic text of daily sihua for the LLM prompt."""
+    lines = []
+    dx = ziwei_daily.get("daxian") or {}
+    if dx.get("palace_display"):
+        lines.append(f"当前大限：{dx['range_text']}行{dx['palace_display']}（{dx.get('hint', '')}）")
+    for item in ziwei_daily.get("sihua") or []:
+        palace = item.get("palace") or "不入本命盘"
+        hint = f"（{item['hint']}）" if item.get("hint") else ""
+        lines.append(f"今日化{item['type']} {item['star']} 落{palace}宫{hint}")
+    fx = ziwei_daily.get("flow_sihua") or []
+    if fx:
+        lines.append(f"流年{ziwei_daily.get('flow_ganzhi', '')}四化：")
+        for item in fx:
+            palace = item.get("palace") or "不入本命盘"
+            lines.append(f"流年化{item['type']} {item['star']} 落{palace}宫")
+    return "\n".join(lines)

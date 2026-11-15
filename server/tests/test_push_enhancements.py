@@ -366,3 +366,15 @@ class TestZiweiDailyPush:
         assert "八字大运" in body and "甲申" in body
         assert "当前大限" in body and "子女宫" in body
         assert "2023-2032" in body
+
+    def test_email_ziwei_daily_interpretation(self):
+        from app.services.push_email import _build_html
+        p = self._payload()
+        p["ziwei_daily"]["interpretation"] = "今日化忌落夫妻宫，亲密关系上少说教、多倾听。"
+        body = _build_html(p)
+        assert "AI 解读" in body
+        assert "少说教" in body
+        # 无 LLM 解读时回退确定性文案（含化忌宫位提示）
+        p2 = self._payload()
+        body2 = _build_html(p2)
+        assert "宜缓宜细" in body2
