@@ -50,7 +50,6 @@ const CHINA_CITIES = [
   { name: '承德', lon: 117.9 }, { name: '沧州', lon: 116.9 }, { name: '廊坊', lon: 116.7 },
   { name: '衡水', lon: 115.7 }, { name: '秦皇岛', lon: 119.6 },
 ]
-]
 const birthCity = ref<number | null>(null)
 const birthForm = reactive({
   birth_year: 1990,
