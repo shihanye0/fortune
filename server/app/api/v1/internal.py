@@ -303,17 +303,6 @@ def _build_payload(
         )
     except Exception:
         ziwei_daily_interpretation = ""
-    if ziwei_daily is not None:
-        ziwei_daily["interpretation"] = ziwei_daily_interpretation
-    bazi_dayun = None
-    try:
-        for cyc in bazi.get("major_luck_cycles") or []:
-            if cyc.get("start_year") and cyc.get("end_year") and cyc["start_year"] <= today.year <= cyc["end_year"]:
-                bazi_dayun = {"pillar": cyc.get("pillar"), "start_year": cyc["start_year"],
-                              "end_year": cyc["end_year"], "start_age": cyc["start_age"], "end_age": cyc["end_age"]}
-                break
-    except Exception:
-        ziwei_daily_interpretation = ""
     try:
         from fortune_engine.ziwei.words import build_daily_signal_summary
         sig_summary = build_daily_signal_summary(ziwei_daily) if ziwei_daily else ""
@@ -324,7 +313,17 @@ def _build_payload(
         )
     except Exception:
         ziwei_daily_interpretation = ""
+    if ziwei_daily is not None:
+        ziwei_daily["interpretation"] = ziwei_daily_interpretation
     bazi_dayun = None
+    try:
+        for cyc in bazi.get("major_luck_cycles") or []:
+            if cyc.get("start_year") and cyc.get("end_year") and cyc["start_year"] <= today.year <= cyc["end_year"]:
+                bazi_dayun = {"pillar": cyc.get("pillar"), "start_year": cyc["start_year"],
+                              "end_year": cyc["end_year"], "start_age": cyc["start_age"], "end_age": cyc["end_age"]}
+                break
+    except Exception:
+        bazi_dayun = None
     payload = {
         "date": today.isoformat(),
         "day_ganzhi": f"{fortune.heavenly_stem or ''}{fortune.earthly_branch or ''}",

@@ -243,4 +243,5 @@ class TestPayloadContract:
         assert payload["daily_overview"]["interpretation"] == "总览文本测试"
         assert "_payload_ready" not in payload
         assert (payload.get("ziwei_daily") or {}).get("interpretation") == "流日解读测试"
+        assert payload.get("bazi_dayun") and payload["bazi_dayun"].get("pillar"), "大运横幅数据不得被后续赋值清空（2026-11-15 事故）"
         assert payload.get("hexagram_interpretation") == "一卦解读测试"
